@@ -4,11 +4,15 @@ import swaggerUi from 'swagger-ui-express'
 import dotenv from 'dotenv'
 
 import UserRouter from './routes/user'
+import { databaseSync } from './database/database'
 
 dotenv.config()
 
 const app : Application = express()
 const PORT : number = Number(process.env.PORT) || 3000
+
+// Database connection
+databaseSync()
 
 app.use(express.json())
 app.use(morgan('dev'))
