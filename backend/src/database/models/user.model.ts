@@ -3,8 +3,9 @@ import { Attribute, PrimaryKey, AutoIncrement, NotNull, Unique, Default, Created
 import {IsEmail} from "@sequelize/validator.js"
 import Property from "./property.model"
 import Favourite from "./favourite.model"
+import { IUser } from "../../interfaces/user.interface"
 
-export default class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+export default class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> implements IUser {
     @Attribute(DataTypes.INTEGER)
     @PrimaryKey
     @AutoIncrement
@@ -28,9 +29,9 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     @NotNull
     declare passwordHashed: string
 
-    @Attribute(DataTypes.BLOB)
+    @Attribute(DataTypes.STRING)
     @NotNull
-    declare profileImage: Blob
+    declare profileImage: string
 
     @Attribute(DataTypes.BOOLEAN)
     @NotNull
