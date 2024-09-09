@@ -3,7 +3,7 @@ import morgan from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 import dotenv from 'dotenv'
 
-import UserRouter from './routes/user'
+import UserRouter from './routes/user.route'
 import { databaseSync } from './database/database'
 
 dotenv.config()
