@@ -30,8 +30,9 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     declare passwordHashed: string
 
     @Attribute(DataTypes.STRING)
+    @Default('')
     @NotNull
-    declare profileImage: string
+    declare profileImage: CreationOptional<string>
 
     @Attribute(DataTypes.BOOLEAN)
     @NotNull

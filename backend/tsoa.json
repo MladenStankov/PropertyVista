@@ -1,6 +1,9 @@
 {
-    "entryFile": "src/index.ts",
-    "noImplicitAdditionalProperties": "throw-on-extras",
+  "entryFile": "src/index.ts",
+  "noImplicitAdditionalProperties": "silently-remove-extras",
+  "controllerPathGlobs": [
+    "src/controllers/**/*.ts"
+  ],
     "spec": {
       "outputDirectory": "public",
       "specVersion": 3
@@ -11,5 +14,8 @@
         "in": "cookie",
         "name": "authToken"
       }
-    }
+    },
+    "routes": {
+    "routesDir": "src/routes"
+  }
   }

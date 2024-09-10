@@ -4,11 +4,12 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "predev": "npm run swagger",
-    "prebuild": "npm run swagger",
+    "predev": "npm run swagger && npm run routes",
+    "prebuild": "npm run swagger && npm run routes",
     "build": "tsc",
     "dev": "concurrently \"nodemon\" \"nodemon -x tsoa spec\"",
-    "swagger": "tsoa spec"
+    "swagger": "tsoa spec",
+    "routes": "tsoa routes"
   },
   "nodemonConfig": {
     "watch": [

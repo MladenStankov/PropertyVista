@@ -3,10 +3,10 @@ import morgan from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 import dotenv from 'dotenv'
 
-import UserRouter from './routes/user.route'
 import { databaseSync } from './database/database'
 import cookieParser from 'cookie-parser'
 import { ValidateError } from 'tsoa'
+import { RegisterRoutes } from './routes/routes'
 
 dotenv.config()
 
@@ -34,7 +34,7 @@ app.use(
   );
 
 // Routes
-app.use(UserRouter)
+RegisterRoutes(app)
 
 // Error handling
 app.use(function notFoundHandler(req: Request, res: Response) {
@@ -58,7 +58,7 @@ app.use(function errorHandler(
   }
   if (err instanceof Error) {
     return res.status(500).json({
-      message: "Internal Server Error" + err,
+      message: "Internal Server Error: " + err,
     })
   }
 
