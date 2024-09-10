@@ -4,8 +4,15 @@ import UserController from '../controllers/user.controller'
 const router = express.Router()
 
 router.get('/users', async (req: Request, res: Response) => {
+    const userId : number = Number(req.params.userId)
     const controller = new UserController()
-    const response = await controller.getAll()
+    const response = await controller.getById(userId)
+    return res.send(response)
+})
+
+router.get('/users/:userId', async (req: Request, res: Response) => {
+    const controller = new UserController()
+    const response = await controller.get()
     return res.send(response)
 })
 

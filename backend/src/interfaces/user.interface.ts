@@ -11,21 +11,11 @@ export interface IUser {
     role: string
 }
 
-export interface IGetAllResponse {
-    response: IResponse
-    users: IUser[] | undefined
-}
-
 export interface ICreateBodyRequest {
     firstName: string,
     lastName: string,
     email: string,
     password: string
-}
-
-export interface ICreateResponse {
-    response: IResponse,
-    user: IUser | undefined
 }
 
 export interface IPatchElement {
@@ -35,13 +25,4 @@ export interface IPatchElement {
 
 export interface IPatchBodyRequest {
     elements: IPatchElement[]
-}
-
-export interface IPatchResponse {
-    response: IResponse,
-    user: IUser | undefined
-}
-
-export interface IDeleteResponse {
-    response : IResponse
 }

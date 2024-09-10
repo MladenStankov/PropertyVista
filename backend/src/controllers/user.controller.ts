@@ -1,34 +1,42 @@
-import {Get, Post, Delete,  Route, Body, Patch, Path, Controller } from 'tsoa'
+import {Get, Post, Delete,  Route, Body, Patch, Path, Controller, Tags } from 'tsoa'
 import User from '../database/models/user.model'
-import { ICreateBodyRequest, ICreateResponse, IDeleteResponse, IGetAllResponse, IPatchBodyRequest, IPatchResponse } from '../interfaces/user.interface'
+import { ICreateBodyRequest, IPatchBodyRequest, IUser } from '../interfaces/user.interface'
 
-@Route('/users')
+@Route('users')
+@Tags('Users')
 export default class UserController extends Controller {
     @Get('/')
-    public async getAll(): Promise<IGetAllResponse> {
+    public async get(): Promise<IUser[]> {
         try {
             const users = await User.findAll()
 
-            return {
-                response: {
-                    statusCode: 200,
-                    message: 'Successfull fetch (users:getAll)'
-                },
-                users: users
+            this.setStatus(200)
+            return users
+        } catch (error) {
+            this.setStatus(500)
+            return []
+        }
+    }
+
+    @Get('/{userId}')
+    public async getById(@Path() userId: number): Promise<IUser | null> {
+        try {
+            const user = await User.findByPk(userId)
+
+            if(user === null) {
+                this.setStatus(404)
+                return null
             }
 
+            this.setStatus(200)
+            return user
         } catch (error) {
-            return {
-                response: {
-                    statusCode: 500,
-                    message: `Internal server error (users:getAll): ${error}`
-                },
-                users: undefined
-            }
+            this.setStatus(500)
+            return null
         }
     }
     @Post("/")
-    public async create(@Body() body: ICreateBodyRequest): Promise<ICreateResponse> {
+    public async create(@Body() body: ICreateBodyRequest): Promise<IUser | null> {
         try{
             const {firstName, lastName, email, password} = body
 
@@ -39,39 +47,25 @@ export default class UserController extends Controller {
                 passwordHashed: password,
                 profileImage: ''
             })
-            return {
-                response: {
-                    statusCode: 200,
-                    message: 'Successfull create (user:create)' 
-                },
-                user: newUser
-            }
+            
+            this.setStatus(200)
+            return newUser
         } catch (error) {
-            return {
-                response: {
-                    statusCode: 500,
-                    message: `Internal server error (users:create): ${error}`
-                },
-                user: undefined
-            }
+            this.setStatus(500)
+            return null
         }
     }
     @Patch("/{userId}")
     public async patch(
         @Path() userId: number,
         @Body() body : IPatchBodyRequest
-    ) : Promise<IPatchResponse> {
+    ) : Promise<IUser | null> {
         try {
             const user = await User.findByPk(userId)
 
             if(user === null) {
-                return {
-                    response: {
-                        statusCode: 404,
-                        message: `Unable to find a user with ID: ${userId}`
-                    }, 
-                    user: undefined
-                }
+                this.setStatus(404)
+                return null
             }
             body.elements.forEach(element => {
                 if(element.field in user.get()) {
@@ -81,54 +75,33 @@ export default class UserController extends Controller {
 
             await user.save()
 
-            return {
-                response: {
-                    statusCode: 200,
-                    message: 'Successfull patch (user:patch)'
-                },
-                user: user
-            }
+            this.setStatus(200)
+            return user
 
         } catch (error) {
-            return {
-                response: {
-                    statusCode: 500,
-                    message: `Internal server error (users:patch): ${error}`
-                },
-                user: undefined
-            }
+            this.setStatus(500)
+            return null
         }
     }
     @Delete("/{userId}")
     public async delete(
         @Path() userId: number
-    ): Promise<IDeleteResponse> {
+    ): Promise<null> {
         try {
             const user = await User.findByPk(userId)
             
             if(user === null) {
-                return {
-                    response: {
-                        statusCode: 404,
-                        message: `Unable to find a user with ID: ${userId}`
-                    }
-                }
+                this.setStatus(404)
+                return null
             }
 
             await user.destroy()
-            return {
-                response: {
-                    statusCode: 200,
-                    message: 'Successfull delete (user:delete)'
-                }
-            }
+            
+            this.setStatus(200)
+            return null
         } catch (error) {
-            return {
-                response: {
-                    statusCode: 500,
-                    message: `Internal server error (user:delete): ${error}`
-                }
-            }
+            this.setStatus(500)
+            return null
         }
     }
 }
