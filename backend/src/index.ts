@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 
 import UserRouter from './routes/user.route'
 import { databaseSync } from './database/database'
+import cookieParser from 'cookie-parser'
 
 dotenv.config()
 
@@ -14,6 +15,8 @@ const PORT : number = Number(process.env.PORT) || 3000
 // Database connection
 databaseSync()
 
+//Server settings
+app.use(cookieParser())
 app.use(express.json())
 app.use(morgan('dev'))
 app.use(express.static("public"))

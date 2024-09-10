@@ -4,5 +4,12 @@
     "spec": {
       "outputDirectory": "public",
       "specVersion": 3
+    },
+    "securityDefinitions": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "authToken"
+      }
     }
   }

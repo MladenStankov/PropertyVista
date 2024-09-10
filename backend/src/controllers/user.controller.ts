@@ -1,9 +1,9 @@
-import {Get, Post, Delete,  Route, Body, Patch, Path } from 'tsoa'
+import {Get, Post, Delete,  Route, Body, Patch, Path, Controller } from 'tsoa'
 import User from '../database/models/user.model'
 import { ICreateBodyRequest, ICreateResponse, IDeleteResponse, IGetAllResponse, IPatchBodyRequest, IPatchResponse } from '../interfaces/user.interface'
 
 @Route('/users')
-export default class UserController {
+export default class UserController extends Controller {
     @Get('/')
     public async getAll(): Promise<IGetAllResponse> {
         try {
