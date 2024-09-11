@@ -1,6 +1,9 @@
 {
-    "entryFile": "src/index.ts",
-    "noImplicitAdditionalProperties": "throw-on-extras",
+  "entryFile": "src/index.ts",
+  "noImplicitAdditionalProperties": "throws-on-extras",
+  "controllerPathGlobs": [
+    "src/controllers/**/*.ts"
+  ],
     "spec": {
       "outputDirectory": "public",
       "specVersion": 3
@@ -9,7 +12,11 @@
       "cookieAuth": {
         "type": "apiKey",
         "in": "cookie",
-        "name": "authToken"
+        "name": "jwt"
       }
+    },
+    "routes": {
+      "routesDir": "src/routes",
+      "authenticationModule": "./src/middleware/auth.middleware.ts"
     }
   }

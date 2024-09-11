@@ -7,94 +7,7 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"IResponse": {
-				"properties": {
-					"statusCode": {
-						"type": "number",
-						"format": "double"
-					},
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"statusCode",
-					"message"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"IUser": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"firstName": {
-						"type": "string"
-					},
-					"lastName": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					},
-					"passwordHashed": {
-						"type": "string"
-					},
-					"profileImage": {
-						"type": "string"
-					},
-					"role": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"id",
-					"firstName",
-					"lastName",
-					"email",
-					"passwordHashed",
-					"profileImage",
-					"role"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"IGetAllResponse": {
-				"properties": {
-					"response": {
-						"$ref": "#/components/schemas/IResponse"
-					},
-					"users": {
-						"items": {
-							"$ref": "#/components/schemas/IUser"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"response"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ICreateResponse": {
-				"properties": {
-					"response": {
-						"$ref": "#/components/schemas/IResponse"
-					},
-					"user": {
-						"$ref": "#/components/schemas/IUser"
-					}
-				},
-				"required": [
-					"response"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ICreateBodyRequest": {
+			"IUserRegisterPayload": {
 				"properties": {
 					"firstName": {
 						"type": "string"
@@ -116,63 +29,27 @@
 					"password"
 				],
 				"type": "object",
-				"additionalProperties": false
+				"additionalProperties": true
 			},
-			"IPatchResponse": {
+			"IUserLoginPayload": {
 				"properties": {
-					"response": {
-						"$ref": "#/components/schemas/IResponse"
-					},
-					"user": {
-						"$ref": "#/components/schemas/IUser"
-					}
-				},
-				"required": [
-					"response"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"IPatchElement": {
-				"properties": {
-					"field": {
+					"email": {
 						"type": "string"
 					},
-					"value": {}
-				},
-				"required": [
-					"field",
-					"value"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"IPatchBodyRequest": {
-				"properties": {
-					"elements": {
-						"items": {
-							"$ref": "#/components/schemas/IPatchElement"
-						},
-						"type": "array"
+					"password": {
+						"type": "string"
+					},
+					"rememberMe": {
+						"type": "boolean"
 					}
 				},
 				"required": [
-					"elements"
+					"email",
+					"password",
+					"rememberMe"
 				],
 				"type": "object",
-				"additionalProperties": false
-			},
-			"IDeleteResponse": {
-				"properties": {
-					"response": {
-						"$ref": "#/components/schemas/IResponse"
-					}
-				},
-				"required": [
-					"response"
-				],
-				"type": "object",
-				"additionalProperties": false
+				"additionalProperties": true
 			}
 		},
 		"securitySchemes": {}
@@ -186,38 +63,17 @@
 		"contact": {}
 	},
 	"paths": {
-		"/users": {
-			"get": {
-				"operationId": "GetAll",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IGetAllResponse"
-								}
-							}
-						}
-					}
-				},
-				"security": [],
-				"parameters": []
-			},
+		"/auth/register": {
 			"post": {
-				"operationId": "Create",
+				"operationId": "Register",
 				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ICreateResponse"
-								}
-							}
-						}
+					"204": {
+						"description": "No content"
 					}
 				},
+				"tags": [
+					"Auth"
+				],
 				"security": [],
 				"parameters": [],
 				"requestBody": {
@@ -225,77 +81,77 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/ICreateBodyRequest"
+								"$ref": "#/components/schemas/IUserRegisterPayload"
 							}
 						}
 					}
 				}
 			}
 		},
-		"/users/{userId}": {
-			"patch": {
-				"operationId": "Patch",
+		"/auth/login": {
+			"post": {
+				"operationId": "Login",
 				"responses": {
 					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IPatchResponse"
-								}
-							}
-						}
+						"description": ""
+					},
+					"204": {
+						"description": "No content"
 					}
 				},
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
+				"tags": [
+					"Auth"
 				],
+				"security": [],
+				"parameters": [],
 				"requestBody": {
 					"required": true,
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/IPatchBodyRequest"
+								"$ref": "#/components/schemas/IUserLoginPayload"
 							}
 						}
 					}
 				}
-			},
-			"delete": {
-				"operationId": "Delete",
+			}
+		},
+		"/auth/logout": {
+			"post": {
+				"operationId": "Logout",
 				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IDeleteResponse"
-								}
-							}
-						}
+					"204": {
+						"description": "No content"
 					}
 				},
-				"security": [],
-				"parameters": [
+				"tags": [
+					"Auth"
+				],
+				"security": [
 					{
-						"in": "path",
-						"name": "userId",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
+						"jwt": []
 					}
-				]
+				],
+				"parameters": []
+			}
+		},
+		"/auth/profile": {
+			"get": {
+				"operationId": "Profile",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
 			}
 		}
 	},
