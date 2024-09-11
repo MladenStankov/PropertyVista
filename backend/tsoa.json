@@ -1,6 +1,6 @@
 {
   "entryFile": "src/index.ts",
-  "noImplicitAdditionalProperties": "silently-remove-extras",
+  "noImplicitAdditionalProperties": "throws-on-extras",
   "controllerPathGlobs": [
     "src/controllers/**/*.ts"
   ],
@@ -12,10 +12,11 @@
       "cookieAuth": {
         "type": "apiKey",
         "in": "cookie",
-        "name": "authToken"
+        "name": "jwt"
       }
     },
     "routes": {
-    "routesDir": "src/routes"
-  }
+      "routesDir": "src/routes",
+      "authenticationModule": "./src/middleware/auth.middleware.ts"
+    }
   }

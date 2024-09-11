@@ -13,11 +13,14 @@ export interface IUserRegisterPayload {
     lastName: string,
     email: string,
     password: string
+}
+
+export interface IUserLoginPayload {
+    email: string,
+    password: string,
     rememberMe: boolean
 }
 
 export interface IUserResponse {
-    firstName: string,
-    lastName: string,
-    email: string
+    id: number
 }

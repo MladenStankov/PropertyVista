@@ -7,26 +7,6 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
-			"IUserResponse": {
-				"properties": {
-					"firstName": {
-						"type": "string"
-					},
-					"lastName": {
-						"type": "string"
-					},
-					"email": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"firstName",
-					"lastName",
-					"email"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"IUserRegisterPayload": {
 				"properties": {
 					"firstName": {
@@ -40,20 +20,36 @@
 					},
 					"password": {
 						"type": "string"
-					},
-					"rememberMe": {
-						"type": "boolean"
 					}
 				},
 				"required": [
 					"firstName",
 					"lastName",
 					"email",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"IUserLoginPayload": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"rememberMe": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"email",
 					"password",
 					"rememberMe"
 				],
 				"type": "object",
-				"additionalProperties": false
+				"additionalProperties": true
 			}
 		},
 		"securitySchemes": {}
@@ -71,15 +67,8 @@
 			"post": {
 				"operationId": "Register",
 				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/IUserResponse"
-								}
-							}
-						}
+					"204": {
+						"description": "No content"
 					}
 				},
 				"tags": [
@@ -97,6 +86,72 @@
 						}
 					}
 				}
+			}
+		},
+		"/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": ""
+					},
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IUserLoginPayload"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/logout": {
+			"post": {
+				"operationId": "Logout",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/auth/profile": {
+			"get": {
+				"operationId": "Profile",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
 			}
 		}
 	},

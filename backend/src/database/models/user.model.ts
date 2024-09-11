@@ -41,7 +41,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
 
     @Attribute(DataTypes.ENUM('User', 'Broker'))
     @NotNull
-    @Default('Broker')
+    @Default('User')
     declare role: CreationOptional<string>
 
     @Attribute(DataTypes.DATE)
