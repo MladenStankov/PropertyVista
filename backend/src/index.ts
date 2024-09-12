@@ -3,6 +3,7 @@ import morgan from 'morgan'
 import swaggerUi from 'swagger-ui-express'
 import dotenv from 'dotenv'
 import cors from 'cors'
+import session from 'express-session'
 
 import { databaseSync } from './database/database'
 import cookieParser from 'cookie-parser'
@@ -28,6 +29,17 @@ app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true
 }))
+
+const SESSION_SECRET_KEY = String(process.env.SESSION_SECRET_KEY)
+
+app.use(
+  session({
+    secret: SESSION_SECRET_KEY,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false },
+  })
+)
 
 // Swagger setup
 app.use(

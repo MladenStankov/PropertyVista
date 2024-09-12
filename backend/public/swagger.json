@@ -135,6 +135,30 @@
 				"parameters": []
 			}
 		},
+		"/auth/email-verify/{token}": {
+			"post": {
+				"operationId": "EmailVerify",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "token",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/auth/profile": {
 			"get": {
 				"operationId": "Profile",
