@@ -2,10 +2,9 @@ import { Sequelize } from '@sequelize/core'
 import { PostgresDialect } from '@sequelize/postgres'
 import dotnev from 'dotenv'
 
-import User from './models/user.model'
-import Property from './models/property.model'
+import {User, Broker} from './models/user.model'
+import Listing from './models/listing.model'
 import Favourite from './models/favourite.model'
-import Image from './models/image.model'
 
 dotnev.config()
 
@@ -17,7 +16,7 @@ export const sequelize = new Sequelize({
     host: process.env.POSTGRES_HOST,
     port: Number(process.env.POSTGRES_PORT),
     clientMinMessages: 'notice',
-    models: [User, Property, Favourite, Image]
+    models: [User, Broker, Listing, Favourite]
 })
 
 export async function databaseSync() {

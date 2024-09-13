@@ -1,10 +1,10 @@
-import { Body, Controller, Get, Path, Post, Res, Route, Security, Tags, TsoaResponse } from "tsoa"
+import { Body, Controller, Get, Path, Post, Query, Res, Route, Security, Tags, TsoaResponse } from "tsoa"
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 
-import { IUserLoginPayload, IUserRegisterPayload } from "../interfaces/user.interface";
-import User from "../database/models/user.model";
+import { IRegisterPayload, ILoginPayload, IEmailVerifyPayload } from "../interfaces/user.interface";
+import { User, Broker } from "../database/models/user.model";
 import TokenService from "../services/token.service";
 import EmailService from "../services/email.service";
 import { HttpError } from "../errors/errors";
@@ -17,25 +17,41 @@ dotenv.config()
 export class AuthenticationController extends Controller {
     @Post('register')
     public async register(
-        @Body() requestBody : IUserRegisterPayload
+        @Body() requestBody : IRegisterPayload
     ): Promise<void> {
-        const {firstName, lastName, email, password} = requestBody
+        const {userType, firstName, lastName, email, password, brokerPayload} = requestBody
 
-        const existingUser = await User.findOne({where: {email}})
-        if(existingUser) {
+        const existingUser = await Promise.all([
+            User.findOne({ where: { email } }), 
+            Broker.findOne({ where: { email } })
+          ]);
+
+        if(!existingUser.every(value => value === null)) {
             throw new HttpError(409, 'User with this email already exists.')
         }
 
         const BCRYPT_SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS)
-        const hashedPassword = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS)
+        const passwordHashed = await bcrypt.hash(password, BCRYPT_SALT_ROUNDS)
 
-        const newUser = await User.create({
-            firstName,
-            lastName,
-            email,
-            passwordHashed: hashedPassword,
-            verified: true
-        })
+        const newUser = (userType == 'user') ? (
+            await User.create({
+                firstName,
+                lastName,
+                email,
+                passwordHashed
+            })
+        ) : (
+            await Broker.create({
+                firstName,
+                lastName,
+                email,
+                passwordHashed,
+                countryOfOrigin: brokerPayload?.countryOfOrigin ?? '',
+                agencyName: brokerPayload?.agencyName ?? '',
+                phoneNumber: brokerPayload?.phoneNumber ?? ''
+            })
+        )
+
         await newUser.save()
 
         const token = await TokenService.generateToken(newUser, '1h')
@@ -47,27 +63,36 @@ export class AuthenticationController extends Controller {
 
     @Post('login')
     public async login(
-        @Body() requestBody: IUserLoginPayload,
-        @Res() res: TsoaResponse<200, void>
+        @Body() requestBody: ILoginPayload
     ): Promise<void> {
         const {email, password, rememberMe} = requestBody
 
-        const existingUser = await User.findOne({where: {email}})
-        if(!existingUser) {
-            throw new HttpError(401, 'Incorrect email or password.')
-        }   
+        const existingUser = await Promise.all([
+            User.findOne({ where: { email } }), 
+            Broker.findOne({ where: { email } })
+          ]);
 
-        const isPasswordValid = await bcrypt.compare(password, existingUser.passwordHashed)
+        if(existingUser.every(value => value === null)) {
+            throw new HttpError(401, 'Incorrect email or password.')
+        }
+
+        const user = existingUser.find(obj => obj !== null)
+
+        if(!user) {
+            throw new Error()
+        } 
+
+        const isPasswordValid = await bcrypt.compare(password, user.passwordHashed)
         if(!isPasswordValid) {
             throw new HttpError(401, 'Incorrect email or password.')
         }
 
-        if(!existingUser.verified) {
+        if(!user.verified) {
             throw new HttpError(406, 'Email is not verified.')
         }
 
         const duration = rememberMe ? '2d' : '1h';
-        const token = await TokenService.generateToken(existingUser, duration);
+        const token = await TokenService.generateToken(user, duration);
         
         if (rememberMe) {
           this.setHeader('Set-Cookie', `jwt=${token}; HttpOnly; Max-Age=${1000 * 60 * 60 * 24 * 2}`);
@@ -85,10 +110,12 @@ export class AuthenticationController extends Controller {
         this.setHeader('Set-Cookie', [`jwt=deleted; Max-Age=0`])
     }
 
-    @Post('email-verify/{token}')
+    @Post('verify-email')
     public async emailVerify(
-        @Path() token : string
+        @Body() requestBody : IEmailVerifyPayload
     ): Promise<void> {
+        const {token} = requestBody
+
         if(!token) {
             throw new HttpError(404, 'Token not found')
         }
@@ -96,10 +123,19 @@ export class AuthenticationController extends Controller {
         const AUTHENTICATION_SECRET_KEY = String(process.env.AUTHENTICATION_SECRET_KEY)
         const decoded = jwt.verify(token, AUTHENTICATION_SECRET_KEY) as IJwtPayload
 
-        const user = await User.findByPk(decoded.id)
+        const existingUser = await Promise.all([
+            User.findByPk(decoded.id), 
+            Broker.findByPk(decoded.id)
+          ]);
+
+        if(!existingUser) {
+            throw new HttpError(404, 'User not found')
+        }
+
+        const user = existingUser.find(obj => obj !== null)
 
         if(!user) {
-            throw new HttpError(404, 'User not found')
+            throw new Error()
         }
 
         if(user.verified) {

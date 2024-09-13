@@ -1,16 +1,18 @@
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 
-import User from "../database/models/user.model"
+import { AbstractUser, User } from '../database/models/user.model'
 import { IJwtPayload } from '../interfaces/auth.interface'
 
 dotenv.config()
 
 export default class TokenService {
-    static async generateToken(user: User, duration: string) {
+    static async generateToken(user: AbstractUser<any>, duration: string) {
+        const role = user instanceof User ? 'user' : 'broker'
+        
         const payload : IJwtPayload = {
             id: user.id,
-            role: user.role,
+            role: role,
             verified: user.verified
         }
 

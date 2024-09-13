@@ -1,20 +1,3 @@
-export interface IAbstractUser {
-    id: number,
-    firstName: string,
-    lastName: string,
-    email: string,
-    passwordHashed: string,
-    profileImage: string
-}
-
-export interface IUser extends IAbstractUser {}
-
-export interface IBroker extends IAbstractUser {
-    countryOfOrigin: string,
-    agencyName?: string,
-    phoneNumber?: string
-}
-
 export enum userTypes {
     USER = 'user',
     BROKER = 'broker'
@@ -43,4 +26,10 @@ export interface ILoginPayload {
 
 export interface IEmailVerifyPayload {
     token?: string
+}
+
+export interface IResponse {
+    status: number,
+    message?: string,
+    data?: unknown
 }
