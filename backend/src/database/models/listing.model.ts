@@ -1,26 +1,31 @@
 import { DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOptional, NonAttribute, HasManyGetAssociationsMixin } from "@sequelize/core"
 import { Attribute, PrimaryKey, AutoIncrement, NotNull, Default, CreatedAt, UpdatedAt, HasMany } from "@sequelize/core/decorators-legacy"
-import Favourite from "./favourite.model"
-import Image from "./image.model"
 
-export default class Property extends Model<InferAttributes<Property>, InferCreationAttributes<Property>> {
+import Favourite from "./favourite.model"
+import { IProperty, ListingType } from "../../interfaces/listing.interface"
+
+export default class Listing extends Model<InferAttributes<Listing>, InferCreationAttributes<Listing>> {
     @Attribute(DataTypes.INTEGER)
     @PrimaryKey
     @AutoIncrement
     declare id: CreationOptional<number>
 
-    @Attribute(DataTypes.INTEGER)
+    @Attribute(DataTypes.JSON)
     @NotNull
-    declare longitude: number
+    declare property: IProperty
 
-    @Attribute(DataTypes.INTEGER)
+    @Attribute(DataTypes.STRING)
     @NotNull
-    declare latitude: number
+    declare image: string[] 
 
     @Attribute(DataTypes.JSON)
     @NotNull
-    declare metaData: object
+    declare type: ListingType
 
+    @Attribute(DataTypes.DECIMAL)
+    @NotNull
+    declare price: number
+    
     @Attribute(DataTypes.DATE)
     @CreatedAt
     @NotNull
@@ -39,21 +44,11 @@ export default class Property extends Model<InferAttributes<Property>, InferCrea
 
     @HasMany(() => Favourite, {
         foreignKey: {
-            name: 'propertyId',
+            name: 'listingId',
             onDelete: 'CASCADE'
         }
     })
     declare favourites?: NonAttribute<Favourite[]>
 
     declare getFavourites: HasManyGetAssociationsMixin<Favourite>
-
-    @HasMany(() => Image, {
-        foreignKey: {
-            name: 'propertyId',
-            onDelete: 'CASCADE'
-        }
-    })
-    declare images?: NonAttribute<Image[]>
-
-    declare getImages: HasManyGetAssociationsMixin<Image>
 }

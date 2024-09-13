@@ -20,7 +20,7 @@ export default class EmailService {
             from: EMAIL_SERVICE_USER,
             to: email,
             subject: 'Verify your email',
-            html: `<a href="http://localhost:3000/auth/verify-email?token=${token}">Verify</a>`
+            html: `<a href="http://localhost:5173/verify-email/${token}">Verify</a>`
         })
 
         // TDO: Need to send an email to the frontend/email-verify, where I would send it to the backend

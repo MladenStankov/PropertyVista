@@ -5,7 +5,7 @@ import { Attribute, PrimaryKey, AutoIncrement, NotNull, Default, CreatedAt, Upda
     indexes: [
         {
             unique: true,
-            fields: ['userId', 'propertyId']
+            fields: ['userId', 'listingId']
         }
     ]
 })
@@ -33,5 +33,5 @@ export default class Favourite extends Model<InferAttributes<Favourite>, InferCr
 
     @Attribute(DataTypes.INTEGER)
     @NotNull
-    declare propertyId: number
+    declare listingId: number
 }
