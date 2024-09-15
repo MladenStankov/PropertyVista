@@ -9,6 +9,7 @@ import TokenService from "../services/token.service";
 import EmailService from "../services/email.service";
 import { HttpError } from "../errors/errors";
 import { IJwtPayload } from "../interfaces/auth.interface";
+import StatusCode from "status-code-enum";
 
 dotenv.config()
 
@@ -27,7 +28,7 @@ export class AuthenticationController extends Controller {
           ]);
 
         if(!existingUser.every(value => value === null)) {
-            throw new HttpError(409, 'User with this email already exists.')
+            throw new HttpError(StatusCode.ClientErrorConflict, 'User with this email already exists.')
         }
 
         const BCRYPT_SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS)
@@ -57,7 +58,7 @@ export class AuthenticationController extends Controller {
         const token = await TokenService.generateToken(newUser, '1h')
         await EmailService.sendVerifyEmail(newUser.email, token)
 
-        this.setStatus(201)
+        this.setStatus(StatusCode.SuccessCreated)
         return
     }
 
@@ -73,7 +74,7 @@ export class AuthenticationController extends Controller {
           ]);
 
         if(existingUser.every(value => value === null)) {
-            throw new HttpError(401, 'Incorrect email or password.')
+            throw new HttpError(StatusCode.ClientErrorUnauthorized, 'Incorrect email or password.')
         }
 
         const user = existingUser.find(obj => obj !== null)
@@ -84,30 +85,31 @@ export class AuthenticationController extends Controller {
 
         const isPasswordValid = await bcrypt.compare(password, user.passwordHashed)
         if(!isPasswordValid) {
-            throw new HttpError(401, 'Incorrect email or password.')
+            throw new HttpError(StatusCode.ClientErrorUnauthorized, 'Incorrect email or password.')
         }
 
         if(!user.verified) {
-            throw new HttpError(406, 'Email is not verified.')
+            throw new HttpError(StatusCode.ClientErrorNotAcceptable, 'Email is not verified.')
         }
 
         const duration = rememberMe ? '2d' : '1h';
         const token = await TokenService.generateToken(user, duration);
         
         if (rememberMe) {
-          this.setHeader('Set-Cookie', `jwt=${token}; HttpOnly; Max-Age=${1000 * 60 * 60 * 24 * 2}`);
+          this.setHeader('Set-Cookie', `jwt=${token}; HttpOnly; Max-Age=${1000 * 60 * 60 * 24 * 2}; Path=/`);
         } else {
-          this.setHeader('Set-Cookie', `jwt=${token}; HttpOnly`);
+          this.setHeader('Set-Cookie', `jwt=${token}; HttpOnly; Path=/`);
         }
         
-        this.setStatus(200);
+        this.setStatus(StatusCode.SuccessNoContent);
         return
     }
 
     @Post('logout')
     @Security('jwt')
     public async logout(): Promise<void> {
-        this.setHeader('Set-Cookie', [`jwt=deleted; Max-Age=0`])
+        this.setHeader('Set-Cookie', [`jwt=deleted; Max-Age=0; Path=/`])
+        this.setStatus(StatusCode.SuccessNoContent)
     }
 
     @Post('verify-email')
@@ -117,7 +119,7 @@ export class AuthenticationController extends Controller {
         const {token} = requestBody
 
         if(!token) {
-            throw new HttpError(404, 'Token not found')
+            throw new HttpError(StatusCode.ClientErrorNotFound, 'Token not found')
         }
 
         const AUTHENTICATION_SECRET_KEY = String(process.env.AUTHENTICATION_SECRET_KEY)
@@ -129,7 +131,7 @@ export class AuthenticationController extends Controller {
           ]);
 
         if(!existingUser) {
-            throw new HttpError(404, 'User not found')
+            throw new HttpError(StatusCode.ClientErrorNotFound, 'User not found')
         }
 
         const user = existingUser.find(obj => obj !== null)
@@ -139,13 +141,13 @@ export class AuthenticationController extends Controller {
         }
 
         if(user.verified) {
-            throw new HttpError(304, 'User is already verified')
+            throw new HttpError(StatusCode.RedirectNotModified, 'User is already verified')
         }
 
         user.verified = true
         await user.save()
 
-        this.setStatus(200)
+        this.setStatus(StatusCode.SuccessNoContent)
     }
 
     @Get('profile')

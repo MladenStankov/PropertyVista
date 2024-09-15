@@ -2,9 +2,9 @@ import { DataTypes, Model, InferAttributes, InferCreationAttributes, CreationOpt
 import { Attribute, PrimaryKey, AutoIncrement, NotNull, Default, CreatedAt, UpdatedAt, HasMany } from "@sequelize/core/decorators-legacy"
 
 import Favourite from "./favourite.model"
-import { IProperty, ListingType } from "../../interfaces/listing.interface"
+import { IListing, IProperty, ListingType } from "../../interfaces/listing.interface"
 
-export default class Listing extends Model<InferAttributes<Listing>, InferCreationAttributes<Listing>> {
+export default class Listing extends Model<InferAttributes<Listing>, InferCreationAttributes<Listing>> implements IListing {
     @Attribute(DataTypes.INTEGER)
     @PrimaryKey
     @AutoIncrement
@@ -12,11 +12,11 @@ export default class Listing extends Model<InferAttributes<Listing>, InferCreati
 
     @Attribute(DataTypes.JSON)
     @NotNull
-    declare property: IProperty
+    declare propertyData: IProperty
 
-    @Attribute(DataTypes.STRING)
+    @Attribute(DataTypes.JSON)
     @NotNull
-    declare image: string[] 
+    declare images: string[] 
 
     @Attribute(DataTypes.JSON)
     @NotNull

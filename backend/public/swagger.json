@@ -7,6 +7,188 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"IGeoLocation": {
+				"properties": {
+					"longitude": {
+						"type": "number",
+						"format": "double"
+					},
+					"latitude": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"longitude",
+					"latitude"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"IAddress": {
+				"properties": {
+					"street": {
+						"type": "string"
+					},
+					"city": {
+						"type": "string"
+					},
+					"postalCode": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"street",
+					"city",
+					"postalCode"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"RoomType": {
+				"enum": [
+					"bedroom",
+					"bathroom",
+					"garage"
+				],
+				"type": "string"
+			},
+			"IRoom": {
+				"properties": {
+					"type": {
+						"$ref": "#/components/schemas/RoomType"
+					},
+					"count": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"type",
+					"count"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ConditionType": {
+				"enum": [
+					"perfect",
+					"good",
+					"bad"
+				],
+				"type": "string"
+			},
+			"IConstructionInfo": {
+				"properties": {
+					"type": {
+						"type": "string"
+					},
+					"year": {
+						"type": "number",
+						"format": "double"
+					},
+					"condition": {
+						"$ref": "#/components/schemas/ConditionType"
+					}
+				},
+				"required": [
+					"type",
+					"year",
+					"condition"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"AmenityType": {
+				"enum": [
+					"wifi",
+					"parking",
+					"pool",
+					"gym",
+					"air_conditioning",
+					"heating",
+					"elevator",
+					"washer",
+					"dryer",
+					"pet_friendly",
+					"wheelchair_accessible",
+					"security",
+					"fireplace",
+					"balcony",
+					"garden",
+					"sauna",
+					"concierge",
+					"barbecue_area",
+					"storage",
+					"smart_home"
+				],
+				"type": "string"
+			},
+			"IProperty": {
+				"properties": {
+					"geoLocation": {
+						"$ref": "#/components/schemas/IGeoLocation"
+					},
+					"address": {
+						"$ref": "#/components/schemas/IAddress"
+					},
+					"rooms": {
+						"items": {
+							"$ref": "#/components/schemas/IRoom"
+						},
+						"type": "array"
+					},
+					"constructionInfo": {
+						"$ref": "#/components/schemas/IConstructionInfo"
+					},
+					"amenities": {
+						"items": {
+							"$ref": "#/components/schemas/AmenityType"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"geoLocation"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ListingType": {
+				"enum": [
+					"sale",
+					"rent"
+				],
+				"type": "string"
+			},
+			"IListing": {
+				"properties": {
+					"propertyData": {
+						"$ref": "#/components/schemas/IProperty"
+					},
+					"images": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"type": {
+						"$ref": "#/components/schemas/ListingType"
+					},
+					"price": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"propertyData",
+					"images",
+					"type",
+					"price"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
 			"userTypes": {
 				"enum": [
 					"user",
@@ -104,6 +286,130 @@
 		"contact": {}
 	},
 	"paths": {
+		"/listing/all": {
+			"get": {
+				"operationId": "GetAll",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/IListing"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Listing"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/listing/{id}": {
+			"get": {
+				"operationId": "GetById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IListing"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Listing"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "Delete",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Listing"
+				],
+				"security": [
+					{
+						"jwt": [
+							"broker"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/listing": {
+			"post": {
+				"operationId": "Create",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IListing"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Listing"
+				],
+				"security": [
+					{
+						"jwt": [
+							"broker"
+						]
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IListing"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/auth/register": {
 			"post": {
 				"operationId": "Register",

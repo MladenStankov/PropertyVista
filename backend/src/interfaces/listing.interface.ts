@@ -67,3 +67,10 @@ export enum ListingType {
     SALE = 'sale',
     RENT = 'rent'
 }
+
+export interface IListing {
+    propertyData: IProperty,
+    images: string[],
+    type: ListingType,
+    price: number
+}

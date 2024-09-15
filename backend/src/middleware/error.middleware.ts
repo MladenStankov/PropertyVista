@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ValidateError } from "tsoa";
 import { HttpError } from "../errors/errors";
+import StatusCode from "status-code-enum";
 
 export function errorHandler(
     err: unknown,
@@ -10,7 +11,7 @@ export function errorHandler(
   ): Response | void {
     if (err instanceof ValidateError) {
       console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
-      return res.status(422).json({
+      return res.status(StatusCode.ClientErrorUnprocessableEntity).json({
         message: "Validation Failed",
         details: err?.fields,
       })
@@ -23,7 +24,7 @@ export function errorHandler(
     }
 
     if (err instanceof Error) {
-      return res.status(500).json({
+      return res.status(StatusCode.ServerErrorInternal).json({
         message: "Internal Server Error: " + err.message,
       })
     }
