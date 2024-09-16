@@ -97,6 +97,11 @@ const models: TsoaRoute.Models = {
         "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Partial_IListing_": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"propertyData":{"ref":"IProperty"},"images":{"dataType":"array","array":{"dataType":"string"}},"type":{"ref":"ListingType"},"price":{"dataType":"double"}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "userTypes": {
         "dataType": "refEnum",
         "enums": ["user","broker"],
@@ -240,6 +245,39 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'create',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.patch('/listing/:id',
+            authenticateMiddleware([{"jwt":["broker"]}]),
+            ...(fetchMiddlewares<RequestHandler>(ListingController)),
+            ...(fetchMiddlewares<RequestHandler>(ListingController.prototype.patch)),
+
+            async function ListingController_patch(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"Partial_IListing_"},
+                    id: {"in":"path","name":"id","required":true,"dataType":"double"},
+                    req: {"in":"request","name":"req","required":true,"dataType":"object"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new ListingController();
+
+              await templateService.apiHandler({
+                methodName: 'patch',
                 controller,
                 response,
                 next,

@@ -189,6 +189,28 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"Partial_IListing_": {
+				"properties": {
+					"propertyData": {
+						"$ref": "#/components/schemas/IProperty"
+					},
+					"images": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"type": {
+						"$ref": "#/components/schemas/ListingType"
+					},
+					"price": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
 			"userTypes": {
 				"enum": [
 					"user",
@@ -341,6 +363,52 @@
 						}
 					}
 				]
+			},
+			"patch": {
+				"operationId": "Patch",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/IListing"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Listing"
+				],
+				"security": [
+					{
+						"jwt": [
+							"broker"
+						]
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Partial_IListing_"
+							}
+						}
+					}
+				}
 			},
 			"delete": {
 				"operationId": "Delete",

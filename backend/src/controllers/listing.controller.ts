@@ -4,7 +4,7 @@ import Listing from "../database/models/listing.model";
 import StatusCode from "status-code-enum";
 import { HttpError } from "../errors/errors";
 import { IExpressRequest } from "../interfaces/express.interface";
-import { list } from "@sequelize/core/_non-semver-use-at-your-own-risk_/expression-builders/list.js";
+import { PatchService } from "../services/patch.service";
 
 @Route('listing')
 @Tags('Listing')
@@ -47,29 +47,30 @@ export class ListingController extends Controller {
         return newListing
     }
 
-    // @Patch('/{id}')
-    // @Security('jwt', ['broker'])
-    // public async patch(
-    //     @Body() requestBody: IPatchPayload,
-    //     @Patch() id: number,
-    //     @Request() req: IExpressRequest
-    // ) : Promise<IListing> {
-    //     const brokerId = req.userId
-    //     const listing = await Listing.findByPk(id)
+    @Patch('/{id}')
+    @Security('jwt', ['broker'])
+    public async patch(
+        @Body() requestBody: Partial<IListing>,
+        @Patch() id: number,
+        @Request() req: IExpressRequest
+    ) : Promise<IListing> {
+        const brokerId = req.userId
+        const listing = await Listing.findByPk(id)
 
-    //     if(!listing) {
-    //         throw new HttpError(StatusCode.ClientErrorNotFound, 'Listing not found.')
-    //     }
+        if(!listing) {
+            throw new HttpError(StatusCode.ClientErrorNotFound, 'Listing not found.')
+        }
 
-    //     if(listing.brokerId !== brokerId) {
-    //         throw new HttpError(StatusCode.ClientErrorUnauthorized, 'Unauthorized user.')
-    //     }
+        if(listing.brokerId !== brokerId) {
+            throw new HttpError(StatusCode.ClientErrorUnauthorized, 'Unauthorized user.')
+        }
 
-    //     //TODO: make the propertdata structure into different models and assossiate them in the db
+        
+        await PatchService.patch(listing, requestBody)
 
-    //     this.setStatus(StatusCode.SuccessOK)
-    //     return listing
-    // }
+        this.setStatus(StatusCode.SuccessOK)
+        return listing
+    }
 
     @Delete('/{id}')
     @Security('jwt', ['broker'])
