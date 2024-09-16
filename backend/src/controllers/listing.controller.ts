@@ -1,10 +1,9 @@
-import { Body, Controller, Delete, Get, Patch, Path, Post, Request, Route, Security, Tags } from "tsoa";
+import { Body, Controller, Delete, Get, Patch, Path, Post, Put, Request, Route, Security, Tags } from "tsoa";
 import { IListing } from "../interfaces/listing.interface";
 import Listing from "../database/models/listing.model";
 import StatusCode from "status-code-enum";
 import { HttpError } from "../errors/errors";
 import { IExpressRequest } from "../interfaces/express.interface";
-import { PatchService } from "../services/patch.service";
 
 @Route('listing')
 @Tags('Listing')
@@ -47,10 +46,10 @@ export class ListingController extends Controller {
         return newListing
     }
 
-    @Patch('/{id}')
+    @Put('/{id}')
     @Security('jwt', ['broker'])
-    public async patch(
-        @Body() requestBody: Partial<IListing>,
+    public async put(
+        @Body() requestBody: IListing,
         @Patch() id: number,
         @Request() req: IExpressRequest
     ) : Promise<IListing> {
@@ -66,7 +65,8 @@ export class ListingController extends Controller {
         }
 
         
-        await PatchService.patch(listing, requestBody)
+        await listing.update(requestBody)
+        await listing.save()
 
         this.setStatus(StatusCode.SuccessOK)
         return listing

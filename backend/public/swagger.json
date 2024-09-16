@@ -189,28 +189,6 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"Partial_IListing_": {
-				"properties": {
-					"propertyData": {
-						"$ref": "#/components/schemas/IProperty"
-					},
-					"images": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"type": {
-						"$ref": "#/components/schemas/ListingType"
-					},
-					"price": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"type": "object",
-				"description": "Make all properties in T optional"
-			},
 			"userTypes": {
 				"enum": [
 					"user",
@@ -364,8 +342,8 @@
 					}
 				]
 			},
-			"patch": {
-				"operationId": "Patch",
+			"put": {
+				"operationId": "Put",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -404,7 +382,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/Partial_IListing_"
+								"$ref": "#/components/schemas/IListing"
 							}
 						}
 					}
