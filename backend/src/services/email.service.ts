@@ -22,7 +22,5 @@ export default class EmailService {
             subject: 'Verify your email',
             html: `<a href="http://localhost:5173/verify-email/${token}">Verify</a>`
         })
-
-        // TDO: Need to send an email to the frontend/email-verify, where I would send it to the backend
     }
 }
