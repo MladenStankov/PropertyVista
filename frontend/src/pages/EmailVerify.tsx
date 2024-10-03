@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { emailVerify } from '../apis/auth.api'
+import { emailVerify } from '../apis/email.api'
 
 const EmailVerify = () => {  
   const { token } = useParams<{ token?: string }>()

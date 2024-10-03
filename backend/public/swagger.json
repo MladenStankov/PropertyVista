@@ -166,12 +166,6 @@
 					"propertyData": {
 						"$ref": "#/components/schemas/IProperty"
 					},
-					"images": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
 					"type": {
 						"$ref": "#/components/schemas/ListingType"
 					},
@@ -182,43 +176,23 @@
 				},
 				"required": [
 					"propertyData",
-					"images",
 					"type",
 					"price"
 				],
 				"type": "object",
 				"additionalProperties": true
 			},
-			"userTypes": {
-				"enum": [
-					"user",
-					"broker"
-				],
-				"type": "string"
-			},
-			"IBrokerPayload": {
+			"IEmailVerifyPayload": {
 				"properties": {
-					"countryOfOrigin": {
-						"type": "string"
-					},
-					"agencyName": {
-						"type": "string"
-					},
-					"phoneNumber": {
+					"token": {
 						"type": "string"
 					}
 				},
-				"required": [
-					"countryOfOrigin"
-				],
 				"type": "object",
 				"additionalProperties": true
 			},
 			"IRegisterPayload": {
 				"properties": {
-					"userType": {
-						"$ref": "#/components/schemas/userTypes"
-					},
 					"firstName": {
 						"type": "string"
 					},
@@ -230,13 +204,9 @@
 					},
 					"password": {
 						"type": "string"
-					},
-					"brokerPayload": {
-						"$ref": "#/components/schemas/IBrokerPayload"
 					}
 				},
 				"required": [
-					"userType",
 					"firstName",
 					"lastName",
 					"email",
@@ -262,15 +232,6 @@
 					"password",
 					"rememberMe"
 				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"IEmailVerifyPayload": {
-				"properties": {
-					"token": {
-						"type": "string"
-					}
-				},
 				"type": "object",
 				"additionalProperties": true
 			}
@@ -450,6 +411,31 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/IListing"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/email/verify-email": {
+			"put": {
+				"operationId": "VerifyEmail",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Email"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IEmailVerifyPayload"
 							}
 						}
 					}

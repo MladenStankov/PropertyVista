@@ -36,8 +36,8 @@ export class ListingController extends Controller {
         @Body() requestBody: IListing,
         @Request() req: IExpressRequest
     ) : Promise<IListing> {
-        const brokerId = req.userId
-        const listingPayload = {...requestBody, brokerId}
+        const userId = req.userId
+        const listingPayload = {...requestBody, userId}
 
         const newListing = await Listing.create(listingPayload)
         await newListing.save()
@@ -60,7 +60,7 @@ export class ListingController extends Controller {
             throw new HttpError(StatusCode.ClientErrorNotFound, 'Listing not found.')
         }
 
-        if(listing.brokerId !== brokerId) {
+        if(listing.userId !== brokerId) {
             throw new HttpError(StatusCode.ClientErrorUnauthorized, 'Unauthorized user.')
         }
 
@@ -85,7 +85,7 @@ export class ListingController extends Controller {
             throw new HttpError(StatusCode.ClientErrorNotFound, 'Listing not found.')
         }
 
-        if(listing.brokerId !== brokerId) {
+        if(listing.userId !== brokerId) {
             throw new HttpError(StatusCode.ClientErrorUnauthorized, 'Unauthorized user.')
         }
 

@@ -5,6 +5,8 @@ import { TsoaRoute, fetchMiddlewares, ExpressTemplateService } from '@tsoa/runti
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { ListingController } from './../controllers/listing.controller';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { EmailController } from './../controllers/email.controller';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthenticationController } from './../controllers/auth.controller';
 import { expressAuthentication } from './../middleware/auth.middleware';
 // @ts-ignore - no great way to install types from subpackage
@@ -90,24 +92,16 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "propertyData": {"ref":"IProperty","required":true},
-            "images": {"dataType":"array","array":{"dataType":"string"},"required":true},
             "type": {"ref":"ListingType","required":true},
             "price": {"dataType":"double","required":true},
         },
         "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "userTypes": {
-        "dataType": "refEnum",
-        "enums": ["user","broker"],
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IBrokerPayload": {
+    "IEmailVerifyPayload": {
         "dataType": "refObject",
         "properties": {
-            "countryOfOrigin": {"dataType":"string","required":true},
-            "agencyName": {"dataType":"string"},
-            "phoneNumber": {"dataType":"string"},
+            "token": {"dataType":"string"},
         },
         "additionalProperties": true,
     },
@@ -115,12 +109,10 @@ const models: TsoaRoute.Models = {
     "IRegisterPayload": {
         "dataType": "refObject",
         "properties": {
-            "userType": {"ref":"userTypes","required":true},
             "firstName": {"dataType":"string","required":true},
             "lastName": {"dataType":"string","required":true},
             "email": {"dataType":"string","required":true},
             "password": {"dataType":"string","required":true},
-            "brokerPayload": {"ref":"IBrokerPayload"},
         },
         "additionalProperties": true,
     },
@@ -131,14 +123,6 @@ const models: TsoaRoute.Models = {
             "email": {"dataType":"string","required":true},
             "password": {"dataType":"string","required":true},
             "rememberMe": {"dataType":"boolean","required":true},
-        },
-        "additionalProperties": true,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "IEmailVerifyPayload": {
-        "dataType": "refObject",
-        "properties": {
-            "token": {"dataType":"string"},
         },
         "additionalProperties": true,
     },
@@ -305,6 +289,36 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'delete',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.put('/email/verify-email',
+            ...(fetchMiddlewares<RequestHandler>(EmailController)),
+            ...(fetchMiddlewares<RequestHandler>(EmailController.prototype.verifyEmail)),
+
+            async function EmailController_verifyEmail(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    requestBody: {"in":"body","name":"requestBody","required":true,"ref":"IEmailVerifyPayload"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const controller = new EmailController();
+
+              await templateService.apiHandler({
+                methodName: 'verifyEmail',
                 controller,
                 response,
                 next,

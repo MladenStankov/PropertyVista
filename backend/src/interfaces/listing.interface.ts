@@ -70,7 +70,6 @@ export enum ListingType {
 
 export interface IListing {
     propertyData: IProperty,
-    images: string[],
     type: ListingType,
     price: number
 }
