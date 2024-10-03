@@ -1,24 +1,28 @@
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 
-import { AbstractUser, User } from '../database/models/user.model'
 import { IJwtPayload } from '../interfaces/auth.interface'
+import { User } from '../database/models/user.model'
 
 dotenv.config()
 
 export default class TokenService {
-    static async generateToken(user: AbstractUser<any>, duration: string) {
-        const role = user instanceof User ? 'user' : 'broker'
-        
+    async generateToken(user: User, duration: string) : Promise<string> {
         const payload : IJwtPayload = {
             id: user.id,
-            role: role,
-            verified: user.verified
+            passwordHashed: user.passwordHashed
         }
 
         const AUTHENTICATION_SECRET_KEY = String(process.env.AUTHENTICATION_SECRET_KEY)
         const token = jwt.sign(payload, AUTHENTICATION_SECRET_KEY, {expiresIn: duration})
 
         return token
+    }
+
+    async decodeToken(token: string) : Promise<IJwtPayload> {
+        const AUTHENTICATION_SECRET_KEY = String(process.env.AUTHENTICATION_SECRET_KEY)
+        const decoded = jwt.verify(token, AUTHENTICATION_SECRET_KEY) as IJwtPayload
+
+        return decoded
     }
 }

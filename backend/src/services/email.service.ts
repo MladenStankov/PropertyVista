@@ -1,10 +1,11 @@
 import nodemailer from 'nodemailer'
 import dotenv from 'dotenv'
+import { User } from '../database/models/user.model'
 
 dotenv.config()
 
 export default class EmailService {
-    static async sendVerifyEmail(email: string, token: string) {
+    async sendEmailVerification(email: string, token: string) {
         const EMAIL_SERVICE_USER = process.env.EMAIL_SERVICE_USER
         const EMAIL_SERVICE_PASSWORD = process.env.EMAIL_SERVICE_PASSWORD
 
@@ -20,7 +21,7 @@ export default class EmailService {
             from: EMAIL_SERVICE_USER,
             to: email,
             subject: 'Verify your email',
-            html: `<a href="http://localhost:5173/verify-email/${token}">Verify</a>`
+            html: `<h1>Click the link: http://localhost:5173/verify-email/${token}<h1>`
         })
     }
 }
