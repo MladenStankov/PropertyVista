@@ -9,6 +9,8 @@
 
     -ms-overflow-style: none;
     scrollbar-width: none;
+
+    outline: 1px red;
 }
 
 *::-webkit-scrollbar {

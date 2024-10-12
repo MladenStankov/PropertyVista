@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersModule } from 'src/users/users.module';
@@ -13,6 +13,7 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 import { JwtGuard } from './guards/jwt.guard';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { GoogleOAuthGuard } from './guards/google-oauth.guard';
+import { EmailSendingModule } from 'src/email-sending/email-sending.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { GoogleOAuthGuard } from './guards/google-oauth.guard';
       signOptions: { expiresIn: '30m' },
     }),
     AuthRefreshTokenModule,
+    forwardRef(() => EmailSendingModule),
   ],
   controllers: [AuthController],
   providers: [
@@ -38,6 +40,6 @@ import { GoogleOAuthGuard } from './guards/google-oauth.guard';
       useClass: ThrottlerGuard,
     },
   ],
-  exports: [JwtGuard],
+  exports: [JwtGuard, AuthService],
 })
 export class AuthModule {}

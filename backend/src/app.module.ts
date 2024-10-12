@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { AuthRefreshTokenModule } from './auth-refresh-token/auth-refresh-token.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { EmailSendingModule } from './email-sending/email-sending.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { APP_GUARD } from '@nestjs/core';
         limit: 10,
       },
     ]),
+    EmailSendingModule,
   ],
   controllers: [],
   providers: [

@@ -29,12 +29,20 @@ export class AuthService {
     return await this.userService.create(registerPayload);
   }
 
-  async login(req: Request, res: Response) {
+  async login(res: Response, req?: Request, user?: User) {
     const { access_token, refresh_token } =
-      await this.authRefreshTokenService.generateTokenPair(req.user as User);
+      await this.authRefreshTokenService.generateTokenPair(
+        req ? (req.user as User) : user,
+      );
 
-    res.cookie('access_token', access_token, { httpOnly: true });
-    res.cookie('refresh_token', refresh_token, { httpOnly: true });
+    res.cookie('access_token', access_token, {
+      httpOnly: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+    res.cookie('refresh_token', refresh_token, {
+      httpOnly: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
   }
 
   async validateUser(loginPayload: LoginDto) {
@@ -49,6 +57,10 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
+    if (!existingUser.isVerified) {
+      throw new UnauthorizedException('User is not verified');
+    }
+
     return existingUser;
   }
 
@@ -60,8 +72,14 @@ export class AuthService {
         (req.user as any).refreshTokenExpiresAt as Date,
       );
 
-    res.cookie('access_token', access_token, { httpOnly: true });
-    res.cookie('refresh_token', refresh_token, { httpOnly: true });
+    res.cookie('access_token', access_token, {
+      httpOnly: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+    res.cookie('refresh_token', refresh_token, {
+      httpOnly: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
   }
 
   async logout(req: Request, res: Response) {
@@ -71,8 +89,14 @@ export class AuthService {
       ((req.user as any).attributes as User).id,
     );
 
-    res.clearCookie('access_token', { httpOnly: true });
-    res.clearCookie('refresh_token', { httpOnly: true });
+    res.clearCookie('access_token', {
+      httpOnly: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
+    res.clearCookie('refresh_token', {
+      httpOnly: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
   }
 
   // async googleLogin(req: Request) {

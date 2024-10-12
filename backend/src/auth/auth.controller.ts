@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Post,
-  Put,
   Req,
   Res,
   UseGuards,
@@ -16,35 +15,42 @@ import { Request, Response } from 'express';
 import { JwtGuard } from './guards/jwt.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { Throttle } from '@nestjs/throttler';
-import { GoogleOAuthGuard } from './guards/google-oauth.guard';
+// import { GoogleOAuthGuard } from './guards/google-oauth.guard';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { EmailSendingService } from 'src/email-sending/email-sending.service';
+import { User } from 'src/users/entity/user.entity';
 
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private emailSendingService: EmailSendingService,
+  ) {}
   @Post('/register')
   async register(@Body() registerPayload: CreateUserDto) {
-    return this.authService.register(registerPayload);
+    const { email } = await this.authService.register(registerPayload);
+    return this.emailSendingService.sendUserVerificationEmail(email);
   }
 
   @ApiBody({ type: LoginDto })
   @UseGuards(LocalGuard)
   @Post('/login')
   async login(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    return this.authService.login(req, res);
+    return this.authService.login(res, req);
   }
 
   @Throttle({ default: { limit: 10, ttl: 1000 } })
   @UseGuards(JwtGuard)
   @Get('/profile')
   async profile(@Req() req: Request) {
-    return req.user;
+    const { id, fullName, email, imageUrl, phoneNumber } = req.user as User;
+    return { id, fullName, email, imageUrl, phoneNumber };
   }
 
   @Throttle({ default: { limit: 3, ttl: 1000 } })
   @UseGuards(JwtRefreshGuard)
-  @Put('/refresh-tokens')
+  @Post('/refresh-tokens')
   async refreshTokens(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
@@ -53,7 +59,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtRefreshGuard)
-  @Put('/logout')
+  @Post('/logout')
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     return this.authService.logout(req, res);
   }
