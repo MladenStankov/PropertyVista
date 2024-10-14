@@ -39,31 +39,27 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
 
     if (response.status == 401) {
       await refreshTokens();
-      return fetch(url, { credentials: "include" });
+      return fetch(API_ENDPOINT + url, { credentials: "include" });
     }
 
     return response;
   };
 
   const refreshTokens = async () => {
-    const response = await fetch(API_ENDPOINT + "/auth/refresh-tokens", {
+    await fetch(API_ENDPOINT + "/auth/refresh-tokens", {
       method: "POST",
       credentials: "include",
     });
-
-    if (!response.ok) {
-      throw new Error("Cannot refresh tokens");
-    }
   };
 
   const fetchProfile = async () => {
     const response = await authFetch("/auth/profile");
 
     if (!response.ok) {
-      throw new Error("Failed to fetch profile");
+      setUser(null);
     }
 
-    const userData = await response.json();
+    const userData: IUser = await response.json();
     setUser(userData);
   };
 
@@ -77,15 +73,8 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const auth = async () => {
-      try {
-        await fetchProfile();
-        console.log(user);
-      } catch (error) {
-        console.log("Auth error", error);
-        setUser(null);
-      } finally {
-        setIsLoading(false);
-      }
+      await fetchProfile();
+      setIsLoading(false);
     };
 
     auth();

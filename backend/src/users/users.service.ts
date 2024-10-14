@@ -53,4 +53,20 @@ export class UsersService {
       await this.usersRepository.findOne({ where: { email }, select: ['id'] })
     ).id;
   }
+
+  async existsByEmail(email: string): Promise<boolean> {
+    return await this.usersRepository.existsBy({ email });
+  }
+
+  async upadatePassword(email: string, password: string) {
+    const hashedPassword = await hash(
+      password,
+      this.configService.get<string>('BCRYPT_SALT'),
+    );
+
+    const user = await this.usersRepository.findOneBy({ email });
+    user.password = hashedPassword;
+
+    await user.save();
+  }
 }

@@ -15,7 +15,7 @@ import { Request, Response } from 'express';
 import { JwtGuard } from './guards/jwt.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { Throttle } from '@nestjs/throttler';
-// import { GoogleOAuthGuard } from './guards/google-oauth.guard';
+import { GoogleOAuthGuard } from './guards/google-oauth.guard';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { EmailSendingService } from 'src/email-sending/email-sending.service';
 import { User } from 'src/users/entity/user.entity';
@@ -64,21 +64,11 @@ export class AuthController {
     return this.authService.logout(req, res);
   }
 
-  // @Get('/google')
-  // @UseGuards(GoogleOAuthGuard)
-  // async googleAuth() {}
+  @Get('/google')
+  @UseGuards(GoogleOAuthGuard)
+  async googleAuth() {}
 
-  // @Get('/google/callback')
-  // @UseGuards(GoogleOAuthGuard)
-  // async googleAuthCallBack(
-  //   @Req() req: Request,
-  //   @Res({ passthrough: true }) res: Response,
-  // ) {
-  //   await this.authService.googleLogin(req);
-
-  //   const { accessToken, refreshToken } = req.user as any;
-
-  //   res.cookie('access_token', accessToken, { httpOnly: true });
-  //   res.cookie('refresh_token', refreshToken, { httpOnly: true });
-  // }
+  @Get('/google/callback')
+  @UseGuards(GoogleOAuthGuard)
+  async googleAuthCallBack() {}
 }

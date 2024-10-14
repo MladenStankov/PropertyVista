@@ -1,17 +1,24 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, Repository } from 'typeorm';
-import { UserVerificationEmail } from './entity/user-verification-email.entity';
+import { UserVerification } from './entity/user-verification-email.entity';
 import * as crypto from 'crypto';
 import { MailerService } from '@nestjs-modules/mailer';
 import { UsersService } from 'src/users/users.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { PasswordReset } from './entity/password-reset-email.entity';
 
 @Injectable()
 export class EmailSendingService {
   constructor(
-    @InjectRepository(UserVerificationEmail)
-    private readonly userEmailVerificationEmailRepository: Repository<UserVerificationEmail>,
+    @InjectRepository(UserVerification)
+    private readonly userVerificationRepository: Repository<UserVerification>,
+    @InjectRepository(PasswordReset)
+    private readonly passwordResetRepository: Repository<PasswordReset>,
     private mailerService: MailerService,
     private userService: UsersService,
   ) {}
@@ -25,13 +32,10 @@ export class EmailSendingService {
   ): Promise<string> {
     let token: string;
 
-    const userId = await this.userService.getIdByEmail(userEmail);
-
-    if (!userId) {
-      throw new UnauthorizedException('No User');
+    if (!this.userService.existsByEmail(userEmail)) {
+      throw new NotFoundException('User does not exist.');
     }
-
-    const user = await this.userService.findById(userId);
+    const user = await this.userService.findByEmail(userEmail);
 
     if (user && user.isVerified) {
       throw new UnauthorizedException('User already verified');
@@ -39,14 +43,11 @@ export class EmailSendingService {
 
     do {
       token = await this.generateRandomToken();
-    } while (
-      await this.userEmailVerificationEmailRepository.existsBy({ token })
-    );
+    } while (await this.userVerificationRepository.existsBy({ token }));
 
-    await this.userEmailVerificationEmailRepository.insert({
+    await this.userVerificationRepository.insert({
       userEmail,
       token,
-      userId,
       expirationDate: new Date(new Date().getTime() + 30 * 60000),
     });
 
@@ -64,10 +65,9 @@ export class EmailSendingService {
   }
 
   async validateUserVerificationToken(token: string) {
-    const verificationEmail =
-      await this.userEmailVerificationEmailRepository.findOne({
-        where: { token },
-      });
+    const verificationEmail = await this.userVerificationRepository.findOne({
+      where: { token },
+    });
 
     if (
       !verificationEmail ||
@@ -76,16 +76,71 @@ export class EmailSendingService {
       throw new UnauthorizedException('Token not valid');
     }
 
-    await this.userEmailVerificationEmailRepository.remove(verificationEmail);
+    await this.userVerificationRepository.remove(verificationEmail);
 
-    const { userId } = verificationEmail;
+    const { userEmail } = verificationEmail;
 
-    return this.userService.findById(userId);
+    return this.userService.findByEmail(userEmail);
+  }
+
+  async createPasswordResetEmail(userEmail: string): Promise<string> {
+    let token: string;
+    do {
+      token = await this.generateRandomToken();
+    } while (await this.passwordResetRepository.existsBy({ token }));
+
+    await this.passwordResetRepository.insert({
+      userEmail,
+      token,
+      expirationDate: new Date(new Date().getTime() + 60 * 60000),
+    });
+
+    return token;
+  }
+
+  async sendPasswordResetEmail(userEmail: string): Promise<void> {
+    if (!this.userService.existsByEmail(userEmail)) {
+      return;
+    }
+
+    const token = await this.createPasswordResetEmail(userEmail);
+
+    this.mailerService.sendMail({
+      to: userEmail,
+      subject: 'Reset your password',
+      html: `${token}`,
+    });
+  }
+
+  async validatePasswordReset(token: string, newPassword: string) {
+    const passwordReset = await this.passwordResetRepository.findOne({
+      where: { token },
+    });
+
+    if (
+      !passwordReset ||
+      passwordReset.expirationDate.getTime() <= Date.now()
+    ) {
+      throw new UnauthorizedException('Token not valid');
+    }
+
+    await this.passwordResetRepository.remove(passwordReset);
+    await this.userService.upadatePassword(
+      passwordReset.userEmail,
+      newPassword,
+    );
   }
 
   @Cron(CronExpression.EVERY_10_MINUTES)
-  async deleteExpiredRefreshTokens() {
-    await this.userEmailVerificationEmailRepository.delete({
+  async deleteExpiredValidations() {
+    await this.userVerificationRepository.delete({
+      expirationDate: LessThanOrEqual(new Date()),
+    });
+  }
+
+  @Cron(CronExpression.EVERY_10_MINUTES)
+  async deleteExpiredResetPasswords() {
+    await this.passwordResetRepository.delete({
       expirationDate: LessThanOrEqual(new Date()),
     });
   }

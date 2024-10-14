@@ -6,10 +6,16 @@ import {
 import { UsersService } from 'src/users/users.service';
 import { compare } from 'bcrypt';
 import { AuthRefreshTokenService } from 'src/auth-refresh-token/auth-refresh-token.service';
-import { Request, Response } from 'express';
+import { CookieOptions, Request, Response } from 'express';
 import { User } from 'src/users/entity/user.entity';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
+
+const cookieOptions: CookieOptions = {
+  httpOnly: true,
+  maxAge: 30 * 24 * 60 * 60 * 1000,
+  sameSite: 'strict',
+};
 
 @Injectable()
 export class AuthService {
@@ -35,14 +41,8 @@ export class AuthService {
         req ? (req.user as User) : user,
       );
 
-    res.cookie('access_token', access_token, {
-      httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
-    res.cookie('refresh_token', refresh_token, {
-      httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie('access_token', access_token, cookieOptions);
+    res.cookie('refresh_token', refresh_token, cookieOptions);
   }
 
   async validateUser(loginPayload: LoginDto) {
@@ -72,14 +72,8 @@ export class AuthService {
         (req.user as any).refreshTokenExpiresAt as Date,
       );
 
-    res.cookie('access_token', access_token, {
-      httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
-    res.cookie('refresh_token', refresh_token, {
-      httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+    res.cookie('access_token', access_token, cookieOptions);
+    res.cookie('refresh_token', refresh_token, cookieOptions);
   }
 
   async logout(req: Request, res: Response) {
@@ -89,14 +83,8 @@ export class AuthService {
       ((req.user as any).attributes as User).id,
     );
 
-    res.clearCookie('access_token', {
-      httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
-    res.clearCookie('refresh_token', {
-      httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+    res.clearCookie('access_token', cookieOptions);
+    res.clearCookie('refresh_token', cookieOptions);
   }
 
   // async googleLogin(req: Request) {

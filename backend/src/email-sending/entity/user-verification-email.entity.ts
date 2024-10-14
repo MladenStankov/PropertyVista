@@ -1,15 +1,10 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
-import { User } from 'src/users/entity/user.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('UserVerificationEmail')
-export class UserVerificationEmail {
+@Entity('UserVerification')
+export class UserVerification {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @IsNotEmpty()
-  @Column()
-  userId: number;
 
   @IsNotEmpty()
   @IsString()
@@ -24,7 +19,4 @@ export class UserVerificationEmail {
 
   @Column()
   expirationDate: Date;
-
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  user: User;
 }
