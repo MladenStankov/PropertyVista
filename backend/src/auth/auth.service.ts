@@ -87,17 +87,20 @@ export class AuthService {
     res.clearCookie('refresh_token', cookieOptions);
   }
 
-  // async googleLogin(req: Request) {
-  //   const { googleId, firstName, familyName, email, picture } = req.user as any;
+  async googleLogin(req: Request, res: Response) {
+    const { fullName, email, imageUrl } = req.user as any;
 
-  //   const CreateGoogleUserDto = {
-  //     googleId,
-  //     firstName,
-  //     familyName,
-  //     email,
-  //     picture,
-  //   };
+    let existingUser: User | void = await this.userService.findByEmail(email);
 
-  //   return await this.userService.createGoogleAccount(CreateGoogleUserDto);
-  // }
+    if (!existingUser) {
+      const createUserDto: CreateUserDto = {
+        fullName,
+        email,
+        imageUrl,
+      };
+
+      existingUser = await this.userService.create(createUserDto);
+    }
+    return this.login(res, null, existingUser);
+  }
 }

@@ -1,4 +1,9 @@
-import { IsEmail, IsString, IsStrongPassword } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  IsStrongPassword,
+} from 'class-validator';
 import {
   BaseEntity,
   Column,
@@ -14,11 +19,14 @@ export class User extends BaseEntity {
   id: number;
 
   @IsString()
+  @IsNotEmpty()
   @Column()
   fullName: string;
 
   @Column({ unique: true })
+  @IsNotEmpty()
   @IsEmail()
+  @IsString()
   email: string;
 
   @Column({ nullable: true })

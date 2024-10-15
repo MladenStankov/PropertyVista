@@ -17,6 +17,8 @@ export class CreateUserDto {
 
   @IsStrongPassword()
   @IsString()
-  @IsNotEmpty()
-  password: string;
+  password?: string;
+
+  @IsString()
+  imageUrl?: string;
 }

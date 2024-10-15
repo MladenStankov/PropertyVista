@@ -4,7 +4,6 @@ import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
 import { hash } from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { updateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
@@ -16,16 +15,23 @@ export class UsersService {
   ) {}
 
   async create(createLocalUserDto: CreateUserDto): Promise<User> {
-    const { fullName, email, password } = createLocalUserDto;
-    const hashedPassword = await hash(
-      password,
-      this.configService.get<string>('BCRYPT_SALT'),
-    );
+    const { fullName, email, password, imageUrl } = createLocalUserDto;
+
+    let hashedPassword: string;
+
+    if (password) {
+      hashedPassword = await hash(
+        password,
+        this.configService.get<string>('BCRYPT_SALT'),
+      );
+    }
 
     const newUser = this.usersRepository.create({
       fullName,
       email,
-      password: hashedPassword,
+      password: password ? hashedPassword : null,
+      imageUrl: imageUrl,
+      isVerified: password ? false : true,
     });
 
     return this.usersRepository.save(newUser);
@@ -41,11 +47,6 @@ export class UsersService {
 
   async findAll(): Promise<User[] | void> {
     return this.usersRepository.find();
-  }
-
-  async update(id: number, updateUserDto: updateUserDto): Promise<User | void> {
-    await this.usersRepository.update(id, updateUserDto);
-    return this.findById(id);
   }
 
   async getIdByEmail(email: string) {

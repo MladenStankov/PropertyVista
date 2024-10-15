@@ -70,5 +70,10 @@ export class AuthController {
 
   @Get('/google/callback')
   @UseGuards(GoogleOAuthGuard)
-  async googleAuthCallBack() {}
+  async googleAuthCallBack(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    return this.authService.googleLogin(req, res);
+  }
 }
