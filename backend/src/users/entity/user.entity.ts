@@ -4,11 +4,13 @@ import {
   IsString,
   IsStrongPassword,
 } from 'class-validator';
+import { Listing } from 'src/listings/entity/listing.entity';
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -43,6 +45,9 @@ export class User extends BaseEntity {
 
   @Column({ default: false })
   isVerified: boolean = false;
+
+  @OneToMany(() => Listing, (listing) => listing.user, { cascade: true })
+  listings: Listing[];
 
   @CreateDateColumn({
     type: 'timestamp',

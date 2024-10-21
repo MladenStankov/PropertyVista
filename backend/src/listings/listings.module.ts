@@ -1,0 +1,40 @@
+import { Module } from '@nestjs/common';
+import { ListingsService } from './services/listings.service';
+import { ListingsController } from './listings.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Listing } from './entity/listing.entity';
+import { ListingImage } from './entity/listing-image.entity';
+import { ListingLocation } from './entity/listing-location.entity';
+import { ListingView } from './entity/listing-view.entity';
+import { ListingRoom } from './entity/listing-room.entity';
+import { ListingAmenity } from './entity/listing-amenity.entity';
+import { ListingPriceHistory } from './entity/listing-price-history.entity';
+import { AwsModule } from 'src/aws/aws.module';
+import { ListingLocationsService } from './services/listing-locations.service';
+import { ListingImagesService } from './services/listing-images.service';
+import { ListingAmenitiesService } from './services/listing-amenities.service';
+import { ListingRoomsService } from './services/listing-rooms.service';
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([
+      Listing,
+      ListingImage,
+      ListingLocation,
+      ListingView,
+      ListingRoom,
+      ListingAmenity,
+      ListingPriceHistory,
+    ]),
+    AwsModule,
+  ],
+  providers: [
+    ListingsService,
+    ListingLocationsService,
+    ListingImagesService,
+    ListingAmenitiesService,
+    ListingRoomsService,
+  ],
+  controllers: [ListingsController],
+})
+export class ListingsModule {}

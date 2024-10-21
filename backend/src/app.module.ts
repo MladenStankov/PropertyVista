@@ -7,6 +7,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { EmailSendingModule } from './email-sending/email-sending.module';
 import { AwsModule } from './aws/aws.module';
+import { ListingsModule } from './listings/listings.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AwsModule } from './aws/aws.module';
     ]),
     EmailSendingModule,
     AwsModule,
+    ListingsModule,
   ],
   controllers: [],
   providers: [
