@@ -28,7 +28,7 @@ export class ListingsController {
     type: PublishListingDto,
   })
   @UseInterceptors(FilesInterceptor('createImages', MAX_IMAGES))
-  async public(
+  async publish(
     @Req() req: Request,
     @Body() body: any,
     @UploadedFiles() files: Express.Multer.File[],
