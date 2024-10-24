@@ -1,5 +1,5 @@
-To run backend - 
-npm run dev
+To run backend -
+npm run start:dev
 
-To run frontend - 
+To run frontend -
 npm run dev
