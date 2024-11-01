@@ -37,7 +37,8 @@ export class EmailSendingController {
     user.isVerified = true;
     await user.save();
 
-    return this.authService.login(res, null, user);
+    await this.authService.login(res, null, user);
+    res.redirect('http://localhost:5173');
   }
 
   @Post('/password-reset')

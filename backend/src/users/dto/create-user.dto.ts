@@ -19,6 +19,5 @@ export class CreateUserDto {
   @IsString()
   password?: string;
 
-  @IsString()
   imageUrl?: string;
 }

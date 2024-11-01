@@ -50,15 +50,15 @@ export class AuthService {
     const existingUser = await this.userService.findByEmail(email);
 
     if (!existingUser) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Invalid email or password!');
     }
 
     if (!(await compare(password, existingUser.password))) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Invalid email or password!');
     }
 
     if (!existingUser.isVerified) {
-      throw new UnauthorizedException('User is not verified');
+      throw new UnauthorizedException('User is not verified!');
     }
 
     return existingUser;
