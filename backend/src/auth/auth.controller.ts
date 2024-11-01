@@ -40,7 +40,7 @@ export class AuthController {
     return this.authService.login(res, req);
   }
 
-  @Throttle({ default: { limit: 10, ttl: 1000 } })
+  @Throttle({ default: { limit: 100, ttl: 1000 } })
   @UseGuards(JwtGuard)
   @Get('/profile')
   async profile(@Req() req: Request) {
@@ -74,6 +74,7 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    return this.authService.googleLogin(req, res);
+    await this.authService.googleLogin(req, res);
+    res.redirect('http://localhost:5173');
   }
 }
