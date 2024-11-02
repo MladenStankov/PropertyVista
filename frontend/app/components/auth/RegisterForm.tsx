@@ -57,24 +57,18 @@ const RegisterForm = () => {
       return;
     }
 
-    try {
-      const response = await fetch("http://localhost:3000/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullName, email, password }),
-      });
+    const response = await fetch("http://localhost:3000/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fullName, email, password }),
+      credentials: "include",
+    });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.message || "Registration failed!");
-      } else {
-        console.log("Registration successful");
-      }
-    } catch (error) {
-      console.log(error);
-      setError("Something went wrong!");
-    } finally {
-      setLoading(false);
+    if (!response.ok) {
+      const errorData = await response.json();
+      setError(errorData.message || "Registration failed!");
+    } else {
+      console.log("Registration successful");
       redirect(`/register/verify?email=${email}`);
     }
   };

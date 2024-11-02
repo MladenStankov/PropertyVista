@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
 import { HiOutlineMailOpen } from "react-icons/hi";
@@ -8,6 +8,7 @@ import { HiOutlineMailOpen } from "react-icons/hi";
 const Verify = () => {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
+
   return (
     <div className="flex h-screen mx-10">
       <div className="flex flex-col items-center m-auto p-10 rounded-md border border-gray-300 shadow-xl n max-w-screen-sm">
@@ -28,4 +29,12 @@ const Verify = () => {
   );
 };
 
-export default Verify;
+const VerifyPage = () => {
+  return (
+    <Suspense>
+      <Verify />
+    </Suspense>
+  );
+};
+
+export default VerifyPage;

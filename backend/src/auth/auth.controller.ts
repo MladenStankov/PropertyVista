@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { AuthService } from './auth.service';
+import { AuthService } from './services/auth.service';
 import { LoginDto } from './dto/login.dto';
 import { LocalGuard } from './guards/local.guard';
 import { Request, Response } from 'express';
@@ -48,14 +48,14 @@ export class AuthController {
     return { id, fullName, email, imageUrl, phoneNumber };
   }
 
-  @Throttle({ default: { limit: 3, ttl: 1000 } })
+  @Throttle({ default: { limit: 100, ttl: 1000 } })
   @UseGuards(JwtRefreshGuard)
   @Post('/refresh-tokens')
   async refreshTokens(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    return this.authService.refreshTokens(req, res);
+    return await this.authService.refreshTokens(req, res);
   }
 
   @UseGuards(JwtRefreshGuard)

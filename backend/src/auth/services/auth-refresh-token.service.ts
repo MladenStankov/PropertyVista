@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AuthRefreshToken } from './entity/auth-refresh-token.entity';
+import { AuthRefreshToken } from '../entity/auth-refresh-token.entity';
 import { LessThanOrEqual, Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { User } from 'src/users/entity/user.entity';
@@ -41,6 +41,7 @@ export class AuthRefreshTokenService {
     const payload: IJwtTokenPayload = {
       userId: user.id,
       password: user.password,
+      date: Date.now(),
     };
 
     const newRefreshToken = this.jwtService.sign(payload, {
@@ -71,6 +72,7 @@ export class AuthRefreshTokenService {
     const payload: IJwtTokenPayload = {
       userId: user.id,
       password: user.password,
+      date: Date.now(),
     };
 
     return {

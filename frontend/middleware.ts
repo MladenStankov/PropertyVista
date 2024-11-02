@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import isUserAuthenticated from "./app/components/auth/isUserAuthenticated";
+import isUserAuthenticated from "./app/utils/isUserAuthenticated";
 
 export async function middleware(request: NextRequest) {
   const isAuth = await isUserAuthenticated(request);

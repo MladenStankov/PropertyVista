@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { AuthRefreshTokenModule } from './auth-refresh-token/auth-refresh-token.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { EmailSendingModule } from './email-sending/email-sending.module';
@@ -23,7 +22,6 @@ import { ListingsModule } from './listings/listings.module';
       synchronize: true,
     }),
     AuthModule,
-    AuthRefreshTokenModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000,

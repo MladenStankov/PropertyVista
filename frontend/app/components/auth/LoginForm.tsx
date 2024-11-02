@@ -38,14 +38,6 @@ const LoginForm = () => {
       setError("Invalid email!");
       hasError = true;
       document.getElementById("email")?.classList.add("border-red-500");
-    } else if (
-      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
-        password
-      )
-    ) {
-      setError("Password needs to be strong!");
-      hasError = true;
-      document.getElementById("password")?.classList.add("border-red-500");
     }
 
     if (hasError) {
@@ -53,24 +45,18 @@ const LoginForm = () => {
       return;
     }
 
-    try {
-      const response = await fetch("http://localhost:3000/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+    const response = await fetch("http://localhost:3000/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+      credentials: "include",
+    });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.message || "Registration failed!");
-      } else {
-        console.log("Registration successful");
-      }
-    } catch (error) {
-      console.log(error);
-      setError("Something went wrong!");
-    } finally {
-      setLoading(false);
+    if (!response.ok) {
+      const errorData = await response.json();
+      setError(errorData.message || "Registration failed!");
+    } else {
+      console.log("Registration successful");
       redirect("/");
     }
   };

@@ -5,11 +5,11 @@ import {
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { compare } from 'bcrypt';
-import { AuthRefreshTokenService } from 'src/auth-refresh-token/auth-refresh-token.service';
+import { AuthRefreshTokenService } from 'src/auth/services/auth-refresh-token.service';
 import { CookieOptions, Request, Response } from 'express';
 import { User } from 'src/users/entity/user.entity';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { LoginDto } from './dto/login.dto';
+import { LoginDto } from '../dto/login.dto';
 
 const cookieOptions: CookieOptions = {
   httpOnly: true,
