@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import isUserAuthenticated from "./app/utils/isUserAuthenticated";
 
 export async function middleware(request: NextRequest) {
-  const isAuth = await isUserAuthenticated(request);
+  const isAuth = await isUserAuthenticated();
 
   const protectedRoutes = ["/profile"];
   const authRoutes = ["/login", "/register", "/register/verify"];

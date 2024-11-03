@@ -14,7 +14,10 @@ import { LoginDto } from '../dto/login.dto';
 const cookieOptions: CookieOptions = {
   httpOnly: true,
   maxAge: 30 * 24 * 60 * 60 * 1000,
-  sameSite: 'strict',
+  sameSite: 'none',
+  secure: true,
+  path: '/',
+  domain: 'localhost',
 };
 
 @Injectable()
@@ -53,7 +56,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid email or password!');
     }
 
-    if (!(await compare(password, existingUser.password))) {
+    if (
+      !existingUser.password ||
+      !(await compare(password, existingUser.password))
+    ) {
       throw new UnauthorizedException('Invalid email or password!');
     }
 
@@ -74,6 +80,8 @@ export class AuthService {
 
     res.cookie('access_token', access_token, cookieOptions);
     res.cookie('refresh_token', refresh_token, cookieOptions);
+
+    return { access_token: access_token, refresh_token: refresh_token };
   }
 
   async logout(req: Request, res: Response) {

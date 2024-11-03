@@ -15,6 +15,7 @@ async function bootstrap() {
     origin: [configService.get<string>('CORS_ORIGIN')],
     credentials: true,
   });
+
   app.use(
     helmet({
       contentSecurityPolicy: {

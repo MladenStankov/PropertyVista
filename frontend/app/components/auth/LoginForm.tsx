@@ -5,7 +5,7 @@ import FormInput from "../FormInput";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { FaArrowLeft, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
 import { IoWarningOutline } from "react-icons/io5";
 import Link from "next/link";
@@ -55,6 +55,7 @@ const LoginForm = () => {
     if (!response.ok) {
       const errorData = await response.json();
       setError(errorData.message || "Registration failed!");
+      setLoading(false);
     } else {
       console.log("Registration successful");
       redirect("/");
@@ -62,13 +63,21 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-screen flex-col bg-gradient-to-r from-cyan-500 to-blue-500 ">
       <form
         onSubmit={handleSumbit}
-        className="m-auto p-10 rounded-md border border-gray-300 shadow-xl"
+        className="m-auto p-10 rounded-md border border-gray-300 shadow-xl bg-white"
         autoComplete="on"
       >
-        <h1 className="text-center text-3xl mb-4">Sign in to your Account</h1>
+        <Link
+          href="/"
+          className="flex flex-row gap-1 w-fit mb-2 hover:underline hover:text-gray-700"
+        >
+          <FaArrowLeft className="mt-1 text-gray-500" />
+          <p className="text-gray-500 hover:text-gray-800">Back to Home</p>
+        </Link>
+
+        <h1 className="text-center text-3xl mb-4">Enter in your Account</h1>
 
         <div className="relative">
           <FormInput
@@ -104,16 +113,16 @@ const LoginForm = () => {
         <button
           type="submit"
           className={`w-full my-4 border border-gray-400 p-2 rounded-md ${
-            loading ? "bg-gray-400" : "bg-blue-500"
+            loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
           } text-white`}
           disabled={loading}
         >
           {loading ? "Signing in..." : "Sign in"}
         </button>
 
-        <div className="flex mb-3 justify-center">
+        <div className="flex mb-3 justify-end">
           <Link
-            href="#"
+            href="/login/forgot-password"
             className="text-blue-400 underline hover:cursor-pointer hover:text-blue-500"
           >
             Forgot password?

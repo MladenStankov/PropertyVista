@@ -44,18 +44,18 @@ export class AuthController {
   @UseGuards(JwtGuard)
   @Get('/profile')
   async profile(@Req() req: Request) {
-    const { id, fullName, email, imageUrl, phoneNumber } = req.user as User;
-    return { id, fullName, email, imageUrl, phoneNumber };
+    const { id, fullName, email, imageUrl } = req.user as User;
+    return { id, fullName, email, imageUrl };
   }
 
-  @Throttle({ default: { limit: 100, ttl: 1000 } })
+  @Throttle({ default: { limit: 2, ttl: 500 } })
   @UseGuards(JwtRefreshGuard)
   @Post('/refresh-tokens')
   async refreshTokens(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    return await this.authService.refreshTokens(req, res);
+    return this.authService.refreshTokens(req, res);
   }
 
   @UseGuards(JwtRefreshGuard)

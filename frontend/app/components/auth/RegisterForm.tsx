@@ -9,6 +9,7 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { CiUser } from "react-icons/ci";
 import { MdOutlineEmail } from "react-icons/md";
 import { IoWarningOutline } from "react-icons/io5";
+import { FaArrowLeft } from "react-icons/fa";
 import Link from "next/link";
 
 const RegisterForm = () => {
@@ -67,6 +68,7 @@ const RegisterForm = () => {
     if (!response.ok) {
       const errorData = await response.json();
       setError(errorData.message || "Registration failed!");
+      setLoading(false);
     } else {
       console.log("Registration successful");
       redirect(`/register/verify?email=${email}`);
@@ -74,13 +76,22 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-screen flex-col bg-gradient-to-l from-cyan-500 to-blue-500">
       <form
         onSubmit={handleSumbit}
-        className="m-auto p-10 rounded-md border border-gray-300 shadow-xl"
+        className="m-auto p-10 rounded-md border border-gray-300 shadow-xl bg-white max-w-md"
         autoComplete="on"
       >
-        <h1 className="text-center text-3xl mb-4">Create your Account</h1>
+        <Link
+          href="/"
+          className="flex flex-row gap-1 w-fit mb-2 hover:underline hover:text-gray-700"
+        >
+          <FaArrowLeft className="mt-1 text-gray-500" />
+          <p className="text-gray-500 hover:text-gray-800">Back to Home</p>
+        </Link>
+        <h1 className="text-center text-3xl mb-4 hover:text-gray-800">
+          Create your Account
+        </h1>
         <div className="relative">
           <FormInput
             id="name"
@@ -125,7 +136,7 @@ const RegisterForm = () => {
         <button
           type="submit"
           className={`w-full my-4 border border-gray-400 p-2 rounded-md ${
-            loading ? "bg-gray-400" : "bg-blue-500"
+            loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
           } text-white`}
           disabled={loading}
         >

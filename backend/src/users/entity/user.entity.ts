@@ -36,11 +36,11 @@ export class User extends BaseEntity {
   password?: string;
 
   @IsString()
-  @Column({ nullable: true })
-  phoneNumber?: string;
-
-  @IsString()
-  @Column({ default: null })
+  @Column({
+    default:
+      's3://property-vista-images/307ce493-b254-4b2d-8ba4-d12c080d6651.jpg',
+    nullable: true,
+  })
   imageUrl?: string;
 
   @Column({ default: false })

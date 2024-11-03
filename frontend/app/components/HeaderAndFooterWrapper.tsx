@@ -11,7 +11,12 @@ export default function HeaderAndFooterWrapper({
   children: React.ReactNode;
 }) {
   const pathName = usePathname();
-  const noLayoutRoutes = ["/login", "/register", "/register/verify"];
+  const noLayoutRoutes = [
+    "/login",
+    "/register",
+    "/register/verify",
+    "/login/forgot-password",
+  ];
   const showHeaderAndFooter = !noLayoutRoutes.includes(pathName);
 
   return (

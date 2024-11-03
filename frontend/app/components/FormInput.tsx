@@ -5,6 +5,7 @@ interface FormInputProps {
   id: string;
   value: string;
   label?: string;
+  placeholder?: string;
   required?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -15,6 +16,7 @@ const FormInput: React.FC<FormInputProps> = ({
   value,
   label = "",
   required = false,
+  placeholder = "",
   onChange,
 }) => {
   return (
@@ -29,6 +31,7 @@ const FormInput: React.FC<FormInputProps> = ({
         value={value}
         onChange={onChange}
         required={required}
+        placeholder={placeholder}
       />
     </div>
   );
