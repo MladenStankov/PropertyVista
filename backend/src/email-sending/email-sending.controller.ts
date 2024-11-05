@@ -13,6 +13,7 @@ import { AuthService } from 'src/auth/services/auth.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ValidatePasswordReset } from './dto/validate-password-reset.dto';
 import { SendPasswordResetDto } from './dto/send-password-reset.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('email-sending')
 @ApiTags('Email Sending')
@@ -20,6 +21,7 @@ export class EmailSendingController {
   constructor(
     private emailSendingService: EmailSendingService,
     private authService: AuthService,
+    private configService: ConfigService,
   ) {}
 
   @Get('/verify-email/:token')
@@ -38,17 +40,17 @@ export class EmailSendingController {
     await user.save();
 
     await this.authService.login(res, null, user);
-    res.redirect('http://localhost:5173');
+    res.redirect(`${this.configService.get<string>('FRONTEND_URL')}`);
   }
 
-  @Post('/password-reset')
+  @Post('/password-forgot')
   async sendPasswordReset(@Body() sendPasswordResetDto: SendPasswordResetDto) {
     return await this.emailSendingService.sendPasswordResetEmail(
       sendPasswordResetDto.email,
     );
   }
 
-  @Post('/password-reset/validate')
+  @Post('/password-reset')
   async validatePasswordReset(
     @Body() validatePasswordResetDto: ValidatePasswordReset,
   ) {

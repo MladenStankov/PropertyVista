@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { FaArrowLeft } from "react-icons/fa";
 
-const Verify = () => {
+function Verify() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
 
@@ -33,14 +33,12 @@ const Verify = () => {
       </div>
     </div>
   );
-};
+}
 
-const VerifyPage = () => {
+export default function VerifyPage() {
   return (
     <Suspense>
       <Verify />
     </Suspense>
   );
-};
-
-export default VerifyPage;
+}

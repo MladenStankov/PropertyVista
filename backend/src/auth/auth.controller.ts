@@ -19,6 +19,7 @@ import { GoogleOAuthGuard } from './guards/google-oauth.guard';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { EmailSendingService } from 'src/email-sending/email-sending.service';
 import { User } from 'src/users/entity/user.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -26,6 +27,7 @@ export class AuthController {
   constructor(
     private authService: AuthService,
     private emailSendingService: EmailSendingService,
+    private configService: ConfigService,
   ) {}
   @Post('/register')
   async register(@Body() registerPayload: CreateUserDto) {
@@ -75,6 +77,6 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     await this.authService.googleLogin(req, res);
-    res.redirect('http://localhost:5173');
+    res.redirect(`${this.configService.get<string>('FRONTEND_URL')}`);
   }
 }

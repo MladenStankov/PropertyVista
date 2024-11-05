@@ -12,7 +12,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import Link from "next/link";
 import GoogleButton from "../components/GoogleButton";
 
-export default function Register() {
+export default function RegisterPage() {
   const [fullName, setFullName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");

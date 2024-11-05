@@ -70,4 +70,9 @@ export class UsersService {
 
     await user.save();
   }
+
+  async hasPassword(email: string): Promise<boolean> {
+    const user = await this.usersRepository.findOneBy({ email });
+    return user.password ? true : false;
+  }
 }

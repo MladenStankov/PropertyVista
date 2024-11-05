@@ -6,9 +6,9 @@ import { redirect } from "next/navigation";
 
 import { FaArrowLeft, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
-import { IoWarningOutline } from "react-icons/io5";
 import Link from "next/link";
 import GoogleButton from "../components/GoogleButton";
+import ErrorMessage from "../components/ErrorMessage";
 
 export default function LoginPage() {
   const [email, setEmail] = useState<string>("");
@@ -57,7 +57,6 @@ export default function LoginPage() {
       setError(errorData.message || "Registration failed!");
       setLoading(false);
     } else {
-      console.log("Registration successful");
       redirect("/");
     }
   };
@@ -151,14 +150,7 @@ export default function LoginPage() {
 
         <GoogleButton text="Sign in with Google" />
 
-        {error && (
-          <div className="flex flex-row gap-2 mt-3 w-full justify-center">
-            <IoWarningOutline className="text-red-600 mt-[2px]" />
-            <p className="text-sm break-words text-red-600 font-semibold">
-              {error}
-            </p>
-          </div>
-        )}
+        <ErrorMessage error={error} />
       </form>
     </div>
   );

@@ -11,6 +11,7 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { UsersService } from 'src/users/users.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PasswordReset } from './entity/password-reset-email.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class EmailSendingService {
@@ -21,6 +22,7 @@ export class EmailSendingService {
     private readonly passwordResetRepository: Repository<PasswordReset>,
     private mailerService: MailerService,
     private userService: UsersService,
+    private configService: ConfigService,
   ) {}
 
   private async generateRandomToken(): Promise<string> {
@@ -57,10 +59,12 @@ export class EmailSendingService {
   async sendUserVerificationEmail(userEmail: string) {
     const token = await this.createUserVerificationEmail(userEmail);
 
+    const verificationLink = `${this.configService.get<string>('BACKEND_URL')}/email-sending/verify-email/${token}`;
+
     this.mailerService.sendMail({
       to: userEmail,
       subject: 'Verify your account',
-      html: `http://localhost:3000/email-sending/verify-email/${token}`,
+      html: verificationLink,
     });
   }
 
@@ -99,16 +103,20 @@ export class EmailSendingService {
   }
 
   async sendPasswordResetEmail(userEmail: string): Promise<void> {
-    if (!this.userService.existsByEmail(userEmail)) {
+    if (!(await this.userService.existsByEmail(userEmail))) {
       return;
     }
-
+    if (!(await this.userService.hasPassword(userEmail))) {
+      return;
+    }
     const token = await this.createPasswordResetEmail(userEmail);
+
+    const resetPasswordLink = `${this.configService.get<string>('FRONTEND_URL')}/login/reset-password?token=${token}`;
 
     this.mailerService.sendMail({
       to: userEmail,
       subject: 'Reset your password',
-      html: `${token}`,
+      html: resetPasswordLink,
     });
   }
 

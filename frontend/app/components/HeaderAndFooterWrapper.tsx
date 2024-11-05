@@ -16,6 +16,7 @@ export default function HeaderAndFooterWrapper({
     "/register",
     "/register/verify",
     "/login/forgot-password",
+    "/login/reset-password",
   ];
   const showHeaderAndFooter = !noLayoutRoutes.includes(pathName);
 
