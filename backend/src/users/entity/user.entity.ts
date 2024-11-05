@@ -38,7 +38,7 @@ export class User extends BaseEntity {
   @IsString()
   @Column({
     default:
-      's3://property-vista-images/307ce493-b254-4b2d-8ba4-d12c080d6651.jpg',
+      'https://property-vista-images.s3.eu-north-1.amazonaws.com/default-profile-image.png',
     nullable: true,
   })
   imageUrl?: string;
