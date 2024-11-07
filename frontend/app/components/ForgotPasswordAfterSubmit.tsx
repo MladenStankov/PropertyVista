@@ -18,7 +18,7 @@ export default function ForgotPasswordAfterSubmit() {
           Successfully sent a reset-password email!
         </h1>
         <p className="break-words max-w-96">
-          We sent a reset-password email if there is an account with this email.
+          We sent a reset-password email if an account with this email exists.
           For more instruction check your email.
         </p>
       </div>

@@ -50,7 +50,7 @@ export default function ForgotPasswordBeforeSubmit({
 
     if (!response.ok) {
       const errorData = await response.json();
-      setError(errorData.message || "Registration failed!");
+      setError(errorData.message || "Failed to send a reset password email!");
       setLoading(false);
     } else {
       handleSubmit();
@@ -79,7 +79,6 @@ export default function ForgotPasswordBeforeSubmit({
           className="rounded-md py-2 pr-9 pl-2 border-gray-400 w-full border"
           id="email"
           placeholder="Enter your email"
-          name="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />

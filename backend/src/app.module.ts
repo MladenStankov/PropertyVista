@@ -7,10 +7,12 @@ import { APP_GUARD } from '@nestjs/core';
 import { EmailSendingModule } from './email-sending/email-sending.module';
 import { AwsModule } from './aws/aws.module';
 import { ListingsModule } from './listings/listings.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DATABASE_HOST,

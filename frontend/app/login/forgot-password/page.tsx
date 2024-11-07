@@ -5,13 +5,13 @@ import ForgotPasswordBeforeSubmit from "@/app/components/ForgotPasswordBeforeSub
 import React, { useState } from "react";
 
 export default function ForgotPasswordPage() {
-  const [submit, setSubmit] = useState<boolean>(false);
+  const [isSubmitted, setIsSubmittedSubmit] = useState<boolean>(false);
 
   const handleSubmit = () => {
-    setSubmit(true);
+    setIsSubmittedSubmit(true);
   };
 
-  return !submit ? (
+  return !isSubmitted ? (
     <ForgotPasswordBeforeSubmit handleSubmit={handleSubmit} />
   ) : (
     <ForgotPasswordAfterSubmit />

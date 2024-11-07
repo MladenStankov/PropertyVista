@@ -4,7 +4,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThanOrEqual, Repository } from 'typeorm';
+import { LessThan, LessThanOrEqual, Repository } from 'typeorm';
 import { UserVerification } from './entity/user-verification-email.entity';
 import * as crypto from 'crypto';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -149,7 +149,7 @@ export class EmailSendingService {
   @Cron(CronExpression.EVERY_10_MINUTES)
   async deleteExpiredResetPasswords() {
     await this.passwordResetRepository.delete({
-      expirationDate: LessThanOrEqual(new Date()),
+      expirationDate: LessThan(new Date()),
     });
   }
 }

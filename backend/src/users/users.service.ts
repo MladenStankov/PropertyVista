@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
-import { Repository } from 'typeorm';
+import { LessThanOrEqual, Repository } from 'typeorm';
 import { hash } from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { CreateUserDto } from './dto/create-user.dto';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class UsersService {
@@ -74,5 +75,13 @@ export class UsersService {
   async hasPassword(email: string): Promise<boolean> {
     const user = await this.usersRepository.findOneBy({ email });
     return user.password ? true : false;
+  }
+
+  @Cron(CronExpression.EVERY_HOUR)
+  async deleteExpiredRefreshTokens() {
+    await this.usersRepository.delete({
+      isVerified: false,
+      createdAt: LessThanOrEqual(new Date(Date.now() - 30 * 60 * 1000)),
+    });
   }
 }

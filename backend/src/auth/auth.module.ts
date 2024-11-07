@@ -15,13 +15,11 @@ import { GoogleOAuthGuard } from './guards/google-oauth.guard';
 import { EmailSendingModule } from 'src/email-sending/email-sending.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthRefreshToken } from 'src/auth/entity/auth-refresh-token.entity';
-import { ScheduleModule } from '@nestjs/schedule';
 import { AuthRefreshTokenService } from './services/auth-refresh-token.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AuthRefreshToken]),
-    ScheduleModule.forRoot(),
     UsersModule,
     PassportModule,
     JwtModule.register({
