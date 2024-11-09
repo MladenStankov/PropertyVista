@@ -7,7 +7,7 @@ import useProfileImage from "../utils/useProfileImage";
 const Header = () => {
   const imageUrl = useProfileImage();
   return (
-    <header className="p-4 pb-5 sticky flex justify-between border border-gray-400 w-screen shadow-lg">
+    <header className="p-4 pb-5 sticky flex justify-between border border-gray-400 w-full">
       <Link href="/">
         <Image
           className="min-w-[150px] min-h-[20px]"
