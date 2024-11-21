@@ -7,7 +7,7 @@ import useProfileImage from "../utils/useProfileImage";
 const Header = () => {
   const imageUrl = useProfileImage();
   return (
-    <header className="p-4 pb-5 sticky flex justify-between border border-gray-400 w-full">
+    <header className="p-4 pb-5 sticky flex justify-between shadow-md border-gray-400 w-full top-0 bg-white z-10">
       <Link href="/">
         <Image
           className="min-w-[150px] min-h-[20px]"
@@ -21,13 +21,13 @@ const Header = () => {
       <nav className="w-2/5 min-w-fit max-md:hidden">
         <ul className="flex gap-10 justify-end">
           <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
-            <Link href="#">Buy</Link>
+            <Link href="/listings?type=buy">Buy</Link>
           </li>
           <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
-            <Link href="#">Rent</Link>
+            <Link href="/listings?type=rent">Rent</Link>
           </li>
           <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
-            <Link href="#">Sell</Link>
+            <Link href="/sell">Sell</Link>
           </li>
           <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light  ">
             <Link href="#">Calculators</Link>

@@ -1,7 +1,7 @@
 "use client";
 
-import ResetPasswordAfterSubmit from "@/app/components/ResetPasswordAfterSubmit";
-import ResetPasswordBeforeSubmit from "@/app/components/ResetPasswordBeforeSubmit";
+import ResetPasswordAfterSubmit from "@/app/components/auth/ResetPasswordAfterSubmit";
+import ResetPasswordBeforeSubmit from "@/app/components/auth/ResetPasswordBeforeSubmit";
 import { useSearchParams } from "next/navigation";
 import React, { Suspense, useState } from "react";
 

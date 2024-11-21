@@ -1,9 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-  
+
 html {
-    scrollbar-width: thin;
-    scrollbar-color: #555555 white;
-    scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #555555 white;
+  scroll-behavior: smooth;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button,
+input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
+
+select {
+  appearance: none;
 }

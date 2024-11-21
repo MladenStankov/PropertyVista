@@ -11,4 +11,5 @@ export enum AmenityType {
   TERRACE = 'terrace',
   FITNESS_CENTER = 'fitness_center',
   SAUNA = 'sauna',
+  GARAGE = 'garage',
 }

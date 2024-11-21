@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import RegisterBeforeSubmit from "../components/RegisterBeforeSubmit";
-import RegisterAfterSubmit from "../components/RegisterAfterSubmit";
+import RegisterBeforeSubmit from "../components/auth/RegisterBeforeSubmit";
+import RegisterAfterSubmit from "../components/auth/RegisterAfterSubmit";
 
 export default function RegisterPage() {
   const [email, setEmail] = useState<string>("");

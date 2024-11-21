@@ -1,9 +1,9 @@
-import AccountCTA from "./components/AccountCTA";
-import CalculatorCTA from "./components/CalculatorCTA";
-import ChatCTA from "./components/ChatCTA";
-import HeroSection from "./components/HeroSection";
-import ListingsCTA from "./components/ListingsCTA";
-import MostViewedCarousel from "./components/MostViewedCarousel";
+import AccountCTA from "./components/home/AccountCTA";
+import CalculatorCTA from "./components/home/CalculatorCTA";
+import ChatCTA from "./components/home/ChatCTA";
+import HeroSection from "./components/home/HeroSection";
+import ListingsCTA from "./components/home/ListingsCTA";
+import MostViewedCarousel from "./components/home/MostViewedCarousel";
 
 export default function Home() {
   return (

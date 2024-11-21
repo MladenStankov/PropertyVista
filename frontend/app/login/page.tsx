@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import FormInput from "../components/FormInput";
+import FormInput from "../components/auth/FormInput";
 import { redirect } from "next/navigation";
 
 import { FaArrowLeft, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
 import Link from "next/link";
-import GoogleButton from "../components/GoogleButton";
-import ErrorMessage from "../components/ErrorMessage";
+import GoogleButton from "../components/auth/GoogleButton";
+import ErrorMessage from "../components/auth/ErrorMessage";
 
 export default function LoginPage() {
   const [email, setEmail] = useState<string>("");

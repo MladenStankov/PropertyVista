@@ -31,7 +31,7 @@ const Footer = () => {
         </nav>
 
         <p className="text-sm mt-4 md:mt-0 text-gray-400">
-          &copy; {new Date().getFullYear()} PropertyVista. All rights reserved.
+          &copy; 2024 PropertyVista. All rights reserved.
         </p>
       </div>
     </footer>
