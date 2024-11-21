@@ -43,6 +43,9 @@ function MapComponent({
         if (coordinates === null) {
           coordinates = await getGeoLocationByCurrentLocation();
         }
+        if (coordinates === null) {
+          coordinates = { latitude: 0, longitude: 0 };
+        }
 
         setLocation(coordinates);
       } catch (error) {
