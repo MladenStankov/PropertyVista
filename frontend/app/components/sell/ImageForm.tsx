@@ -11,12 +11,12 @@ export default function ImageForm({ formData, handleImageChange }: IImageForm) {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
-    handleImageChange(files);
+    handleImageChange([...formData.images, ...files]);
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    handleImageChange(files);
+    handleImageChange([...formData.images, ...files]);
   };
 
   const handleRemoveImage = (index: number) => {

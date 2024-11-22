@@ -39,7 +39,7 @@ export default function AmenitiesSelector({
           ))}
         </div>
       ) : (
-        <div className="text-center">No more amenities available</div>
+        <div className="text-center">No more available amenities</div>
       )}
     </div>
   );

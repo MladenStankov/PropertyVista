@@ -5,7 +5,7 @@ import isUserAuthenticated from "./app/utils/isUserAuthenticated";
 export async function middleware(request: NextRequest) {
   const isAuth = await isUserAuthenticated();
 
-  const protectedRoutes = ["/profile"];
+  const protectedRoutes = ["/profile", "/sell"];
   const authRoutes = ["/login", "/register", "/register/verify"];
 
   const { pathname } = request.nextUrl;

@@ -125,7 +125,7 @@ export default function WizardForm() {
   const handleImageChange = (images: File[]) => {
     setFormData((prevFormData) => ({
       ...prevFormData,
-      images: [...prevFormData.images, ...images],
+      images: [...images],
     }));
   };
 
