@@ -32,7 +32,7 @@ export class ListingsController {
     @Req() req: Request,
     @Body() body: any,
     @UploadedFiles() files: Express.Multer.File[],
-  ) {
+  ): Promise<{ uuid: string }> {
     const publishListingDto: PublishListingDto = {
       createListing: JSON.parse(body.createListing),
       createLocation: JSON.parse(body.createLocation),
@@ -44,6 +44,6 @@ export class ListingsController {
     };
 
     publishListingDto.createListing.user = (req as any).user;
-    return this.listingService.publish(publishListingDto);
+    return { uuid: await this.listingService.publish(publishListingDto) };
   }
 }

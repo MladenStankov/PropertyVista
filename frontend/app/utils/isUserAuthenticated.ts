@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 
 export default async function isUserAuthenticated(): Promise<boolean> {
   const cookieStore = await cookies();
-  const API_URL: string = String(process.env.API_URL);
+  const API_URL: string = String(process.env.NEXT_PUBLIC_API_URL);
   let response: Response;
 
   try {

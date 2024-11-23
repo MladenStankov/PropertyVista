@@ -5,18 +5,25 @@ import { IWizardForm } from "./WizardForm";
 interface IImageForm {
   formData: IWizardForm;
   handleImageChange: (images: File[]) => void;
+  errors: { [key: string]: string };
 }
 
-export default function ImageForm({ formData, handleImageChange }: IImageForm) {
+export default function ImageForm({
+  formData,
+  handleImageChange,
+  errors,
+}: IImageForm) {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
-    handleImageChange([...formData.images, ...files]);
+    const allFiles = [...formData.images, ...files];
+    handleImageChange(allFiles.filter((_, index) => index < 10));
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    handleImageChange([...formData.images, ...files]);
+    const allFiles = [...formData.images, ...files];
+    handleImageChange(allFiles.filter((_, index) => index < 10));
   };
 
   const handleRemoveImage = (index: number) => {
@@ -31,7 +38,9 @@ export default function ImageForm({ formData, handleImageChange }: IImageForm) {
     <>
       <div className="flex flex-col gap-5">
         <div
-          className="border-2 border-blue-500 border-dashed flex justify-center text-center p-8 flex-col gap-6"
+          className={`border-2 border-blue-500 border-dashed flex justify-center text-center p-8 flex-col gap-6 ${
+            errors["images"] && "border-red-500"
+          }`}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
@@ -51,7 +60,13 @@ export default function ImageForm({ formData, handleImageChange }: IImageForm) {
           >
             Select Images
           </label>
+          <p className="text-xs">Max 10 images</p>
         </div>
+        {errors["images"] && (
+          <span className="text-red-500 text-sm mt-1 self-center">
+            {errors["images"]}
+          </span>
+        )}
         {formData.images.length > 0 && (
           <div className="h-60 overflow-y-scroll grid grid-cols-1 gap-2 border p-4 rounded-md">
             {formData.images.map((image, index) => (

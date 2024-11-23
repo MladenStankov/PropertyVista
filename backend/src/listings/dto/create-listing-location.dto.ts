@@ -1,18 +1,35 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { Listing } from '../entity/listing.entity';
 import { ApiHideProperty } from '@nestjs/swagger';
 
 export class CreateListingLocationDto {
-  @IsNotEmpty()
   @IsString()
-  address: string;
+  @IsNotEmpty()
+  streetNumber: string;
+
+  @IsString()
+  @IsNotEmpty()
+  streetName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  postalCode: string;
+
+  @IsString()
+  @IsNotEmpty()
+  city: string;
+
+  @IsString()
+  state: string;
+
+  @IsString()
+  @IsNotEmpty()
+  country: string;
 
   @IsNotEmpty()
-  @IsNumber()
   longitude: number;
 
   @IsNotEmpty()
-  @IsNumber()
   latitude: number;
 
   @ApiHideProperty()

@@ -64,5 +64,7 @@ export class ListingsService {
       createListingRoomDto.listing = newListing;
       this.listingRoomsService.create(createListingRoomDto);
     });
+
+    return newListing.uuid;
   }
 }

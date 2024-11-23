@@ -3,10 +3,15 @@ import { IForm } from "./WizardForm";
 import { FaEuroSign } from "react-icons/fa";
 import { TbMeterSquare } from "react-icons/tb";
 
+interface IGeneralInformationForm extends IForm {
+  errors: { [key: string]: string };
+}
+
 export default function GeneralInformationForm({
   formData,
   handleChange,
-}: IForm) {
+  errors,
+}: IGeneralInformationForm) {
   return (
     <>
       <div className="flex flex-col gap-5">
@@ -21,7 +26,9 @@ export default function GeneralInformationForm({
               value={formData.general.type}
               name="general.type"
               onChange={handleChange}
-              className="border-2 rounded-xl px-4 py-2"
+              className={`border-2 rounded-xl px-4 py-2 ${
+                errors["general.type"] ? "border-red-500" : ""
+              }`}
             >
               <option value="" disabled>
                 Select a type
@@ -29,6 +36,11 @@ export default function GeneralInformationForm({
               <option value="Buy">Buy</option>
               <option value="Rent">Rent</option>
             </select>
+            {errors["general.type"] && (
+              <span className="text-red-500 text-sm mt-1">
+                {errors["general.type"]}
+              </span>
+            )}
           </div>
 
           <div className="flex flex-col">
@@ -42,11 +54,18 @@ export default function GeneralInformationForm({
                 value={formData.general.price}
                 name="general.price"
                 placeholder="eg. 47000"
-                className="border-2 rounded-xl px-4 pr-10 py-2 w-full"
+                className={`border-2 rounded-xl px-4 pr-10 py-2 w-full ${
+                  errors["general.price"] ? "border-red-500" : ""
+                }`}
                 onChange={handleChange}
               />
               <FaEuroSign className="absolute right-2 top-1/2 transform -translate-y-1/2 text-slate-600" />
             </div>
+            {errors["general.price"] && (
+              <span className="text-red-500 text-sm mt-1">
+                {errors["general.price"]}
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -66,7 +85,9 @@ export default function GeneralInformationForm({
               value={formData.general.constructionType}
               name="general.constructionType"
               onChange={handleChange}
-              className="border-2 rounded-xl px-4 py-2"
+              className={`border-2 rounded-xl px-4 py-2 ${
+                errors["general.constructionType"] ? "border-red-500" : ""
+              }`}
             >
               <option value="" disabled>
                 Select a type
@@ -74,6 +95,11 @@ export default function GeneralInformationForm({
               <option value="House">House</option>
               <option value="Apartment">Apartment</option>
             </select>
+            {errors["general.constructionType"] && (
+              <span className="text-red-500 text-sm mt-1">
+                {errors["general.constructionType"]}
+              </span>
+            )}
           </div>
 
           <div className="flex flex-col">
@@ -90,7 +116,9 @@ export default function GeneralInformationForm({
                 value={formData.general.surfaceArea}
                 name="general.surfaceArea"
                 placeholder="eg. 70"
-                className="border-2 rounded-xl px-4 pr-10 py-2 w-full"
+                className={`border-2 rounded-xl px-4 pr-10 py-2 w-full ${
+                  errors["general.surfaceArea"] ? "border-red-500" : ""
+                }`}
                 onChange={handleChange}
               />
               <TbMeterSquare
@@ -98,6 +126,11 @@ export default function GeneralInformationForm({
                 size={25}
               />
             </div>
+            {errors["general.surfaceArea"] && (
+              <span className="text-red-500 text-sm mt-1">
+                {errors["general.surfaceArea"]}
+              </span>
+            )}
           </div>
 
           <div className="flex flex-col">
@@ -113,9 +146,16 @@ export default function GeneralInformationForm({
               value={formData.general.constructionYear}
               name="general.constructionYear"
               placeholder="eg. 1999"
-              className="border-2 rounded-xl px-4 py-2"
+              className={`border-2 rounded-xl px-4 py-2 ${
+                errors["general.constructionYear"] ? "border-red-500" : ""
+              }`}
               onChange={handleChange}
             />
+            {errors["general.constructionYear"] && (
+              <span className="text-red-500 text-sm mt-1">
+                {errors["general.constructionYear"]}
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -128,9 +168,16 @@ export default function GeneralInformationForm({
             value={formData.general.description}
             name="general.description"
             placeholder="eg. Cool house"
-            className="border-2 rounded-xl px-4 py-2 h-40 resize-none"
+            className={`border-2 rounded-xl px-4 py-2 h-40 resize-none ${
+              errors["general.description"] ? "border-red-500" : ""
+            }`}
             onChange={handleChange}
           />
+          {errors["general.description"] && (
+            <span className="text-red-500 text-sm mt-1">
+              {errors["general.description"]}
+            </span>
+          )}
         </div>
       </div>
     </>

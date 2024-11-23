@@ -14,12 +14,27 @@ export class ListingLocation extends BaseEntity {
   id: number;
 
   @Column()
-  address: string;
+  streetNumber: string;
 
   @Column()
+  streetName: string;
+
+  @Column()
+  postalCode: string;
+
+  @Column()
+  city: string;
+
+  @Column()
+  state: string;
+
+  @Column()
+  country: string;
+
+  @Column('float')
   longitude: number;
 
-  @Column()
+  @Column('float')
   latitude: number;
 
   @OneToOne(() => Listing, (listing) => listing.location, {

@@ -5,7 +5,15 @@ import { FaShower, FaBed } from "react-icons/fa";
 import { MdOutlineOtherHouses } from "react-icons/md";
 import { FaStairs } from "react-icons/fa6";
 
-export default function RoomForm({ formData, handleChange }: IForm) {
+interface IRoomForm extends IForm {
+  errors: { [key: string]: string };
+}
+
+export default function RoomForm({
+  formData,
+  handleChange,
+  errors,
+}: IRoomForm) {
   return (
     <>
       <div className="flex flex-col gap-5">
@@ -25,7 +33,9 @@ export default function RoomForm({ formData, handleChange }: IForm) {
                 value={formData.rooms.numberOfBedrooms}
                 name="rooms.numberOfBedrooms"
                 placeholder="eg. 2"
-                className="border-2 rounded-xl px-4 pr-10 py-2 w-full"
+                className={`border-2 rounded-xl px-4 pr-10 py-2 w-full ${
+                  errors["rooms.numberOfBedrooms"] ? "border-red-500" : ""
+                }`}
                 onChange={handleChange}
               />
               <FaBed
@@ -33,6 +43,11 @@ export default function RoomForm({ formData, handleChange }: IForm) {
                 size={25}
               />
             </div>
+            {errors["rooms.numberOfBedrooms"] && (
+              <span className="text-red-500 text-sm mt-1">
+                {errors["rooms.numberOfBedrooms"]}
+              </span>
+            )}
           </div>
 
           <div className="relative flex flex-col">
@@ -49,7 +64,9 @@ export default function RoomForm({ formData, handleChange }: IForm) {
                 value={formData.rooms.numberOfBathrooms}
                 name="rooms.numberOfBathrooms"
                 placeholder="eg. 2"
-                className="border-2 rounded-xl px-4 pr-10 py-2 w-full"
+                className={`border-2 rounded-xl px-4 pr-10 py-2 w-full ${
+                  errors["rooms.numberOfBathrooms"] ? "border-red-500" : ""
+                }`}
                 onChange={handleChange}
               />
               <FaShower
@@ -57,6 +74,11 @@ export default function RoomForm({ formData, handleChange }: IForm) {
                 size={25}
               />
             </div>
+            {errors["rooms.numberOfBathrooms"] && (
+              <span className="text-red-500 text-sm mt-1">
+                {errors["rooms.numberOfBathrooms"]}
+              </span>
+            )}
           </div>
 
           <div className="relative flex flex-col">
@@ -73,7 +95,9 @@ export default function RoomForm({ formData, handleChange }: IForm) {
                 value={formData.rooms.numberOfOtherRooms}
                 name="rooms.numberOfOtherRooms"
                 placeholder="eg. 3"
-                className="border-2 rounded-xl px-4 pr-10 py-2 w-full"
+                className={`border-2 rounded-xl px-4 pr-10 py-2 w-full ${
+                  errors["rooms.numberOfOtherRooms"] ? "border-red-500" : ""
+                }`}
                 onChange={handleChange}
               />
               <MdOutlineOtherHouses
@@ -81,6 +105,11 @@ export default function RoomForm({ formData, handleChange }: IForm) {
                 size={25}
               />
             </div>
+            {errors["rooms.numberOfOtherRooms"] && (
+              <span className="text-red-500 text-sm mt-1">
+                {errors["rooms.numberOfOtherRooms"]}
+              </span>
+            )}
           </div>
         </div>
 
@@ -100,7 +129,9 @@ export default function RoomForm({ formData, handleChange }: IForm) {
                 value={formData.rooms.numberOfFloors}
                 name="rooms.numberOfFloors"
                 placeholder="eg. 1"
-                className="border-2 rounded-xl px-4 pr-10 py-2 w-full"
+                className={`border-2 rounded-xl px-4 pr-10 py-2 w-full ${
+                  errors["rooms.numberOfFloors"] ? "border-red-500" : ""
+                }`}
                 onChange={handleChange}
               />
               <FaStairs
@@ -108,6 +139,11 @@ export default function RoomForm({ formData, handleChange }: IForm) {
                 size={25}
               />
             </div>
+            {errors["rooms.numberOfFloors"] && (
+              <span className="text-red-500 text-sm mt-1">
+                {errors["rooms.numberOfFloors"]}
+              </span>
+            )}
           </div>
         </div>
       </div>

@@ -13,6 +13,10 @@ const containerStyle = {
   height: "200px",
 };
 
+interface IMapComponent extends IAddress {
+  handleLocationChange: (longitude: number, latitude: number) => void;
+}
+
 function MapComponent({
   streetNumber,
   streetName,
@@ -20,7 +24,8 @@ function MapComponent({
   city,
   state,
   country,
-}: IAddress) {
+  handleLocationChange,
+}: IMapComponent) {
   const [location, setLocation] = useState<IGeoLocation | null>(null);
 
   const { isLoaded } = useJsApiLoader({
@@ -47,6 +52,7 @@ function MapComponent({
           coordinates = { latitude: 0, longitude: 0 };
         }
 
+        handleLocationChange(coordinates.longitude, coordinates.latitude);
         setLocation(coordinates);
       } catch (error) {
         console.error("Error fetching location:", error);
