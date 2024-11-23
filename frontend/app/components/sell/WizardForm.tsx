@@ -236,6 +236,7 @@ export default function WizardForm() {
         if (firstErrorStep == 0) {
           if (key.startsWith("address")) firstErrorStep = 1;
           else if (key.startsWith("general")) firstErrorStep = 2;
+          else if (key.startsWith("images")) firstErrorStep = 3;
           else if (key.startsWith("rooms")) firstErrorStep = 4;
           else firstErrorStep = 5;
         }
