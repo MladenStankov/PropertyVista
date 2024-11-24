@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import Header from "./Nav";
+import Nav from "./nav/Nav";
 import Footer from "./Footer";
 import React from "react";
 
@@ -22,7 +22,7 @@ export default function HeaderAndFooterWrapper({
 
   return (
     <React.Fragment>
-      {showHeaderAndFooter && <Header />}
+      {showHeaderAndFooter && <Nav />}
       <main>{children}</main>
       {showHeaderAndFooter && <Footer />}
     </React.Fragment>

@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 
-interface FetchJson {
+interface IUser {
   id: number;
   fullName: string;
   email: string;
   imageUrl: string;
 }
 
-export default function useProfileImage() {
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+export default function useProfile() {
+  const [user, setUser] = useState<IUser | null>(null);
 
   useEffect(() => {
     async function fetchImage() {
@@ -18,18 +18,18 @@ export default function useProfileImage() {
         });
 
         if (!response.ok) {
-          setImageUrl(null);
+          setUser(null);
           return;
         }
 
-        const data: FetchJson = await response.json();
+        const data: IUser = await response.json();
 
-        setImageUrl(data.imageUrl);
+        setUser(data);
       } catch (error) {
         console.log("Profile image error:" + error);
       }
     }
     fetchImage();
   }, []);
-  return imageUrl;
+  return user;
 }
