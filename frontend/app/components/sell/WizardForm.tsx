@@ -12,7 +12,10 @@ import Link from "next/link";
 
 type PropertyType = "buy" | "rent";
 
-type ConstructionType = "house" | "apartment";
+enum ConstructionType {
+  HOUSE = "house",
+  APARTMENT = "apartment",
+}
 
 export enum AmenityType {
   AIR_CONDITIONING = "air_conditioning",
@@ -82,7 +85,7 @@ export default function WizardForm() {
     general: {
       type: "buy",
       price: "",
-      constructionType: "house",
+      constructionType: ConstructionType.HOUSE,
       surfaceArea: "",
       constructionYear: "",
       description: "",

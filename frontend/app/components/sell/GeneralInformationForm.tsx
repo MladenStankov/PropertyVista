@@ -33,8 +33,8 @@ export default function GeneralInformationForm({
               <option value="" disabled>
                 Select a type
               </option>
-              <option value="Buy">Buy</option>
-              <option value="Rent">Rent</option>
+              <option value="buy">Buy</option>
+              <option value="rent">Rent</option>
             </select>
             {errors["general.type"] && (
               <span className="text-red-500 text-sm mt-1">
@@ -92,8 +92,8 @@ export default function GeneralInformationForm({
               <option value="" disabled>
                 Select a type
               </option>
-              <option value="House">House</option>
-              <option value="Apartment">Apartment</option>
+              <option value="house">House</option>
+              <option value="apartment">Apartment</option>
             </select>
             {errors["general.constructionType"] && (
               <span className="text-red-500 text-sm mt-1">

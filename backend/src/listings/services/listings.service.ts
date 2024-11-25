@@ -9,6 +9,8 @@ import { ListingLocationsService } from './listing-locations.service';
 import { ListingImagesService } from './listing-images.service';
 import { ListingAmenitiesService } from './listing-amenities.service';
 import { ListingRoomsService } from './listing-rooms.service';
+import { IListing } from '../dto/get-all-listing.dto';
+import { RoomType } from '../types/room-type.dto';
 
 @Injectable()
 export class ListingsService {
@@ -32,10 +34,6 @@ export class ListingsService {
 
   async findByUuid(uuid: string): Promise<Listing> {
     return this.listingRepository.findOneBy({ uuid });
-  }
-
-  async getAll(): Promise<Listing[]> {
-    return this.listingRepository.find();
   }
 
   async getByUser(user: User): Promise<Listing[]> {
@@ -66,5 +64,38 @@ export class ListingsService {
     });
 
     return newListing.uuid;
+  }
+
+  private getNumberOfRooms(listing: Listing, roomType: RoomType): number {
+    const result = listing.rooms
+      .filter((room) => room.type === roomType)
+      .reduce((sum, room) => sum + room.amount, 0);
+
+    return result || 0;
+  }
+
+  async getAll(): Promise<IListing[]> {
+    const listings = await this.listingRepository.find({
+      relations: { images: true, location: true, rooms: true },
+    });
+
+    return listings.map((listing) => {
+      const formattedAddress = `${listing.location.streetName} ${listing.location.streetNumber}, ${listing.location.postalCode}, ${listing.location.city}, ${listing.location.country}`;
+
+      const transformedListing: IListing = {
+        uuid: listing.uuid,
+        address: formattedAddress,
+        imageUrl: listing.images[0]?.imageUrl || '',
+        type: listing.type,
+        constructionType: listing.constructionType,
+        numberOfBedrooms: this.getNumberOfRooms(listing, RoomType.BEDROOM),
+        numberOfBathrooms: this.getNumberOfRooms(listing, RoomType.BATHROOM),
+        numberOfFloors: this.getNumberOfRooms(listing, RoomType.FLOOR),
+        surfaceArea: listing.livingSurface,
+        price: listing.price,
+      };
+
+      return transformedListing;
+    });
   }
 }

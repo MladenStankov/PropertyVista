@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   Req,
   UploadedFiles,
@@ -12,6 +13,7 @@ import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { PublishListingDto } from './dto/publish-listing.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { IListing } from './dto/get-all-listing.dto';
 
 const MAX_IMAGES = 10;
 
@@ -45,5 +47,10 @@ export class ListingsController {
 
     publishListingDto.createListing.user = (req as any).user;
     return { uuid: await this.listingService.publish(publishListingDto) };
+  }
+
+  @Get()
+  async getAll(): Promise<IListing[]> {
+    return this.listingService.getAll();
   }
 }
