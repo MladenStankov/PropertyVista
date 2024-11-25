@@ -57,7 +57,7 @@ export default function ProfileMenu({ setIsProfileMenuVisible }: IProfileMenu) {
     <div
       ref={menuRef}
       className="absolute bg-white divide-y-[1px] top-[68px] right-0 z-10 w-60 text-base shadow-2xl p-2
-     grid grid-rows-4 rounded-sm text-gray-700 border-2"
+     grid grid-rows-4 rounded-sm text-gray-700"
     >
       <Link className="p-3 hover:bg-gray-100" href="/profile">
         <div className="flex items-center gap-2 hover:underline">
