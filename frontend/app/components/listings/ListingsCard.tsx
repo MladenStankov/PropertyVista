@@ -39,45 +39,45 @@ export default function ListingsCard({
   return (
     <div className="border-2 shadow-lg hover:shadow-xl rounded-xl grid grid-rows-3">
       <Link href={`listings/${uuid}`} className="row-span-2 relative block">
-        <img src={imageUrl} className="w-full h-full object-cover" />
+        <img
+          src={imageUrl}
+          className="w-full h-full object-cover"
+          alt="Listing Image"
+        />
         <button
           onClick={(e) => handleFavourite(e)}
-          className="absolute bottom-0 right-0 flex items-center gap-2 text-2xl 
-               bg-white rounded-full border-[1px] px-8 py-4 mb-2 mr-2 
-               hover:bg-gray-100 hover:font-semibold text-blue-500 font-medium border-black"
+          className="absolute bottom-0 right-0 flex items-center gap-2 text-sm md:text-xl 
+          bg-white rounded-full border-[1px] px-4 md:px-8 py-2 md:py-4 mb-2 mr-2 
+          hover:bg-gray-100 hover:font-semibold text-blue-500 font-medium border-black"
         >
           <FaRegHeart /> Favorite
         </button>
       </Link>
-      <div className="flex">
-        <div className="p-4 flex flex-col gap-3 w-1/2">
-          <p className="font-light text-lg">
+      <div className="flex flex-wrap sm:flex-col md:flex-row">
+        <div className="p-4 flex flex-col gap-3 w-full md:w-1/2">
+          <p className="font-light text-sm md:text-lg">
             {constructionType[0].toUpperCase() + constructionType.slice(1)} for{" "}
             {type === "buy" ? "sell" : type}
           </p>
-          <p className="text-3xl font-bold">
+          <p className="text-lg md:text-3xl font-bold">
             {new Intl.NumberFormat("en-IE", {
               style: "currency",
               currency: "EUR",
             }).format(price)}
           </p>
-          <div className="flex gap-1">
-            <span className="font-bold">{numberOfBedrooms}</span>
-            bed
-            <span className="font-bold">{numberOfBathrooms}</span>
-            bath
-            <span className="font-bold">{numberOfFloors}</span>
-            floor
-            <span className="font-bold">{surfaceArea}</span>
-            m&sup2;
+          <div className="flex gap-1 text-xs md:text-base">
+            <span className="font-bold">{numberOfBedrooms}</span> bed
+            <span className="font-bold">{numberOfBathrooms}</span> bath
+            <span className="font-bold">{numberOfFloors}</span> floor
+            <span className="font-bold">{surfaceArea}</span> m&sup2;
           </div>
-          <p className="max-w-[calc(70%)] break-words font-light line-clamp-2">
+          <p className="max-w-full md:max-w-[calc(70%)] break-words font-light line-clamp-2 text-sm md:text-base">
             {address}
           </p>
         </div>
-        <div className="flex flex-col justify-end items-end w-1/2 mb-4 mr-2">
+        <div className="flex flex-col justify-end items-end w-full md:w-1/2 mb-4 md:mr-2">
           <Link href="/chats" passHref>
-            <button className="border-2 rounded-full border-black px-8 py-4 hover:bg-gray-100 hover:font-semibold text-xl">
+            <button className="border-2 rounded-full border-black px-6 md:px-8 py-2 md:py-4 hover:bg-gray-100 hover:font-semibold text-sm md:text-xl">
               Contact agent
             </button>
           </Link>
