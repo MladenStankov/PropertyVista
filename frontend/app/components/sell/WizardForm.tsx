@@ -10,9 +10,9 @@ import RoomForm from "./RoomForm";
 import AmenitiesForm from "./AmenitiesForm";
 import Link from "next/link";
 
-type PropertyType = "buy" | "rent";
+export type PropertyType = "buy" | "rent";
 
-enum ConstructionType {
+export enum ConstructionType {
   HOUSE = "house",
   APARTMENT = "apartment",
 }
