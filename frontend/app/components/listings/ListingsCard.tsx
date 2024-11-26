@@ -71,11 +71,11 @@ export default function ListingsCard({
             <span className="font-bold">{numberOfFloors}</span> floor
             <span className="font-bold">{surfaceArea}</span> m&sup2;
           </div>
-          <p className="max-w-full md:max-w-[calc(70%)] break-words font-light line-clamp-2 text-sm md:text-base">
+          <p className="max-w-full break-words font-light line-clamp-2 text-sm md:text-base">
             {address}
           </p>
         </div>
-        <div className="flex flex-col justify-end items-end w-full md:w-1/2 mb-4 md:mr-2">
+        <div className="flex flex-col items-center w-full mb-4 md:mr-2">
           <Link href="/chats" passHref>
             <button className="border-2 rounded-full border-black px-6 md:px-8 py-2 md:py-4 hover:bg-gray-100 hover:font-semibold text-sm md:text-xl">
               Contact agent
