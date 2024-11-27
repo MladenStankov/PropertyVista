@@ -1,7 +1,7 @@
 import React from "react";
 import Map from "./Map";
 import { IForm } from "./WizardForm";
-import { useCountries } from "use-react-countries";
+import countries from "world-countries";
 
 interface IAddressForm extends IForm {
   handleLocationChange: (longitude: number, latitude: number) => void;
@@ -14,8 +14,6 @@ export default function AddressForm({
   handleLocationChange,
   errors,
 }: IAddressForm) {
-  const { countries } = useCountries();
-
   return (
     <>
       <div className="flex flex-col gap-5">
@@ -152,9 +150,9 @@ export default function AddressForm({
             <option value="" disabled>
               Select a country
             </option>
-            {countries?.map((country: any, index: number) => (
-              <option key={index} value={country.name}>
-                {country.name}
+            {countries?.map((country, index: number) => (
+              <option key={index} value={country.name.common}>
+                {country.name.common}
               </option>
             ))}
           </select>

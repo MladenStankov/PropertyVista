@@ -13,6 +13,7 @@ import { GiGardeningShears } from "react-icons/gi";
 import { MdBalcony } from "react-icons/md";
 import { IoIosFitness } from "react-icons/io";
 import { PiTowelLight } from "react-icons/pi";
+import { IconType } from "react-icons";
 
 interface IAmenityContainer {
   amenity: string;
@@ -20,7 +21,7 @@ interface IAmenityContainer {
   handleRemoveAmenity: (index: number) => void;
 }
 
-const amenityIcons: { [key: string]: React.ComponentType } = {
+const amenityIcons: { [key: string]: IconType } = {
   air_conditioning: TbAirConditioning,
   heating: CgSmartHomeHeat,
   washer: CgSmartHomeWashMachine,
@@ -46,7 +47,10 @@ export default function AmenityContainer({
   return (
     <div className="grid grid-cols-5 max-sm:grid-cols-1 gap-4 items-center bg-slate-100 border rounded-md p-4 h-auto">
       {Icon ? (
-        <Icon size={50} className="text-gray-600 mx-auto sm:mb-2 self-center" />
+        <Icon
+          size={50}
+          className="text-gray-600 mx-auto sm:mb-2 self-center w-12 h-12"
+        />
       ) : (
         <div className="text-gray-600 mx-auto sm:mb-2">No Icon</div>
       )}

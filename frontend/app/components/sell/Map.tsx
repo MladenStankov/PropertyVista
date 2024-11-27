@@ -60,7 +60,15 @@ function MapComponent({
     };
 
     fetchLocation();
-  }, [streetName, streetNumber, postalCode, city, country, state]);
+  }, [
+    streetName,
+    streetNumber,
+    postalCode,
+    city,
+    country,
+    state,
+    handleLocationChange,
+  ]);
 
   const isValidLocation =
     location && !isNaN(location.latitude) && !isNaN(location.longitude);

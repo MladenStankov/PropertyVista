@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import FormInput from "../components/FormInput";
 
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { CiUser } from "react-icons/ci";
@@ -9,7 +8,8 @@ import { MdOutlineEmail } from "react-icons/md";
 import { IoWarningOutline } from "react-icons/io5";
 import { FaArrowLeft } from "react-icons/fa";
 import Link from "next/link";
-import GoogleButton from "../components/GoogleButton";
+import GoogleButton from "./GoogleButton";
+import FormInput from "./FormInput";
 
 interface RegisterBeforeSubmitProps {
   handleRegistration: (email: string) => void;

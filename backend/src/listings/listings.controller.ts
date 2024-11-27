@@ -14,6 +14,7 @@ import { JwtGuard } from 'src/auth/guards/jwt.guard';
 import { PublishListingDto } from './dto/publish-listing.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { IListing } from './dto/get-all-listing.dto';
+import { Throttle } from '@nestjs/throttler';
 
 const MAX_IMAGES = 10;
 
@@ -49,6 +50,7 @@ export class ListingsController {
     return { uuid: await this.listingService.publish(publishListingDto) };
   }
 
+  @Throttle({ default: { limit: 100, ttl: 1000 } })
   @Get()
   async getAll(): Promise<IListing[]> {
     return this.listingService.getAll();
