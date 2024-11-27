@@ -5,7 +5,7 @@ import { ConstructionType, PropertyType } from "../sell/WizardForm";
 import { FaRegHeart } from "react-icons/fa6";
 import Link from "next/link";
 
-interface IListingsCard {
+export interface IListingsCard {
   uuid: string;
   address: string;
   imageUrl: string;
@@ -21,7 +21,7 @@ interface IListingsCard {
 export default function ListingsCard({
   uuid = "1",
   address = "Розова Долина 21, 1421 София, България",
-  imageUrl = "https://placehold.co/600x400",
+  imageUrl = "https://property-vista-images.s3.amazonaws.com/1732562103461-gravityfalls.jpg",
   type = "buy",
   constructionType = ConstructionType.HOUSE,
   numberOfBathrooms = 1,
@@ -37,11 +37,11 @@ export default function ListingsCard({
   };
 
   return (
-    <div className="border-2 shadow-lg hover:shadow-xl rounded-xl grid grid-rows-3">
-      <Link href={`listings/${uuid}`} className="row-span-2 relative block">
+    <div className="border-2 shadow-lg hover:shadow-xl rounded-xl grid grid-rows-2">
+      <Link href={`listings/${uuid}`} className="relative">
         <img
           src={imageUrl}
-          className="w-full h-full object-cover"
+          className="w-full h-72 object-cover"
           alt="Listing Image"
         />
         <button

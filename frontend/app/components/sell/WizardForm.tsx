@@ -324,7 +324,7 @@ export default function WizardForm() {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="flex flex-col justify-center items-center m-4 p-4 md:m-10 md:p-10 mx-auto max-w-screen-lg rounded-lg shadow-2xl ring-2 bg-white relative">
+      <div className="flex flex-col justify-center items-center m-4 p-4 md:m-10 md:p-10 mx-auto min-w-[calc(80%)] max-h-full rounded-lg shadow-2xl ring-2 bg-white relative">
         {newListingUUID && (
           <div className="inset-0 w-full h-full bg-white absolute z-[1] flex flex-col items-center justify-center gap-10 p-10  ">
             <h1 className="text-center text-5xl font-medium drop-shadow-2xl text-slate-600 ">
@@ -348,7 +348,7 @@ export default function WizardForm() {
               {Array.from({ length: 5 }).map((_, index) => (
                 <li
                   key={index}
-                  className="flex flex-col md:flex-row items-center md:items-start text-center
+                  className="flex flex-col md:flex-row items-center md:items-start text-center gap-10
                    hover:bg-slate-100 hover:cursor-pointer p-2 rounded-full"
                   onClick={() => setStep(index + 1)}
                 >

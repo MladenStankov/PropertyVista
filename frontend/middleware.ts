@@ -1,22 +1,39 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import isUserAuthenticated from "./app/utils/isUserAuthenticated";
+import getUser from "./app/utils/getUser";
 
 export async function middleware(request: NextRequest) {
-  const isAuth = await isUserAuthenticated();
+  const user = await getUser();
+  const requestHeaders = new Headers(request.headers);
+
+  if (user) {
+    requestHeaders.set(
+      String(process.env.NEXT_PUBLIC_USER_HEADER),
+      JSON.stringify(user)
+    );
+  }
 
   const protectedRoutes = ["/profile", "/sell"];
   const authRoutes = ["/login", "/register", "/register/verify"];
 
   const { pathname } = request.nextUrl;
 
-  if (isAuth && authRoutes.includes(pathname)) {
-    return NextResponse.redirect(new URL("/", request.url));
+  let response: NextResponse;
+
+  if (user && authRoutes.includes(pathname)) {
+    response = NextResponse.redirect(new URL("/", request.url));
+  } else if (!user && protectedRoutes.includes(pathname)) {
+    response = NextResponse.redirect(new URL("/login", request.url));
+  } else {
+    response = NextResponse.next();
   }
 
-  if (!isAuth && protectedRoutes.includes(pathname)) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  if (user) {
+    response.headers.set(
+      String(process.env.NEXT_PUBLIC_USER_HEADER),
+      JSON.stringify(user)
+    );
   }
 
-  return NextResponse.next();
+  return response;
 }

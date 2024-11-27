@@ -1,7 +1,9 @@
 "use client";
 
-import React from "react";
-import ListingsCard from "../components/listings/ListingsCard";
+import React, { useEffect, useState } from "react";
+import ListingsCard, {
+  IListingsCard,
+} from "../components/listings/ListingsCard";
 
 import { IoSearch } from "react-icons/io5";
 import { FaArrowRightLong } from "react-icons/fa6";
@@ -9,6 +11,32 @@ import { LuSettings2 } from "react-icons/lu";
 import { IoIosArrowDown } from "react-icons/io";
 
 export default function ListingsPage() {
+  const [listingsCards, setListingsCards] = useState<IListingsCard[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchListings = async () => {
+      setIsLoading(true);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/listings`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (!response.ok) {
+        setIsLoading(false);
+        return;
+      }
+
+      const data = await response.json();
+      setListingsCards(data);
+      setIsLoading(false);
+    };
+
+    fetchListings();
+  }, []);
+
   const handleSearch = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
@@ -16,7 +44,7 @@ export default function ListingsPage() {
   };
 
   return (
-    <div className="flex flex-col px-4 md:px-20 gap-10">
+    <div className="flex flex-col px-4 md:px-20 gap-10 py-10">
       <div className="flex flex-wrap justify-center gap-4 md:gap-10 items-center">
         <div className="w-full md:w-1/2 relative mt-2">
           <input
@@ -41,18 +69,15 @@ export default function ListingsPage() {
           <IoIosArrowDown />
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <ListingsCard />
-        <ListingsCard />
-        <ListingsCard />
-        <ListingsCard />
-        <ListingsCard />
-        <ListingsCard />
-        <ListingsCard />
-        <ListingsCard />
-        <ListingsCard />
-        <ListingsCard />
-      </div>
+      {isLoading === false ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {listingsCards.map((listing, index) => (
+            <ListingsCard key={index} {...listing} />
+          ))}
+        </div>
+      ) : (
+        <h2 className="text-5xl text-center ">Loading ...</h2>
+      )}
     </div>
   );
 }

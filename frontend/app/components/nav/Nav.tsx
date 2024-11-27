@@ -4,17 +4,20 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { GiHamburgerMenu } from "react-icons/gi";
+import { AiOutlineClose } from "react-icons/ai";
 import useProfile from "../../utils/useProfile";
 import ProfileMenu from "./ProfileMenu";
 
 export default function Nav() {
   const [isProfileMenuVisible, setIsProfileMenuVisible] =
     useState<boolean>(false);
+  const [isMobileMenuVisible, setIsMobileMenuVisible] =
+    useState<boolean>(false);
 
   const profile = useProfile();
 
   return (
-    <header className="p-4 pb-5 sticky flex justify-between shadow-md border-gray-400 w-full top-0 bg-white z-10">
+    <header className="p-4 sticky flex justify-between shadow-md border-gray-400 w-full top-0 bg-white z-10">
       <Link href="/">
         <Image
           className="min-w-[150px] min-h-[20px] hover:scale-105 transition-all duration-300"
@@ -25,7 +28,7 @@ export default function Nav() {
         />
       </Link>
 
-      <nav className="w-2/5 min-w-fit max-md:hidden">
+      <nav className="hidden md:flex min-w-fit">
         <ul className="flex gap-10 justify-end">
           <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
             <Link href="/listings?type=buy">Buy</Link>
@@ -36,7 +39,7 @@ export default function Nav() {
           <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
             <Link href="/sell">Sell</Link>
           </li>
-          <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light  ">
+          <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
             <Link href="#">Calculators</Link>
           </li>
           <div className="flex flex-row gap-3 relative">
@@ -70,7 +73,92 @@ export default function Nav() {
           </div>
         </ul>
       </nav>
-      <GiHamburgerMenu className="md:hidden text-3xl text-blue-500 hover:text-blue-600 hover:cursor-pointer min-w-[50px]" />
+
+      <div className="md:hidden flex items-center">
+        <GiHamburgerMenu
+          className="text-3xl text-blue-500 hover:text-blue-600 hover:cursor-pointer"
+          onClick={() => setIsMobileMenuVisible(true)}
+        />
+      </div>
+
+      {isMobileMenuVisible && (
+        <div className="fixed top-0 right-0 w-fit h-full bg-white z-20 flex flex-col items-start p-6 gap-4 shadow-md">
+          <AiOutlineClose
+            className="text-3xl text-blue-500 hover:text-blue-600 hover:cursor-pointer self-end"
+            onClick={() => setIsMobileMenuVisible(false)}
+          />
+          <ul className="flex flex-col gap-6 w-full divide-y-[2px]">
+            <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
+              <Link
+                href="/listings?type=buy"
+                onClick={() => setIsMobileMenuVisible(false)}
+              >
+                Buy
+              </Link>
+            </li>
+            <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
+              <Link
+                href="/listings?type=rent"
+                onClick={() => setIsMobileMenuVisible(false)}
+              >
+                Rent
+              </Link>
+            </li>
+            <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
+              <Link href="/sell" onClick={() => setIsMobileMenuVisible(false)}>
+                Sell
+              </Link>
+            </li>
+            <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
+              <Link href="#" onClick={() => setIsMobileMenuVisible(false)}>
+                Calculators
+              </Link>
+            </li>
+            {profile ? (
+              <div
+                className="flex gap-4 items-center mt-4"
+                onClick={() => {
+                  setIsProfileMenuVisible(!isProfileMenuVisible);
+                  setIsMobileMenuVisible(false);
+                }}
+              >
+                <Image
+                  src={profile.imageUrl}
+                  alt="Profile Image"
+                  width={35}
+                  height={35}
+                  className="rounded-full"
+                />
+                <span className="text-lg font-light text-blue-500">
+                  Profile
+                </span>
+              </div>
+            ) : (
+              <>
+                <li className="text-lg pt-1 hover:underline hover:text-blue-500">
+                  <Link
+                    href="/login"
+                    onClick={() => setIsMobileMenuVisible(false)}
+                  >
+                    Log in
+                  </Link>
+                </li>
+                <li className="whitespace-nowrap text-lg">
+                  <Link
+                    href="/register"
+                    onClick={() => setIsMobileMenuVisible(false)}
+                  >
+                    <button className="rounded-md px-3 py-1 bg-blue-500 text-white hover:bg-blue-600">
+                      Sign up
+                    </button>
+                  </Link>
+                </li>
+              </>
+            )}
+          </ul>
+        </div>
+      )}
+
       {isProfileMenuVisible && (
         <ProfileMenu setIsProfileMenuVisible={setIsProfileMenuVisible} />
       )}

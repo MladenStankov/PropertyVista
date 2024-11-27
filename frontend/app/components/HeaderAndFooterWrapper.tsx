@@ -1,9 +1,8 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import Nav from "./nav/Nav";
 import Footer from "./Footer";
-import React from "react";
+import Nav from "./nav/Nav";
 
 export default function HeaderAndFooterWrapper({
   children,
@@ -21,10 +20,10 @@ export default function HeaderAndFooterWrapper({
   const showHeaderAndFooter = !noLayoutRoutes.includes(pathName);
 
   return (
-    <React.Fragment>
+    <div className="flex flex-col min-h-screen">
       {showHeaderAndFooter && <Nav />}
-      <main>{children}</main>
+      <main className="flex-grow">{children}</main>
       {showHeaderAndFooter && <Footer />}
-    </React.Fragment>
+    </div>
   );
 }
