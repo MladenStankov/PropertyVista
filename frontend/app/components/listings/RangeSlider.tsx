@@ -10,6 +10,7 @@ interface IRangeSlider {
   maxValue: number | null | undefined;
   maxRange: number;
   step: number;
+  marks?: { value: number }[];
 
   valueName: string;
 
@@ -33,15 +34,22 @@ export default function RangeSlider({
   maxValue,
   maxRange,
   step,
+  marks,
   valueName,
   handleRangeChange,
   handleInputRangeChange,
 }: IRangeSlider) {
   const formatLabel = (value: number) =>
-    new Intl.NumberFormat("en-IE", {
-      style: "currency",
-      currency: "EUR",
-    }).format(value);
+    range === RangeType.SURFACE_AREA
+      ? new Intl.NumberFormat("en-IE", {
+          style: "decimal",
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(value) + " m^2"
+      : new Intl.NumberFormat("en-IE", {
+          style: "currency",
+          currency: "EUR",
+        }).format(value);
 
   return (
     <div className="mb-6">
@@ -54,8 +62,9 @@ export default function RangeSlider({
         valueLabelDisplay="off"
         min={0}
         max={maxRange}
-        step={step}
+        step={marks ? null : step}
         disableSwap
+        marks={marks}
       />
       <div className="flex justify-between mt-2">
         <div className="flex items-center gap-2">
@@ -66,6 +75,12 @@ export default function RangeSlider({
               minValue !== null && minValue != undefined
                 ? range === RangeType.PRICE
                   ? formatLabel(minValue)
+                  : range === RangeType.SURFACE_AREA
+                  ? new Intl.NumberFormat("en-IE", {
+                      style: "decimal",
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
+                    }).format(minValue) + " m²"
                   : minValue
                 : ""
             }
@@ -82,6 +97,12 @@ export default function RangeSlider({
               maxValue !== null && maxValue != undefined
                 ? range === RangeType.PRICE
                   ? formatLabel(maxValue)
+                  : range === RangeType.SURFACE_AREA
+                  ? new Intl.NumberFormat("en-IE", {
+                      style: "decimal",
+                      minimumFractionDigits: 0,
+                      maximumFractionDigits: 0,
+                    }).format(maxValue) + " m²"
                   : maxValue
                 : ""
             }

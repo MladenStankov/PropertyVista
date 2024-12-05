@@ -17,17 +17,65 @@ export enum RangeType {
   FLOORS = "floors",
 }
 
+const priceMarks = [
+  { value: 0 },
+  { value: 50_000 },
+  { value: 100_000 },
+  { value: 150_000 },
+  { value: 200_000 },
+  { value: 250_000 },
+  { value: 300_000 },
+  { value: 350_000 },
+  { value: 400_000 },
+  { value: 450_000 },
+  { value: 500_000 },
+  { value: 550_000 },
+  { value: 600_000 },
+  { value: 650_000 },
+  { value: 700_000 },
+  { value: 750_000 },
+  { value: 800_000 },
+  { value: 850_000 },
+  { value: 900_000 },
+  { value: 950_000 },
+  { value: 1_000_000 },
+  { value: 1_100_000 },
+  { value: 1_200_000 },
+  { value: 1_300_000 },
+  { value: 1_400_000 },
+  { value: 1_500_000 },
+  { value: 1_600_000 },
+  { value: 1_700_000 },
+  { value: 1_800_000 },
+  { value: 1_900_000 },
+  { value: 2_000_000 },
+  { value: 2_250_000 },
+  { value: 2_500_000 },
+  { value: 2_750_000 },
+  { value: 3_000_000 },
+  { value: 3_250_000 },
+  { value: 3_500_000 },
+  { value: 3_750_000 },
+  { value: 4_000_000 },
+  { value: 5_000_000 },
+  { value: 6_000_000 },
+  { value: 7_000_000 },
+  { value: 8_000_000 },
+  { value: 9_000_000 },
+  { value: 10_000_000 },
+];
+
 const maxRange = {
   [RangeType.PRICE]: 10_000_000,
-  [RangeType.SURFACE_AREA]: 10_000,
-  [RangeType.BEDROOMS]: 20,
-  [RangeType.BATHROOMS]: 20,
-  [RangeType.OTHER_ROOMS]: 20,
-  [RangeType.FLOORS]: 10,
+  [RangeType.SURFACE_AREA]: 5_000,
+  [RangeType.BEDROOMS]: 6,
+  [RangeType.BATHROOMS]: 6,
+  [RangeType.OTHER_ROOMS]: 6,
+  [RangeType.FLOORS]: 6,
 };
 
 const rangeStep = {
-  [RangeType.PRICE]: 50_000,
+  [RangeType.PRICE]: 100_000,
   [RangeType.SURFACE_AREA]: 100,
   [RangeType.BEDROOMS]: 1,
   [RangeType.BATHROOMS]: 1,
@@ -50,7 +98,7 @@ export default function FilterContainer({
       return;
     }
 
-    const maxValue = getMaxRange(range);
+    const maxValue = maxRange[range];
 
     switch (range) {
       case RangeType.PRICE: {
@@ -104,22 +152,6 @@ export default function FilterContainer({
     }
   };
 
-  const getMaxRange = (range: RangeType) => {
-    switch (range) {
-      case RangeType.PRICE:
-        return 10_000_000;
-      case RangeType.SURFACE_AREA:
-        return 10_000;
-      case RangeType.BEDROOMS:
-        return 20;
-      case RangeType.BATHROOMS:
-        return 20;
-      case RangeType.OTHER_ROOMS:
-        return 20;
-      case RangeType.FLOORS:
-        return 10;
-    }
-  };
   const handleInputRangeChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     valueName: keyof IFilter
@@ -139,7 +171,7 @@ export default function FilterContainer({
 
   return (
     <div
-      className="fixed top-20 bg-white w-2/3 rounded-md z-[1] shadow-xl ring-2 flex flex-col
+      className="fixed top-20 bg-white w-4/5 rounded-md z-[1] shadow-xl ring-2 flex flex-col
          justify-center p-10 self-center transition-transform duration-150 animate-shake max-h-[90vh] overflow-y-auto"
       style={{ animationDuration: "0.5s" }}
     >
@@ -162,6 +194,7 @@ export default function FilterContainer({
           maxRange={maxRange[RangeType.PRICE]}
           step={rangeStep[RangeType.PRICE]}
           valueName="Price"
+          marks={priceMarks}
           handleRangeChange={handleRangeChange}
           handleInputRangeChange={handleInputRangeChange}
         />
