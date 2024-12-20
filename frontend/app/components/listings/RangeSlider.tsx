@@ -45,15 +45,15 @@ export default function RangeSlider({
           style: "decimal",
           minimumFractionDigits: 0,
           maximumFractionDigits: 0,
-        }).format(value) + " m^2"
+        }).format(value) + " m²"
       : new Intl.NumberFormat("en-IE", {
           style: "currency",
           currency: "EUR",
         }).format(value);
 
   return (
-    <div className="mb-6">
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
+    <div className="p-4 bg-white rounded-lg shadow-md flex flex-col gap-4">
+      <h3 className="text-lg md:text-xl font-semibold">{title}</h3>
       <Slider
         value={[minValue || 0, maxValue || maxRange]}
         onChange={(event, value, activeThumb) =>
@@ -66,9 +66,9 @@ export default function RangeSlider({
         disableSwap
         marks={marks}
       />
-      <div className="flex justify-between mt-2">
-        <div className="flex items-center gap-2">
-          <label className="text-sm">Min:</label>
+      <div className="grid grid-cols-2 gap-4 md:gap-6 items-center">
+        <div className="flex flex-col">
+          <label className="text-sm md:text-base font-medium mb-1">Min:</label>
           <input
             type="text"
             value={
@@ -86,11 +86,11 @@ export default function RangeSlider({
             }
             placeholder="No min"
             onChange={(e) => handleInputRangeChange(e, "min" + valueName)}
-            className="border rounded px-2 py-1 w-32 text-right"
+            className="border rounded px-3 py-2 w-full text-right text-sm md:text-base"
           />
         </div>
-        <div className="flex items-center gap-2">
-          <label className="text-sm">Max:</label>
+        <div className="flex flex-col">
+          <label className="text-sm md:text-base font-medium mb-1">Max:</label>
           <input
             type="text"
             value={
@@ -108,7 +108,7 @@ export default function RangeSlider({
             }
             placeholder="No max"
             onChange={(e) => handleInputRangeChange(e, "max" + valueName)}
-            className="border rounded px-2 py-1 w-32 text-right"
+            className="border rounded px-3 py-2 w-full text-right text-sm md:text-base"
           />
         </div>
       </div>

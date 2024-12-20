@@ -1,6 +1,12 @@
 import React from "react";
 import { IFilter } from "@/app/listings/page";
 import RangeSlider from "./RangeSlider";
+import { FaHouseChimney } from "react-icons/fa6";
+import { PiBuildingFill } from "react-icons/pi";
+import { ConstructionType, PropertyType } from "../sell/WizardForm";
+import { BsArrows } from "react-icons/bs";
+import AmenitiesSelector from "./AmenitiesSelector";
+import { useRouter } from "next/router";
 
 interface IFilterContainer {
   filter: IFilter | null;
@@ -155,113 +161,286 @@ export default function FilterContainer({
   const handleInputRangeChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     valueName: keyof IFilter
-  ) => {
+  ): void => {
     const value = e.target.value.trim();
-    const numericValue = value ? parseInt(value.replace(/[^0-9]/g, "")) : null;
+    let numericValue = value
+      ? parseInt(value.replace(/[^0-9]/g, ""), 10)
+      : null;
 
-    setFilter((prevFilter: IFilter | null) => {
+    setFilter((prevFilter: IFilter | null): IFilter | null => {
       if (!prevFilter) return {};
+
+      if (valueName === "minYear" || valueName === "maxYear") {
+        const currentYear = new Date().getFullYear();
+        if (numericValue && (numericValue <= 0 || numericValue > currentYear)) {
+          numericValue = Math.max(0, Math.min(currentYear, numericValue));
+        }
+      }
 
       return {
         ...prevFilter,
-        [valueName]: numericValue / (valueName.includes("Price") ? 100 : 1),
+        [valueName]: numericValue
+          ? numericValue / (valueName.includes("Price") ? 100 : 1)
+          : null,
       };
     });
   };
 
+  const handleConstructionTypeChange = (
+    e: React.MouseEvent<SVGElement, MouseEvent>,
+    value: ConstructionType
+  ) => {
+    e.preventDefault();
+    if (filter?.constructionType === value) {
+      setFilter({
+        ...filter,
+        constructionType: null,
+      });
+    } else {
+      setFilter({
+        ...filter,
+        constructionType: value,
+      });
+    }
+  };
+
+  const handleListingTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    e.preventDefault();
+
+    setFilter({
+      ...filter,
+      type: e.target.value as PropertyType,
+    });
+  };
+
+  const handleApplyFilters = () => {
+    const queriesString = Object.entries(filter || {})
+      .map(([key, value]) => {
+        if (Array.isArray(value)) {
+          return value.map((v) => `${key}=${v}`).join("&");
+        } else if (value !== undefined && value !== null) {
+          return `${key}=${value}`;
+        }
+      })
+      .filter(Boolean)
+      .join("&");
+    window.location.href = `listings?${queriesString}`;
+  };
+
+  const handleClearFilters = () => {
+    window.location.href = `/listings`;
+  };
+
   return (
     <div
-      className="fixed top-20 bg-white w-4/5 rounded-md z-[1] shadow-xl ring-2 flex flex-col
-         justify-center p-10 self-center transition-transform duration-150 animate-shake max-h-[90vh] overflow-y-auto"
+      className="fixed top-20 bg-white w-[90%] sm:w-4/5 lg:w-2/3 rounded-md z-[1] shadow-xl ring-2 
+             flex flex-col justify-center p-6 sm:p-8 lg:p-10 self-center 
+             transition-transform duration-150 animate-shake max-h-[90vh] sm:max-h-[80vh] overflow-hidden"
       style={{ animationDuration: "0.5s" }}
     >
       <div className="flex w-full justify-between items-center mb-4">
-        <h2 className="text-4xl text-center self-center">Choose Filters</h2>
-        <div
-          onClick={() => setShowFilters(false)}
-          className="cursor-pointer text-red-500 font-bold text-4xl hover:text-red-700"
-        >
-          X
+        <div className="flex-1" />
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl text-center underline">
+          Choose Filters
+        </h2>
+        <div className="flex-1 flex justify-end">
+          <div
+            onClick={() => setShowFilters(false)}
+            className="cursor-pointer text-red-500 font-bold text-2xl sm:text-4xl hover:text-red-700"
+          >
+            X
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-10">
-        <RangeSlider
-          title="Price range"
-          range={RangeType.PRICE}
-          minValue={filter?.minPrice}
-          maxValue={filter?.maxPrice}
-          maxRange={maxRange[RangeType.PRICE]}
-          step={rangeStep[RangeType.PRICE]}
-          valueName="Price"
-          marks={priceMarks}
-          handleRangeChange={handleRangeChange}
-          handleInputRangeChange={handleInputRangeChange}
-        />
+      <div className="overflow-y-auto max-w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-5 mx-4">
+          <div>
+            <h2 className="text-lg sm:text-xl lg:text-2xl mb-2">
+              Listing Type
+            </h2>
+            <select
+              className="border-2 px-2 py-2 w-full rounded-md"
+              value={filter?.type || ""}
+              onChange={(e) => handleListingTypeChange(e)}
+            >
+              <option value="" disabled>
+                Select a type
+              </option>
+              <option value="buy">Buy</option>
+              <option value="rent">Rent</option>
+            </select>
+          </div>
 
-        <RangeSlider
-          title="Surface area range"
-          range={RangeType.SURFACE_AREA}
-          minValue={filter?.minSurfaceArea}
-          maxValue={filter?.maxSurfaceArea}
-          maxRange={maxRange[RangeType.SURFACE_AREA]}
-          step={rangeStep[RangeType.SURFACE_AREA]}
-          valueName="SurfaceArea"
-          handleRangeChange={handleRangeChange}
-          handleInputRangeChange={handleInputRangeChange}
-        />
+          <div className="flex flex-col items-center max-md:items-start">
+            <h2 className="text-lg sm:text-xl lg:text-2xl mb-2 ">
+              Construction Type
+            </h2>
+            <div className="flex justify-center gap-4">
+              <FaHouseChimney
+                size={50}
+                color={
+                  filter?.constructionType === ConstructionType.HOUSE
+                    ? "white"
+                    : ""
+                }
+                className={`p-2 border-2 rounded-l-md hover:cursor-pointer ${
+                  filter?.constructionType === ConstructionType.HOUSE
+                    ? "bg-blue-500"
+                    : ""
+                }`}
+                onClick={(e) =>
+                  handleConstructionTypeChange(e, ConstructionType.HOUSE)
+                }
+              />
+              <PiBuildingFill
+                size={50}
+                color={
+                  filter?.constructionType === ConstructionType.APARTMENT
+                    ? "white"
+                    : ""
+                }
+                className={`p-2 border-2 rounded-r-md hover:cursor-pointer ${
+                  filter?.constructionType === ConstructionType.APARTMENT
+                    ? "bg-blue-500"
+                    : ""
+                }`}
+                onClick={(e) =>
+                  handleConstructionTypeChange(e, ConstructionType.APARTMENT)
+                }
+              />
+            </div>
+          </div>
 
-        <RangeSlider
-          title="Bedrooms range"
-          range={RangeType.BEDROOMS}
-          minValue={filter?.minBedrooms}
-          maxValue={filter?.maxBedrooms}
-          maxRange={maxRange[RangeType.BEDROOMS]}
-          step={rangeStep[RangeType.BEDROOMS]}
-          valueName="Bedrooms"
-          handleRangeChange={handleRangeChange}
-          handleInputRangeChange={handleInputRangeChange}
-        />
+          <div>
+            <h2 className="text-lg sm:text-xl lg:text-2xl mb-2">
+              Year of Construction
+            </h2>
+            <div className="flex gap-2">
+              <input
+                type="number"
+                value={filter?.minYear || ""}
+                placeholder="No Min"
+                onChange={(e) => handleInputRangeChange(e, "minYear")}
+                className="p-2 border-2 rounded-md w-full"
+              />
+              <BsArrows className="self-center" size={50} />
+              <input
+                type="number"
+                value={filter?.maxYear || ""}
+                placeholder="No Max"
+                onChange={(e) => handleInputRangeChange(e, "maxYear")}
+                className="p-2 border-2 rounded-md w-full"
+              />
+            </div>
+          </div>
 
-        <RangeSlider
-          title="Bathrooms range"
-          range={RangeType.BATHROOMS}
-          minValue={filter?.minBathrooms}
-          maxValue={filter?.maxBathrooms}
-          maxRange={maxRange[RangeType.BATHROOMS]}
-          step={rangeStep[RangeType.BATHROOMS]}
-          valueName="Bathrooms"
-          handleRangeChange={handleRangeChange}
-          handleInputRangeChange={handleInputRangeChange}
-        />
+          <div>
+            <AmenitiesSelector
+              selectedAmenities={filter?.amenities || []}
+              setSelectedAmenities={(amenities) =>
+                setFilter((prevFilter) => ({
+                  ...prevFilter,
+                  amenities,
+                }))
+              }
+            />
+          </div>
+        </div>
 
-        <RangeSlider
-          title="Other rooms range"
-          range={RangeType.OTHER_ROOMS}
-          minValue={filter?.minOtherRooms}
-          maxValue={filter?.maxOtherRooms}
-          maxRange={maxRange[RangeType.OTHER_ROOMS]}
-          step={rangeStep[RangeType.OTHER_ROOMS]}
-          valueName="OtherRooms"
-          handleRangeChange={handleRangeChange}
-          handleInputRangeChange={handleInputRangeChange}
-        />
+        <div>
+          <h2 className="text-lg sm:text-xl lg:text-2xl mb-2">Ranges</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-8 p-2">
+            <RangeSlider
+              title="Price range"
+              range={RangeType.PRICE}
+              minValue={filter?.minPrice}
+              maxValue={filter?.maxPrice}
+              maxRange={maxRange[RangeType.PRICE]}
+              step={rangeStep[RangeType.PRICE]}
+              valueName="Price"
+              marks={priceMarks}
+              handleRangeChange={handleRangeChange}
+              handleInputRangeChange={handleInputRangeChange}
+            />
 
-        <RangeSlider
-          title="Floors range"
-          range={RangeType.FLOORS}
-          minValue={filter?.minFloors}
-          maxValue={filter?.maxFloors}
-          maxRange={maxRange[RangeType.FLOORS]}
-          step={rangeStep[RangeType.FLOORS]}
-          valueName="Floors"
-          handleRangeChange={handleRangeChange}
-          handleInputRangeChange={handleInputRangeChange}
-        />
+            <RangeSlider
+              title="Surface area range"
+              range={RangeType.SURFACE_AREA}
+              minValue={filter?.minSurfaceArea}
+              maxValue={filter?.maxSurfaceArea}
+              maxRange={maxRange[RangeType.SURFACE_AREA]}
+              step={rangeStep[RangeType.SURFACE_AREA]}
+              valueName="SurfaceArea"
+              handleRangeChange={handleRangeChange}
+              handleInputRangeChange={handleInputRangeChange}
+            />
+
+            <RangeSlider
+              title="Bedrooms range"
+              range={RangeType.BEDROOMS}
+              minValue={filter?.minBedrooms}
+              maxValue={filter?.maxBedrooms}
+              maxRange={maxRange[RangeType.BEDROOMS]}
+              step={rangeStep[RangeType.BEDROOMS]}
+              valueName="Bedrooms"
+              handleRangeChange={handleRangeChange}
+              handleInputRangeChange={handleInputRangeChange}
+            />
+
+            <RangeSlider
+              title="Bathrooms range"
+              range={RangeType.BATHROOMS}
+              minValue={filter?.minBathrooms}
+              maxValue={filter?.maxBathrooms}
+              maxRange={maxRange[RangeType.BATHROOMS]}
+              step={rangeStep[RangeType.BATHROOMS]}
+              valueName="Bathrooms"
+              handleRangeChange={handleRangeChange}
+              handleInputRangeChange={handleInputRangeChange}
+            />
+
+            <RangeSlider
+              title="Other rooms range"
+              range={RangeType.OTHER_ROOMS}
+              minValue={filter?.minOtherRooms}
+              maxValue={filter?.maxOtherRooms}
+              maxRange={maxRange[RangeType.OTHER_ROOMS]}
+              step={rangeStep[RangeType.OTHER_ROOMS]}
+              valueName="OtherRooms"
+              handleRangeChange={handleRangeChange}
+              handleInputRangeChange={handleInputRangeChange}
+            />
+
+            <RangeSlider
+              title="Floors range"
+              range={RangeType.FLOORS}
+              minValue={filter?.minFloors}
+              maxValue={filter?.maxFloors}
+              maxRange={maxRange[RangeType.FLOORS]}
+              step={rangeStep[RangeType.FLOORS]}
+              valueName="Floors"
+              handleRangeChange={handleRangeChange}
+              handleInputRangeChange={handleInputRangeChange}
+            />
+          </div>
+        </div>
       </div>
 
-      <button className="border rounded-md w-full bg-blue-500 text-white font-semibold text-xl py-2 hover:bg-blue-600">
+      <button
+        onClick={handleApplyFilters}
+        className="border rounded-md mt-4 w-full sm:w-2/3 self-center bg-blue-500 text-white 
+                     font-semibold text-lg sm:text-xl py-2 hover:bg-blue-600"
+      >
         Apply Filters
+      </button>
+
+      <button
+        onClick={handleClearFilters}
+        className="border rounded-md mt-4 w-full sm:w-2/3 self-center text-black 
+                     font-semibold text-lg sm:text-xl py-2 hover:bg-gray-200"
+      >
+        Clear Filters
       </button>
     </div>
   );

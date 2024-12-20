@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Query,
   Req,
   UploadedFiles,
   UseGuards,
@@ -15,6 +16,8 @@ import { PublishListingDto } from './dto/publish-listing.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { IListing } from './dto/get-all-listing.dto';
 import { Throttle } from '@nestjs/throttler';
+import { GetAllQueryDto } from './dto/get-all-query.dto';
+import { IFilter } from './dto/filter-inteface';
 
 const MAX_IMAGES = 10;
 
@@ -52,7 +55,27 @@ export class ListingsController {
 
   @Throttle({ default: { limit: 100, ttl: 1000 } })
   @Get()
-  async getAll(): Promise<IListing[]> {
-    return this.listingService.getAll();
+  async getAll(@Query() body: GetAllQueryDto): Promise<IListing[]> {
+    const filter: IFilter = {
+      type: body.type,
+      constructionType: body.constructionType,
+      minPrice: body.minPrice,
+      maxPrice: body.maxPrice,
+      minSurfaceArea: body.minSurfaceArea,
+      maxSurfaceArea: body.maxSurfaceArea,
+      minYear: body.minYear,
+      maxYear: body.maxYear,
+      minBedrooms: body.minBedrooms,
+      maxBedrooms: body.maxBedrooms,
+      minBathrooms: body.minBathrooms,
+      maxBathrooms: body.maxBathrooms,
+      minOtherRooms: body.minOtherRooms,
+      maxOtherRooms: body.maxOtherRooms,
+      minFloors: body.minFloors,
+      maxFloors: body.maxFloors,
+      amenities:
+        typeof body.amenities === 'string' ? [body.amenities] : body.amenities,
+    };
+    return this.listingService.getAll(filter, body.sort, body.search);
   }
 }

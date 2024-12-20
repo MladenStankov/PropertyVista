@@ -40,36 +40,73 @@ export default function ListingsPage() {
   const [listingsCards, setListingsCards] = useState<IListingsCard[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [search, setSearch] = useState<string>("");
-  const [filter, setFilter] = useState<IFilter | null>(null);
+  const [filter, setFilter] = useState<IFilter | null>({});
   const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [appliedFilter, setAppliedFilter] = useState<IFilter | null>({});
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const initialFilter: IFilter = {};
+
+    params.getAll("amenities").forEach((value) => {
+      if (value) {
+        initialFilter.amenities = initialFilter.amenities
+          ? [...initialFilter.amenities, value as AmenityType]
+          : [value as AmenityType];
+      }
+    });
+    params.forEach((value, key) => {
+      if (key !== "amenities") {
+        if (!isNaN(Number(value))) {
+          (initialFilter as any)[key] = parseInt(value, 10);
+        } else {
+          (initialFilter as any)[key] = value;
+        }
+      }
+    });
+
+    setFilter(initialFilter);
+    setAppliedFilter(initialFilter);
+  }, []);
 
   useEffect(() => {
     const fetchListings = async () => {
       setIsLoading(true);
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/listings`,
-        {
-          method: "GET",
+
+      try {
+        const queryString = Object.entries(appliedFilter || {})
+          .flatMap(([key, value]) =>
+            Array.isArray(value)
+              ? value.map((v) => `${key}=${encodeURIComponent(v)}`) // Separate query for each amenity
+              : value !== undefined && value !== null
+              ? [`${key}=${encodeURIComponent(value)}`]
+              : []
+          )
+          .join("&");
+
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/listings?${queryString}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch listings");
         }
-      );
 
-      if (!response.ok) {
+        const data: IListingsCard[] = await response.json();
+        setListingsCards(data || []);
+      } catch (error) {
+        console.error("Error fetching listings:", error);
+      } finally {
         setIsLoading(false);
-        return;
       }
-
-      const data = await response.json();
-      if (data !== null) {
-        setListingsCards(data);
-      }
-      setIsLoading(false);
     };
 
-    fetchListings().catch((error) => {
-      console.error(error);
-      setIsLoading(false);
-    });
-  }, []);
+    fetchListings();
+  }, [appliedFilter]);
+
+  const handleApplyFilters = () => {
+    setAppliedFilter(filter);
+  };
 
   const handleSearch = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -121,18 +158,16 @@ export default function ListingsPage() {
           <IoIosArrowDown />
         </div>
       </div>
-      {isLoading === false ? (
+      {isLoading ? (
+        <h2 className="text-5xl text-center">Loading ...</h2>
+      ) : listingsCards.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {listingsCards.map((listing, index) => {
-            if (listing !== null) {
-              return <ListingsCard key={index} {...listing} />;
-            } else {
-              return null;
-            }
-          })}
+          {listingsCards.map((listing, index) => (
+            <ListingsCard key={index} {...listing} />
+          ))}
         </div>
       ) : (
-        <h2 className="text-5xl text-center ">Loading ...</h2>
+        <h2 className="text-5xl text-center">No listings found</h2>
       )}
     </div>
   );
