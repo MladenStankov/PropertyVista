@@ -16,6 +16,17 @@ import {
   PropertyType,
 } from "../components/sell/WizardForm";
 
+export enum SortType {
+  PRICE_ASC = "price-asc",
+  PRICE_DESC = "price-desc",
+  SURFACE_AREA_ASC = "surface-area-asc",
+  SURFACE_AREA_DESC = "surface-area-desc",
+  CONSTRUCTION_YEAR_ASC = "construction-year-asc",
+  CONSTRUCTION_YEAR_DESC = "construction-year-desc",
+  NEWEST = "newest",
+  OLDEST = "oldest",
+}
+
 export interface IFilter {
   type?: PropertyType | null;
   minPrice?: number | null;
@@ -34,12 +45,13 @@ export interface IFilter {
   minFloors?: number | null;
   maxFloors?: number | null;
   amenities?: AmenityType[];
+  search?: string | null;
+  sort?: SortType | null;
 }
 
 export default function ListingsPage() {
   const [listingsCards, setListingsCards] = useState<IListingsCard[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [search, setSearch] = useState<string>("");
   const [filter, setFilter] = useState<IFilter | null>({});
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [appliedFilter, setAppliedFilter] = useState<IFilter | null>({});
@@ -77,7 +89,7 @@ export default function ListingsPage() {
         const queryString = Object.entries(appliedFilter || {})
           .flatMap(([key, value]) =>
             Array.isArray(value)
-              ? value.map((v) => `${key}=${encodeURIComponent(v)}`) // Separate query for each amenity
+              ? value.map((v) => `${key}=${encodeURIComponent(v)}`)
               : value !== undefined && value !== null
               ? [`${key}=${encodeURIComponent(value)}`]
               : []
@@ -112,6 +124,19 @@ export default function ListingsPage() {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     event.preventDefault();
+
+    const queriesString = Object.entries(filter || {})
+      .map(([key, value]) => {
+        if (Array.isArray(value)) {
+          return value.map((v) => `${key}=${v}`).join("&");
+        } else if (value !== undefined && value !== null) {
+          if (key === "search" && value === "") return "";
+          return `${key}=${value}`;
+        }
+      })
+      .filter(Boolean)
+      .join("&");
+    window.location.href = `listings?${queriesString}`;
   };
 
   return (
@@ -132,8 +157,8 @@ export default function ListingsPage() {
       <div className="flex flex-wrap justify-center gap-4 md:gap-10 items-center">
         <div className="w-full md:w-1/2 relative mt-2">
           <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={filter?.search || ""}
+            onChange={(e) => setFilter({ ...filter, search: e.target.value })}
             className="rounded-full border-2 border-black px-14 py-4 text-sm md:text-xl shadow-xl w-full"
             type="text"
             placeholder="Postal code, City, Country or Street number"
@@ -157,6 +182,35 @@ export default function ListingsPage() {
           <p>Filter</p>
           <IoIosArrowDown />
         </div>
+      </div>
+      <div>
+        <label>Sort by</label>
+        <select
+          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-fit p-2.5"
+          onChange={(e) =>
+            setAppliedFilter({
+              ...appliedFilter,
+              sort: e.target.value as SortType,
+            })
+          }
+        >
+          <option value={SortType.PRICE_ASC}>Price: Low to High</option>
+          <option value={SortType.PRICE_DESC}>Price: High to Low</option>
+          <option value={SortType.SURFACE_AREA_ASC}>
+            Surface Area: Low to High
+          </option>
+          <option value={SortType.SURFACE_AREA_DESC}>
+            Surface Area: High to Low
+          </option>
+          <option value={SortType.CONSTRUCTION_YEAR_ASC}>
+            Construction Year: Oldest First
+          </option>
+          <option value={SortType.CONSTRUCTION_YEAR_DESC}>
+            Construction Year: Newest First
+          </option>
+          <option value={SortType.NEWEST}>Newest</option>
+          <option value={SortType.OLDEST}>Oldest</option>
+        </select>
       </div>
       {isLoading ? (
         <h2 className="text-5xl text-center">Loading ...</h2>
