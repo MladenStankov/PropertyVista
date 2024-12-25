@@ -1,51 +1,42 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CarouselItem from "./CarouselItem";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 export interface ICarouselItem {
-  id: number;
+  uuid: string;
   price: number;
   location: string;
   imageUrl: string;
 }
 
-const carouselItems: ICarouselItem[] = [
-  {
-    id: 1,
-    price: 100_000,
-    location: "Sofia, Bulgaria",
-    imageUrl: "https://placehold.co/600x400",
-  },
-  {
-    id: 2,
-    price: 60_000,
-    location: "Munich, Germany",
-    imageUrl: "https://placehold.co/600x400",
-  },
-  {
-    id: 3,
-    price: 50_000,
-    location: "Varna, Bulgaria",
-    imageUrl: "https://placehold.co/600x400",
-  },
-  {
-    id: 4,
-    price: 120_000,
-    location: "London, United Kingdom",
-    imageUrl: "https://placehold.co/600x400",
-  },
-  {
-    id: 5,
-    price: 420_000,
-    location: "Rome, Italy",
-    imageUrl: "https://placehold.co/600x400",
-  },
-];
-
 export default function MostViewedCarousel() {
+  const [carouselItems, setCarouselItems] = useState<ICarouselItem[]>([]);
   const [itemIndex, setItemIndex] = useState<number>(0);
+
+  useEffect(() => {
+    async function fetchMostViewedListings() {
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/listings/top-viewed`
+        );
+        const data = await res.json();
+
+        if (Array.isArray(data)) {
+          setCarouselItems(data);
+        } else {
+          console.error("Expected an array but got:", data);
+          setCarouselItems([]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch listings:", error);
+        setCarouselItems([]);
+      }
+    }
+
+    fetchMostViewedListings();
+  }, []);
 
   const getPrevItem = () => {
     if (itemIndex <= 0) {
@@ -75,29 +66,37 @@ export default function MostViewedCarousel() {
       <h2 className="text-center font-bold text-2xl sm:text-4xl md:text-5xl text-slate-600">
         Most viewed listings
       </h2>
-      <div className="flex flex-row justify-center items-center gap-2">
-        <FaArrowLeft
-          onClick={decrementItem}
-          className="hover:cursor-pointer hover:scale-125 transition-transform size-10 lg:size-20 max-md:size-7"
-        />
-        <CarouselItem item={getPrevItem()} />
-        <CarouselItem item={carouselItems[itemIndex]} isCurrent={true} />
-        <CarouselItem item={getNextItem()} />
-        <FaArrowRight
-          onClick={incrementItem}
-          className="hover:cursor-pointer hover:scale-125 transition-transform size-10 lg:size-20 max-md:size-7"
-        />
-      </div>
-      <div className="flex justify-center gap-2 mt-4">
-        {carouselItems.map((item, i) => (
-          <div
-            key={i}
-            className={`w-[10px] h-[10px] rounded-full ${
-              i === itemIndex ? "bg-slate-500" : "bg-slate-200"
-            }`}
-          ></div>
-        ))}
-      </div>
+      {Array.isArray(carouselItems) && carouselItems.length > 0 ? (
+        <>
+          <div className="flex flex-row justify-center items-center gap-2">
+            <FaArrowLeft
+              onClick={decrementItem}
+              className="hover:cursor-pointer hover:scale-125 transition-transform size-10 lg:size-20 max-md:size-7"
+            />
+            <CarouselItem item={getPrevItem()} />
+            <CarouselItem item={carouselItems[itemIndex]} isCurrent={true} />
+            <CarouselItem item={getNextItem()} />
+            <FaArrowRight
+              onClick={incrementItem}
+              className="hover:cursor-pointer hover:scale-125 transition-transform size-10 lg:size-20 max-md:size-7"
+            />
+          </div>
+          <div className="flex justify-center gap-2 mt-4">
+            {carouselItems.map((item, i) => (
+              <div
+                key={i}
+                className={`w-[10px] h-[10px] rounded-full ${
+                  i === itemIndex ? "bg-slate-500" : "bg-slate-200"
+                }`}
+              ></div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <h3 className="text-center font-bold text-2xl sm:text-4xl md:text-5xl text-slate-600">
+          No listings found
+        </h3>
+      )}
     </section>
   );
 }

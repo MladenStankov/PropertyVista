@@ -17,6 +17,7 @@ import { ListingRoomsService } from './services/listing-rooms.service';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { ListingViewsService } from './services/listing-views.service';
+import { ListingFavourite } from './entity/listing-favourite.entity';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ListingViewsService } from './services/listing-views.service';
       ListingRoom,
       ListingAmenity,
       ListingPriceHistory,
+      ListingFavourite,
     ]),
     AwsModule,
   ],

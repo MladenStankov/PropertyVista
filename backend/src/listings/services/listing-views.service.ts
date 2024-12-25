@@ -19,10 +19,10 @@ export class ListingViewsService {
     return this.listingViewRepository.save(newListingView);
   }
 
-  async getNumberOfViews(listingUuid: string): Promise<number> {
+  async getNumberOfViews(listing: Listing): Promise<number> {
     return (
       await this.listingViewRepository.find({
-        where: { listing: { uuid: listingUuid } },
+        where: { listing },
       })
     ).length;
   }

@@ -18,6 +18,7 @@ import { ListingAmenity } from './listing-amenity.entity';
 import { ListingPriceHistory } from './listing-price-history.entity';
 import { ConstructionType } from '../types/construction-type.dto';
 import { ListingView } from './listing-view.entity';
+import { ListingFavourite } from './listing-favourite.entity';
 
 @Entity('Listing')
 export class Listing extends BaseEntity {
@@ -66,6 +67,11 @@ export class Listing extends BaseEntity {
 
   @OneToMany(() => ListingView, (view) => view.listing, { cascade: true })
   views: ListingView[];
+
+  @OneToMany(() => ListingFavourite, (favourite) => favourite.listing, {
+    cascade: true,
+  })
+  favourites: ListingFavourite[];
 
   @OneToMany(
     () => ListingPriceHistory,

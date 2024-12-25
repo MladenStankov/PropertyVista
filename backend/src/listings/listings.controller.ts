@@ -20,8 +20,9 @@ import { Throttle } from '@nestjs/throttler';
 import { GetAllQueryDto } from './dto/get-all-query.dto';
 import { IFilter } from './dto/filter-inteface';
 import { IListingExtended } from './dto/get-by-uuid-listing.dto';
+import { MostViewedListingsDto } from './dto/most-viewed-listings.dto';
 
-const MAX_IMAGES = 10;
+const MAX_IMAGES = 50;
 
 @Controller('listings')
 @ApiTags('Listings')
@@ -79,6 +80,12 @@ export class ListingsController {
         typeof body.amenities === 'string' ? [body.amenities] : body.amenities,
     };
     return this.listingService.getAll(filter, body.sort, body.search);
+  }
+
+  @Throttle({ default: { limit: 100, ttl: 1000 } })
+  @Get('/top-viewed')
+  async getTopViewed(): Promise<MostViewedListingsDto[]> {
+    return this.listingService.getTopViewed();
   }
 
   @Throttle({ default: { limit: 100, ttl: 1000 } })

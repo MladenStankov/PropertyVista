@@ -4,6 +4,7 @@ import {
   IsString,
   IsStrongPassword,
 } from 'class-validator';
+import { ListingFavourite } from 'src/listings/entity/listing-favourite.entity';
 import { Listing } from 'src/listings/entity/listing.entity';
 import {
   BaseEntity,
@@ -48,6 +49,11 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Listing, (listing) => listing.user, { cascade: true })
   listings: Listing[];
+
+  @OneToMany(() => ListingFavourite, (favourite) => favourite.user, {
+    cascade: true,
+  })
+  favourites: ListingFavourite[];
 
   @CreateDateColumn({
     type: 'timestamp',

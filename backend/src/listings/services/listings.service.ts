@@ -15,6 +15,7 @@ import { IFilter } from '../dto/filter-inteface';
 import { SortType } from '../types/sort-type.type';
 import { IListingExtended } from '../dto/get-by-uuid-listing.dto';
 import { ListingViewsService } from './listing-views.service';
+import { MostViewedListingsDto } from '../dto/most-viewed-listings.dto';
 
 @Injectable()
 export class ListingsService {
@@ -273,5 +274,29 @@ export class ListingsService {
       latitude: listing.location.latitude,
       constructionYear: listing.constructionYear,
     };
+  }
+
+  async getTopViewed(): Promise<MostViewedListingsDto[]> {
+    const listings = await this.listingRepository
+      .createQueryBuilder('listing')
+      .leftJoinAndSelect('listing.images', 'images')
+      .leftJoinAndSelect('listing.location', 'location')
+      .leftJoin('listing.views', 'views')
+      .groupBy('listing.id')
+      .addGroupBy('listing.uuid')
+      .addGroupBy('location.id')
+      .addGroupBy('location.city')
+      .addGroupBy('location.country')
+      .addGroupBy('images.id')
+      .orderBy('COUNT(views.id)', 'DESC')
+      .limit(5)
+      .getMany();
+
+    return listings.map((listing) => ({
+      uuid: listing.uuid,
+      price: listing.price,
+      location: `${listing.location.city}, ${listing.location.country}`,
+      imageUrl: listing.images[0]?.imageUrl || '',
+    }));
   }
 }
