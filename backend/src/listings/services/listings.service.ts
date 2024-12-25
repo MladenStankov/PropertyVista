@@ -13,6 +13,8 @@ import { IListing } from '../dto/get-all-listing.dto';
 import { RoomType } from '../types/room-type.dto';
 import { IFilter } from '../dto/filter-inteface';
 import { SortType } from '../types/sort-type.type';
+import { IListingExtended } from '../dto/get-by-uuid-listing.dto';
+import { ListingViewsService } from './listing-views.service';
 
 @Injectable()
 export class ListingsService {
@@ -23,6 +25,7 @@ export class ListingsService {
     private listingImagesService: ListingImagesService,
     private listingAmenitiesService: ListingAmenitiesService,
     private listingRoomsService: ListingRoomsService,
+    private listingViewsService: ListingViewsService,
   ) {}
 
   async create(createListingDto: CreateListingDto): Promise<Listing> {
@@ -240,98 +243,35 @@ export class ListingsService {
     }
   }
 
-  // async filter(listings: Listing[], filter: IFilter): Promise<Listing[]> {
-  //   const isInRange = (
-  //     value: number,
-  //     min?: number | null,
-  //     max?: number | null,
-  //   ): boolean => {
-  //     return (
-  //       (min === null || min === undefined || value >= min) &&
-  //       (max === null || max === undefined || value <= max)
-  //     );
-  //   };
+  async getByUUID(uuid: string): Promise<IListingExtended> {
+    const listing = await this.listingRepository.findOne({
+      where: { uuid },
+      relations: ['location', 'images', 'amenities', 'rooms', 'user'],
+    });
 
-  //   return listings.filter((listing) => {
-  //     const typeMatch = filter.type ? listing.type === filter.type : true;
-  //     const constructionTypeMatch = filter.constructionType
-  //       ? listing.constructionType === filter.constructionType
-  //       : true;
+    await this.listingViewsService.create(listing);
 
-  //     const priceMatch = isInRange(
-  //       listing.price,
-  //       filter.minPrice,
-  //       filter.maxPrice,
-  //     );
-  //     const livingSurfaceMatch = isInRange(
-  //       listing.livingSurface,
-  //       filter.minSurfaceArea,
-  //       filter.maxSurfaceArea,
-  //     );
-  //     const constructionYearMatch = isInRange(
-  //       listing.constructionYear,
-  //       filter.minYear,
-  //       filter.maxYear,
-  //     );
+    const formattedAddress = `${listing.location.streetName} ${listing.location.streetNumber}, ${listing.location.postalCode}, ${listing.location.city}, ${listing.location.country}`;
 
-  //     const roomsMatch = listing.rooms.every((room) => {
-  //       const minKey = `min${room.type}` as keyof IFilter;
-  //       const maxKey = `max${room.type}` as keyof IFilter;
-
-  //       return isInRange(
-  //         room.amount,
-  //         filter[minKey] as number,
-  //         filter[maxKey] as number,
-  //       );
-  //     });
-
-  //     return (
-  //       typeMatch &&
-  //       constructionTypeMatch &&
-  //       priceMatch &&
-  //       livingSurfaceMatch &&
-  //       constructionYearMatch &&
-  //       roomsMatch
-  //     );
-  //   });
-  // }
-
-  // async search(listings: Listing[], search: string): Promise<Listing[]> {
-  //   const similarListings = listings.filter((listing) => {
-  //     const formattedAddress =
-  //       `${listing.location.streetName} ${listing.location.streetNumber}, ${listing.location.postalCode}, ${listing.location.city}, ${listing.location.country}`.toLowerCase();
-  //     const similarityScore = similarity.compareTwoStrings(
-  //       formattedAddress,
-  //       search,
-  //     );
-  //     return similarityScore > 0.5;
-  //   });
-
-  //   return similarListings;
-  // }
-
-  // async sort(listings: Listing[], sort: SortType): Promise<Listing[]> {
-  //   switch (sort) {
-  //     case SortType.PRICE_ASC:
-  //       return listings.sort((a, b) => a.price - b.price);
-  //     case SortType.PRICE_DESC:
-  //       return listings.sort((a, b) => b.price - a.price);
-  //     case SortType.SURFACE_AREA_ASC:
-  //       return listings.sort((a, b) => a.livingSurface - b.livingSurface);
-  //     case SortType.SURFACE_AREA_DESC:
-  //       return listings.sort((a, b) => b.livingSurface - a.livingSurface);
-  //     case SortType.CONSTRUCTION_YEAR_ASC:
-  //       return listings.sort((a, b) => a.constructionYear - b.constructionYear);
-  //     case SortType.CONSTRUCTION_YEAR_DESC:
-  //       return listings.sort((a, b) => b.constructionYear - a.constructionYear);
-  //     case SortType.NEWEST:
-  //       return listings.sort(
-  //         (a, b) => Number(b.createdAt) - Number(a.createdAt),
-  //       );
-  //     case SortType.OLDEST:
-  //       return listings.sort(
-  //         (a, b) => Number(a.createdAt) - Number(b.createdAt),
-  //       );
-  //   }
-  // }
+    return {
+      userId: listing.user.id,
+      userFullName: listing.user.fullName,
+      userImage: listing.user.imageUrl,
+      address: formattedAddress,
+      images: listing.images.map((image) => image.imageUrl),
+      type: listing.type,
+      constructionType: listing.constructionType,
+      numberOfBedrooms: this.getNumberOfRooms(listing, RoomType.BEDROOM),
+      numberOfBathrooms: this.getNumberOfRooms(listing, RoomType.BATHROOM),
+      numberOfOtherRooms: this.getNumberOfRooms(listing, RoomType.OTHER),
+      numberOfFloors: this.getNumberOfRooms(listing, RoomType.FLOOR),
+      surfaceArea: listing.livingSurface,
+      price: listing.price,
+      description: listing.description,
+      amenities: listing.amenities.map((amenity) => amenity.type),
+      longitude: listing.location.longitude,
+      latitude: listing.location.latitude,
+      constructionYear: listing.constructionYear,
+    };
+  }
 }

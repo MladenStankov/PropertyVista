@@ -1,11 +1,5 @@
 import { SortType } from '../types/sort-type.type';
-import {
-  IsArray,
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { AmenityType } from '../types/amenity-type.dto';
 import { ConstructionType } from '../types/construction-type.dto';
 import { ListingType } from '../types/listing-type.dto';

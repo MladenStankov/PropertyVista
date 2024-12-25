@@ -55,6 +55,8 @@ export default function ListingsPage() {
   const [filter, setFilter] = useState<IFilter | null>({});
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [appliedFilter, setAppliedFilter] = useState<IFilter | null>({});
+  const [isFilterInitialized, setIsFilterInitialized] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -63,10 +65,11 @@ export default function ListingsPage() {
     params.getAll("amenities").forEach((value) => {
       if (value) {
         initialFilter.amenities = initialFilter.amenities
-          ? [...initialFilter.amenities, value as AmenityType]
-          : [value as AmenityType];
+          ? [...initialFilter.amenities, value as any]
+          : [value as any];
       }
     });
+
     params.forEach((value, key) => {
       if (key !== "amenities") {
         if (!isNaN(Number(value))) {
@@ -79,9 +82,12 @@ export default function ListingsPage() {
 
     setFilter(initialFilter);
     setAppliedFilter(initialFilter);
+    setIsFilterInitialized(true);
   }, []);
 
   useEffect(() => {
+    if (!isFilterInitialized) return;
+
     const fetchListings = async () => {
       setIsLoading(true);
 
@@ -97,7 +103,9 @@ export default function ListingsPage() {
           .join("&");
 
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/listings?${queryString}`
+          `${process.env.NEXT_PUBLIC_API_URL}/listings${
+            queryString ? `?${queryString}` : ""
+          }`
         );
 
         if (!response.ok) {
@@ -114,11 +122,7 @@ export default function ListingsPage() {
     };
 
     fetchListings();
-  }, [appliedFilter]);
-
-  const handleApplyFilters = () => {
-    setAppliedFilter(filter);
-  };
+  }, [appliedFilter, isFilterInitialized]);
 
   const handleSearch = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>

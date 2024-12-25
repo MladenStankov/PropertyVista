@@ -16,6 +16,7 @@ import { ListingAmenitiesService } from './services/listing-amenities.service';
 import { ListingRoomsService } from './services/listing-rooms.service';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { ListingViewsService } from './services/listing-views.service';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ThrottlerGuard } from '@nestjs/throttler';
     ListingImagesService,
     ListingAmenitiesService,
     ListingRoomsService,
+    ListingViewsService,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

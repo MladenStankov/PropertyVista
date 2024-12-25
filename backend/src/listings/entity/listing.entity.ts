@@ -1,4 +1,3 @@
-import { User } from 'src/users/entity/user.entity';
 import {
   BaseEntity,
   Column,
@@ -10,6 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { User } from 'src/users/entity/user.entity';
 import { ListingImage } from './listing-image.entity';
 import { ListingType } from '../types/listing-type.dto';
 import { ListingLocation } from './listing-location.entity';
@@ -17,6 +17,7 @@ import { ListingRoom } from './listing-room.entity';
 import { ListingAmenity } from './listing-amenity.entity';
 import { ListingPriceHistory } from './listing-price-history.entity';
 import { ConstructionType } from '../types/construction-type.dto';
+import { ListingView } from './listing-view.entity';
 
 @Entity('Listing')
 export class Listing extends BaseEntity {
@@ -55,24 +56,22 @@ export class Listing extends BaseEntity {
   })
   location: ListingLocation;
 
-  @OneToMany(() => ListingRoom, (room) => room.listing, {
-    cascade: true,
-    nullable: true,
-  })
+  @OneToMany(() => ListingRoom, (room) => room.listing, { cascade: true })
   rooms: ListingRoom[];
 
   @OneToMany(() => ListingAmenity, (amenity) => amenity.listing, {
     cascade: true,
-    nullable: true,
   })
   amenities: ListingAmenity[];
+
+  @OneToMany(() => ListingView, (view) => view.listing, { cascade: true })
+  views: ListingView[];
 
   @OneToMany(
     () => ListingPriceHistory,
     (priceHistory) => priceHistory.listing,
     {
       cascade: true,
-      nullable: true,
     },
   )
   priceHistory: ListingPriceHistory[];

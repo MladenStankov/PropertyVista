@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Query,
   Req,
@@ -18,6 +19,7 @@ import { IListing } from './dto/get-all-listing.dto';
 import { Throttle } from '@nestjs/throttler';
 import { GetAllQueryDto } from './dto/get-all-query.dto';
 import { IFilter } from './dto/filter-inteface';
+import { IListingExtended } from './dto/get-by-uuid-listing.dto';
 
 const MAX_IMAGES = 10;
 
@@ -77,5 +79,11 @@ export class ListingsController {
         typeof body.amenities === 'string' ? [body.amenities] : body.amenities,
     };
     return this.listingService.getAll(filter, body.sort, body.search);
+  }
+
+  @Throttle({ default: { limit: 100, ttl: 1000 } })
+  @Get(':uuid')
+  async getByUUID(@Param('uuid') uuid: string): Promise<IListingExtended> {
+    return this.listingService.getByUUID(uuid);
   }
 }
