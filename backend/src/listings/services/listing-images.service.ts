@@ -32,4 +32,10 @@ export class ListingImagesService {
       where: { listing: { uuid: listingUuid } },
     });
   }
+
+  async getAllFileNames(): Promise<string[]> {
+    return (await this.listingImageRepository.find()).map(
+      (image) => image.imageUrl,
+    );
+  }
 }
