@@ -64,6 +64,9 @@ export default function ListingsCard({
               style: "currency",
               currency: "EUR",
             }).format(price)}
+            {type === "rent" && (
+              <span className="font-light text-lg">/month</span>
+            )}
           </p>
           <div className="flex gap-1 text-xs md:text-base">
             <span className="font-bold">{numberOfBedrooms}</span> bed

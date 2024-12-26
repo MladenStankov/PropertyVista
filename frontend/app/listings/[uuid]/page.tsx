@@ -153,7 +153,7 @@ export default function Listing() {
               <h2 className="text-xl sm:text-2xl md:text-3xl">
                 {listing.constructionType[0].toUpperCase() +
                   listing.constructionType.slice(1)}{" "}
-                for {listing.type}
+                for {listing.type === "buy" ? "sale" : "rent"}
               </h2>
 
               <p className="text-lg md:text-2xl font-bold mt-2">
@@ -161,6 +161,9 @@ export default function Listing() {
                   style: "currency",
                   currency: "EUR",
                 }).format(listing.price)}
+                {listing.type === "rent" && (
+                  <span className="font-light">/month</span>
+                )}
               </p>
 
               <div className="flex flex-col">

@@ -59,7 +59,12 @@ export default function GeneralInformationForm({
                 }`}
                 onChange={handleChange}
               />
-              <FaEuroSign className="absolute right-2 top-1/2 transform -translate-y-1/2 text-slate-600" />
+              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 text-slate-600 flex items-center gap-1">
+                <FaEuroSign />
+                {formData.general.type === "rent" && (
+                  <span className="text-sm">/month</span>
+                )}
+              </div>
             </div>
             {errors["general.price"] && (
               <span className="text-red-500 text-sm mt-1">

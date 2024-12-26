@@ -93,7 +93,7 @@ export default function MostViewedCarousel() {
           </div>
         </>
       ) : (
-        <h3 className="text-center font-bold text-2xl sm:text-4xl md:text-5xl text-slate-600">
+        <h3 className="text-center text-2xl text-slate-600">
           No listings found
         </h3>
       )}
