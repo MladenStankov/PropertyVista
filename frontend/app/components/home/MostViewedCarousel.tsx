@@ -3,12 +3,14 @@
 import React, { useEffect, useState } from "react";
 import CarouselItem from "./CarouselItem";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { PropertyType } from "../sell/WizardForm";
 
 export interface ICarouselItem {
   uuid: string;
   price: number;
   location: string;
   imageUrl: string;
+  type: PropertyType;
 }
 
 export default function MostViewedCarousel() {
@@ -25,6 +27,7 @@ export default function MostViewedCarousel() {
 
         if (Array.isArray(data)) {
           setCarouselItems(data);
+          console.log(data);
         } else {
           console.error("Expected an array but got:", data);
           setCarouselItems([]);
@@ -73,9 +76,9 @@ export default function MostViewedCarousel() {
               onClick={decrementItem}
               className="hover:cursor-pointer hover:scale-125 transition-transform size-10 lg:size-20 max-md:size-7"
             />
-            <CarouselItem item={getPrevItem()} />
+            {carouselItems.length > 1 && <CarouselItem item={getPrevItem()} />}
             <CarouselItem item={carouselItems[itemIndex]} isCurrent={true} />
-            <CarouselItem item={getNextItem()} />
+            {carouselItems.length > 1 && <CarouselItem item={getNextItem()} />}
             <FaArrowRight
               onClick={incrementItem}
               className="hover:cursor-pointer hover:scale-125 transition-transform size-10 lg:size-20 max-md:size-7"

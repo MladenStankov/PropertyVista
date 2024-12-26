@@ -23,7 +23,6 @@ export default function AmenitiesForm({
 
   const handleAddAmenity = (amenity: AmenityType) => {
     handleAmenityChange([...formData.amenities, amenity]);
-    setShowSelector(false);
   };
 
   const handleRemoveAmenity = (index: number) => {

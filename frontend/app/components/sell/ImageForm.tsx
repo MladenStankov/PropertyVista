@@ -60,7 +60,7 @@ export default function ImageForm({
           >
             Select Images
           </label>
-          <p className="text-xs">Max 10 images</p>
+          <p className="text-xs">Max 50 images</p>
         </div>
         {errors["images"] && (
           <span className="text-red-500 text-sm mt-1 self-center">

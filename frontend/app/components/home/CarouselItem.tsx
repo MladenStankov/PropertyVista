@@ -14,26 +14,31 @@ export default function CarouselItem({
   return (
     <Link
       href={`/listings/${item.uuid}`}
-      className={`relative w-full max-lg:w-1/2 h-72 shadow-2xl hover:cursor-pointer transition-transform ${
-        !isCurrent ? "scale-90 max-lg:hidden" : ""
+      className={`relative w-1/3 max-lg:w-1/2 h-72 shadow-md hover:cursor-pointer transition-transform hover:shadow-2xl ${
+        !isCurrent
+          ? "scale-90 hover:scale-[95%] max-lg:hidden"
+          : "hover:scale-105"
       } `}
     >
-      <div
-        className="absolute inset-0 bg-cover bg-center filter brightness-75 rounded-lg hover:scale-105 transition-transform"
-        style={{
-          backgroundImage: `url(${item.imageUrl})`,
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      ></div>
+      <img
+        src={item.imageUrl}
+        alt={item.location}
+        className="absolute inset-0 w-full h-full object-cover filter brightness-75 rounded-lg transition-transform"
+      />
 
-      <div className="absolute top-4 left-4 text-white text-lg font-bold underline">
+      <div
+        className="absolute top-4 left-4 text-white text-xl font-bold bg-black bg-opacity-30 px-2 shadow-lg rounded-lg underline"
+        style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.5)" }}
+      >
         {item.location}
       </div>
-      <div className="absolute bottom-4 left-4 text-white text-lg font-bold">
+      <div
+        className="absolute bottom-4 left-4 text-white text-xl font-bold bg-black bg-opacity-30 px-2 shadow-lg rounded-lg"
+        style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.5)" }}
+      >
         <p>
           € <span>{item.price}</span>
+          {item.type === "rent" && <span className="font-normal">/ month</span>}
         </p>
       </div>
     </Link>

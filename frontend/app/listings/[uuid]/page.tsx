@@ -9,6 +9,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 import React, { useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 
 import {
   FaArrowLeft,
@@ -27,6 +28,7 @@ import { IoIosFitness } from "react-icons/io";
 import { PiTowelLight } from "react-icons/pi";
 import { IconType } from "react-icons";
 import Map from "@/app/components/listings/Map";
+import Loading from "@/app/components/Loading";
 
 export interface IListingExtended {
   userId: number;
@@ -86,10 +88,35 @@ export default function Listing() {
     fetchListing();
   }, [uuid]);
 
+  const handlePreviousImage = () => {
+    setCurrentImageIndex((prevIndex) =>
+      listing?.images.length
+        ? prevIndex === 0
+          ? listing?.images?.length - 1
+          : prevIndex - 1
+        : 0
+    );
+  };
+
+  const handleNextImage = () => {
+    setCurrentImageIndex(
+      (prevIndex) =>
+        (prevIndex + 1) % (listing?.images?.length ? listing.images.length : 1)
+    );
+  };
+
+  const handleShareButton = () => {
+    if (listing) {
+      navigator.clipboard.writeText(window.location.href);
+      toast.success("Link copied to clipboard!");
+    }
+  };
+
   return (
     <div className="w-full h-full">
       {listing != null ? (
         <div className="flex flex-col mx-auto my-10 max-w-7xl px-4 md:px-6">
+          <Toaster position="top-center" reverseOrder={false} />
           <h2 className="font-extralight mb-2 text-sm md:text-base">
             Listed by{" "}
             <span className="font-semibold">{listing?.userFullName}</span>
@@ -99,14 +126,26 @@ export default function Listing() {
             <div className="col-span-1 sm:col-span-2 sm:row-span-2 relative">
               <img
                 src={listing.images[currentImageIndex]}
-                className="w-full h-64 sm:h-full object-cover"
+                className="w-full h-full object-cover aspect-video"
                 alt="Main image"
               />
-              <div className="bg-white rounded-full absolute left-1 top-1/2 p-4 opacity-80 hover:cursor-pointer hover:opacity-100">
+              <div
+                onClick={() => handlePreviousImage()}
+                className="bg-white rounded-full absolute left-1 top-1/2 p-4 opacity-80 hover:cursor-pointer hover:opacity-100"
+              >
                 <FaArrowLeft />
               </div>
-              <div className="bg-white rounded-full absolute right-1 top-1/2 p-4 opacity-80 hover:cursor-pointer hover:opacity-100">
+              <div
+                onClick={() => handleNextImage()}
+                className="bg-white rounded-full absolute right-1 top-1/2 p-4 opacity-80 hover:cursor-pointer hover:opacity-100"
+              >
                 <FaArrowRight />
+              </div>
+              <div
+                onClick={() => handleNextImage()}
+                className="bg-white rounded-md absolute bottom-1 right-1/2 p-2 opacity-80 hover:cursor-pointer hover:opacity-100 font-semibold"
+              >
+                {currentImageIndex + 1}/{listing.images.length}
               </div>
             </div>
 
@@ -114,12 +153,12 @@ export default function Listing() {
               <img
                 src={
                   listing.images[
-                    listing.images.length > currentImageIndex + 1
-                      ? currentImageIndex + 1
-                      : currentImageIndex
+                    listing.images.length <= currentImageIndex + 1
+                      ? 0
+                      : currentImageIndex + 1
                   ]
                 }
-                className="w-full h-32 sm:h-full object-cover"
+                className="w-full aspect-video h-full object-cover max-sm:hidden"
                 alt="Next image"
               />
             </div>
@@ -128,12 +167,14 @@ export default function Listing() {
               <img
                 src={
                   listing.images[
-                    listing.images.length > currentImageIndex + 2
-                      ? currentImageIndex + 2
-                      : currentImageIndex
+                    listing.images.length <= currentImageIndex + 2
+                      ? listing.images.length > 1
+                        ? 1
+                        : 0
+                      : currentImageIndex + 2
                   ]
                 }
-                className="w-full h-32 sm:h-full object-cover"
+                className="w-full aspect-video h-full object-cover max-sm:hidden"
                 alt="Next next image"
               />
             </div>
@@ -143,7 +184,10 @@ export default function Listing() {
             <div className="bg-white rounded-full p-3 border w-fit border-black hover:cursor-pointer hover:bg-gray-200">
               <FaRegHeart size={40} />
             </div>
-            <div className="bg-white rounded-full p-3 border w-fit border-black hover:cursor-pointer hover:bg-gray-200">
+            <div
+              onClick={() => handleShareButton()}
+              className="bg-white rounded-full p-3 border w-fit border-black hover:cursor-pointer hover:bg-gray-200"
+            >
               <MdIosShare size={40} />
             </div>
           </div>
@@ -223,8 +267,8 @@ export default function Listing() {
           </div>
 
           <div className="mt-10 flex flex-col gap-4">
-            <h2 className="text-2xl sm:text-4xl font-semibold">Description</h2>
-            <p className="text-sm sm:text-lg md:text-xl">
+            <h2 className="text-2xl sm:text-4xl font-semibold ">Description</h2>
+            <p className="text-sm sm:text-lg md:text-xl max-w-full break-words leading-6">
               {listing.description}
             </p>
           </div>
@@ -286,7 +330,7 @@ export default function Listing() {
           </div>
         </div>
       ) : (
-        <h1 className="text-center text-lg font-semibold">Loading...</h1>
+        <Loading />
       )}
     </div>
   );

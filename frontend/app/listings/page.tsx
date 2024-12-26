@@ -15,6 +15,7 @@ import {
   ConstructionType,
   PropertyType,
 } from "../components/sell/WizardForm";
+import Loading from "../components/Loading";
 
 export enum SortType {
   PRICE_ASC = "price-asc",
@@ -217,7 +218,7 @@ export default function ListingsPage() {
         </select>
       </div>
       {isLoading ? (
-        <h2 className="text-5xl text-center">Loading ...</h2>
+        <Loading />
       ) : listingsCards.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {listingsCards.map((listing, index) => (

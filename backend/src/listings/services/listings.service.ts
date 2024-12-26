@@ -279,24 +279,31 @@ export class ListingsService {
   async getTopViewed(): Promise<MostViewedListingsDto[]> {
     const listings = await this.listingRepository
       .createQueryBuilder('listing')
-      .leftJoinAndSelect('listing.images', 'images')
-      .leftJoinAndSelect('listing.location', 'location')
+      .leftJoin('listing.images', 'images')
+      .leftJoin('listing.location', 'location')
       .leftJoin('listing.views', 'views')
+      .select([
+        'listing.id AS id',
+        'listing.uuid AS uuid',
+        'listing.price AS price',
+        'listing.type AS type',
+        'MAX(location.city) AS city',
+        'MAX(location.country) AS country',
+        "COALESCE(MIN(images.imageUrl), '') AS imageUrl",
+        'COUNT(views.id) AS view_count',
+      ])
       .groupBy('listing.id')
       .addGroupBy('listing.uuid')
-      .addGroupBy('location.id')
-      .addGroupBy('location.city')
-      .addGroupBy('location.country')
-      .addGroupBy('images.id')
-      .orderBy('COUNT(views.id)', 'DESC')
+      .orderBy('view_count', 'DESC')
       .limit(5)
-      .getMany();
+      .getRawMany();
 
     return listings.map((listing) => ({
       uuid: listing.uuid,
       price: listing.price,
-      location: `${listing.location.city}, ${listing.location.country}`,
-      imageUrl: listing.images[0]?.imageUrl || '',
+      location: `${listing.city}, ${listing.country}`,
+      imageUrl: listing.imageurl || '',
+      type: listing.type,
     }));
   }
 }
