@@ -50,7 +50,7 @@ export class AuthController {
     return { id, fullName, email, imageUrl };
   }
 
-  @Throttle({ default: { limit: 2, ttl: 500 } })
+  @Throttle({ default: { limit: 3, ttl: 500 } })
   @UseGuards(JwtRefreshGuard)
   @Post('/refresh-tokens')
   async refreshTokens(

@@ -31,10 +31,7 @@ export default function Nav() {
       <nav className="hidden md:flex min-w-fit">
         <ul className="flex gap-10 justify-end">
           <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
-            <Link href="/listings?type=buy">Buy</Link>
-          </li>
-          <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
-            <Link href="/listings?type=rent">Rent</Link>
+            <Link href="/listings">Properties</Link>
           </li>
           <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
             <Link href="/sell">Sell</Link>
@@ -90,18 +87,10 @@ export default function Nav() {
           <ul className="flex flex-col gap-6 w-full divide-y-[2px]">
             <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
               <Link
-                href="/listings?type=buy"
+                href="/listings"
                 onClick={() => setIsMobileMenuVisible(false)}
               >
-                Buy
-              </Link>
-            </li>
-            <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
-              <Link
-                href="/listings?type=rent"
-                onClick={() => setIsMobileMenuVisible(false)}
-              >
-                Rent
+                Properties
               </Link>
             </li>
             <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
