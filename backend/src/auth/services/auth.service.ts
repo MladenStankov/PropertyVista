@@ -10,6 +10,7 @@ import { CookieOptions, Request, Response } from 'express';
 import { User } from 'src/users/entity/user.entity';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { LoginDto } from '../dto/login.dto';
+import { ProfileInfo } from '../dto/profile-info.dto';
 
 const cookieOptions: CookieOptions = {
   httpOnly: true,
@@ -110,5 +111,10 @@ export class AuthService {
       existingUser = await this.userService.create(createUserDto);
     }
     return this.login(res, null, existingUser);
+  }
+
+  async profileInfo(req: Request): Promise<ProfileInfo> {
+    const { id } = req.user as User;
+    return await this.userService.profileInfo(id);
   }
 }

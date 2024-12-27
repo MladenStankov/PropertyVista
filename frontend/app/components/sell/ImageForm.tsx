@@ -23,7 +23,7 @@ export default function ImageForm({
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const allFiles = [...formData.images, ...files];
-    handleImageChange(allFiles.filter((_, index) => index < 10));
+    handleImageChange(allFiles.filter((_, index) => index <= 50));
   };
 
   const handleRemoveImage = (index: number) => {

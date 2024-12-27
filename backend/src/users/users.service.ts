@@ -6,6 +6,7 @@ import { hash } from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { ProfileInfo } from 'src/auth/dto/profile-info.dto';
 
 @Injectable()
 export class UsersService {
@@ -83,5 +84,45 @@ export class UsersService {
       isVerified: false,
       createdAt: LessThanOrEqual(new Date(Date.now() - 30 * 60 * 1000)),
     });
+  }
+
+  async profileInfo(id: number): Promise<ProfileInfo> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: [
+        'listings',
+        'favourites',
+        'listings.views',
+        'listings.favourites',
+      ],
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const totalListings = user.listings.length;
+    const totalFavouritedListings = user.favourites.length;
+
+    const totalReceivedFavourites = user.listings.reduce(
+      (sum, listing) => sum + listing.favourites.length,
+      0,
+    );
+
+    const totalViewsOnProfile = user.listings.reduce(
+      (sum, listing) => sum + listing.views.length,
+      0,
+    );
+
+    return {
+      fullName: user.fullName,
+      email: user.email,
+      imageUrl: user.imageUrl ?? '',
+      totalListings,
+      totalChats: 0, //TDO
+      totalFavouritedListings,
+      totalReceivedFavourites,
+      totalViewsOnProfile,
+    };
   }
 }

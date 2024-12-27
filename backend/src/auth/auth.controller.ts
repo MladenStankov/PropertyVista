@@ -79,4 +79,11 @@ export class AuthController {
     await this.authService.googleLogin(req, res);
     res.redirect(`${this.configService.get<string>('FRONTEND_URL')}`);
   }
+
+  @Throttle({ default: { limit: 100, ttl: 1000 } })
+  @UseGuards(JwtGuard)
+  @Get('/profile-info')
+  async profileInfo(@Req() req: Request) {
+    return this.authService.profileInfo(req);
+  }
 }

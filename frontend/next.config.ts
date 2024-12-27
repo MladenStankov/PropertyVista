@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
       "img.icons8.com",
       "lh3.googleusercontent.com",
       "property-vista-images.s3.eu-north-1.amazonaws.com",
+      "placehold.co",
     ],
   },
   pageExtensions: ["ts", "tsx"],

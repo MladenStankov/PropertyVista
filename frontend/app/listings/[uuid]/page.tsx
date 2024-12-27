@@ -141,10 +141,7 @@ export default function Listing() {
               >
                 <FaArrowRight />
               </div>
-              <div
-                onClick={() => handleNextImage()}
-                className="bg-white rounded-md absolute bottom-1 right-1/2 p-2 opacity-80 hover:cursor-pointer hover:opacity-100 font-semibold"
-              >
+              <div className="bg-white rounded-md absolute bottom-1 right-1/2 p-2 opacity-80 hover:cursor-pointer hover:opacity-100 font-semibold">
                 {currentImageIndex + 1}/{listing.images.length}
               </div>
             </div>
@@ -236,7 +233,7 @@ export default function Listing() {
               </div>
             </div>
 
-            <div className="flex flex-col border-2 rounded-xl p-4">
+            <div className="flex flex-col border-2 rounded-xl p-4 shadow-md">
               <div className="flex items-center gap-2">
                 <div className="w-12 h-12 overflow-hidden rounded-full">
                   <Image
