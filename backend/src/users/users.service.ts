@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { ProfileInfo } from 'src/auth/dto/profile-info.dto';
+import { ProfileListings } from 'src/auth/dto/profile-listings.dto';
 
 @Injectable()
 export class UsersService {
@@ -124,5 +125,27 @@ export class UsersService {
       totalReceivedFavourites,
       totalViewsOnProfile,
     };
+  }
+
+  async profileListings(id: number): Promise<ProfileListings[]> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: [
+        'listings',
+        'listings.images',
+        'listings.views',
+        'listings.favourites',
+      ],
+    });
+
+    return user.listings.map((listing) => ({
+      uuid: listing.uuid,
+      imageUrl: listing.images[0].imageUrl,
+      createdAt: listing.createdAt,
+      price: listing.price,
+      type: listing.type,
+      views: listing.views.length,
+      favourites: listing.favourites.length,
+    }));
   }
 }

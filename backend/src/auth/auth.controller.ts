@@ -20,6 +20,7 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { EmailSendingService } from 'src/email-sending/email-sending.service';
 import { User } from 'src/users/entity/user.entity';
 import { ConfigService } from '@nestjs/config';
+import { ProfileListings } from './dto/profile-listings.dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -85,5 +86,12 @@ export class AuthController {
   @Get('/profile-info')
   async profileInfo(@Req() req: Request) {
     return this.authService.profileInfo(req);
+  }
+
+  @Throttle({ default: { limit: 100, ttl: 1000 } })
+  @UseGuards(JwtGuard)
+  @Get('/profile-listings')
+  async profileListings(@Req() req: Request) {
+    return this.authService.profileListings(req);
   }
 }

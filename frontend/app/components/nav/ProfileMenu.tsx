@@ -65,13 +65,16 @@ export default function ProfileMenu({ setIsProfileMenuVisible }: IProfileMenu) {
           <span>Profile</span>
         </div>
       </Link>
-      <Link className="p-3 hover:bg-gray-100" href="#">
+      <Link className="p-3 hover:bg-gray-100" href="/profile/listings">
         <div className="flex items-center gap-2 hover:underline">
           <PiBuildingApartmentBold />
           <span>Listings</span>
         </div>
       </Link>
-      <Link className="p-3 hover:bg-gray-100" href="#">
+      <Link
+        className="p-3 hover:bg-gray-100"
+        href="/profile/favourite-listings"
+      >
         <div className="flex items-center gap-2 hover:underline">
           <FaHeart />
           <span>Favourite Listings</span>

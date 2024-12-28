@@ -11,6 +11,7 @@ import { User } from 'src/users/entity/user.entity';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { LoginDto } from '../dto/login.dto';
 import { ProfileInfo } from '../dto/profile-info.dto';
+import { ProfileListings } from '../dto/profile-listings.dto';
 
 const cookieOptions: CookieOptions = {
   httpOnly: true,
@@ -116,5 +117,10 @@ export class AuthService {
   async profileInfo(req: Request): Promise<ProfileInfo> {
     const { id } = req.user as User;
     return await this.userService.profileInfo(id);
+  }
+
+  async profileListings(req: Request): Promise<ProfileListings[]> {
+    const { id } = req.user as User;
+    return await this.userService.profileListings(id);
   }
 }

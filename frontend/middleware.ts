@@ -13,7 +13,13 @@ export async function middleware(request: NextRequest) {
     );
   }
 
-  const protectedRoutes = ["/profile", "/sell"];
+  const protectedRoutes = [
+    "/profile",
+    "/sell",
+    "/profile/listings",
+    "/profile/favourite-listings",
+    "/profile/chats",
+  ];
   const authRoutes = ["/login", "/register", "/register/verify"];
 
   const { pathname } = request.nextUrl;
