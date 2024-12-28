@@ -47,14 +47,17 @@ export default function ProfileListings() {
             My Listings
           </h1>
           <div className="grid grid-cols-1 gap-6 overflow-y-scroll">
-            {listings.map((listing) => (
-              <ProfileListing key={listing.uuid} listing={listing} />
-            ))}
+            {listings.length > 0 ? (
+              listings.map((listing) => (
+                <ProfileListing key={listing.uuid} listing={listing} />
+              ))
+            ) : (
+              <div className="text-center text-xl text-gray-500">
+                No Listings
+              </div>
+            )}
           </div>
         </div>
-      )}
-      {!isLoading && !listings && (
-        <div className="text-center text-xl text-gray-500">No Listings</div>
       )}
     </div>
   );
