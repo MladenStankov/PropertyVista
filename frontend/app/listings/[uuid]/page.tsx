@@ -70,6 +70,7 @@ const amenityIcons: { [key: string]: IconType } = {
 export default function Listing() {
   const [listing, setListing] = useState<IListingExtended | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const uuid = usePathname().split("/").pop();
 
@@ -80,10 +81,12 @@ export default function Listing() {
       );
 
       if (!response.ok) {
+        setIsLoading(false);
         throw new Error("Failed to fetch listings");
       }
       const listing: IListingExtended = await response.json();
       setListing(listing);
+      setIsLoading(false);
     }
     fetchListing();
   }, [uuid]);
@@ -326,8 +329,14 @@ export default function Listing() {
             </div>
           </div>
         </div>
-      ) : (
+      ) : isLoading ? (
         <Loading />
+      ) : (
+        <div className="w-full h-full flex justify-center items-center py-20">
+          <h2 className="text-2xl sm:text-4xl font-semibold ">
+            Listing not found
+          </h2>
+        </div>
       )}
     </div>
   );

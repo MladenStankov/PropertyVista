@@ -7,9 +7,13 @@ import { FaHeart } from "react-icons/fa";
 
 interface IProifleListingProps {
   listing: ProfileListings;
+  handleDelete: (uuid: string) => void;
 }
 
-export default function ProfileListing({ listing }: IProifleListingProps) {
+export default function ProfileListing({
+  listing,
+  handleDelete,
+}: IProifleListingProps) {
   return (
     <div className="bg-gray-300 p-4 md:p-6 flex flex-col md:flex-row items-center gap-6 md:gap-10 rounded-md text-base md:text-lg lg:text-xl flex-wrap">
       <img
@@ -50,7 +54,10 @@ export default function ProfileListing({ listing }: IProifleListingProps) {
           <button className="px-4 py-2 bg-yellow-500 text-white rounded-md font-bold hover:bg-yellow-600 w-full">
             Edit
           </button>
-          <button className="px-4 py-2 bg-red-500 text-white rounded-md font-bold hover:bg-red-600">
+          <button
+            onClick={() => handleDelete(listing.uuid)}
+            className="px-4 py-2 bg-red-500 text-white rounded-md font-bold hover:bg-red-600"
+          >
             Delete
           </button>
         </div>

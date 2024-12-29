@@ -38,6 +38,18 @@ export default function ProfileListings() {
     fetchListings();
   }, []);
 
+  const handleDelete = async (uuid: string) => {
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/listings/${uuid}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      setListings(listings?.filter((listing) => listing.uuid !== uuid) || null);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="w-full h-auto px-4 md:px-6 lg:px-8 py-8 flex items-center justify-center">
       {isLoading && <Loading />}
@@ -49,7 +61,11 @@ export default function ProfileListings() {
           <div className="grid grid-cols-1 gap-6 overflow-y-scroll">
             {listings.length > 0 ? (
               listings.map((listing) => (
-                <ProfileListing key={listing.uuid} listing={listing} />
+                <ProfileListing
+                  key={listing.uuid}
+                  listing={listing}
+                  handleDelete={handleDelete}
+                />
               ))
             ) : (
               <div className="text-center text-xl text-gray-500">
