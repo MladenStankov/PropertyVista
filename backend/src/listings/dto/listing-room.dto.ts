@@ -1,11 +1,14 @@
 import { IsNotEmpty } from 'class-validator';
-import { AmenityType } from '../types/amenity-type.dto';
 import { Listing } from '../entity/listing.entity';
+import { RoomType } from '../types/room-type.dto';
 import { ApiHideProperty } from '@nestjs/swagger';
 
-export class CreateListingAmenityDto {
+export class ListingRoomDto {
   @IsNotEmpty()
-  type: AmenityType;
+  type: RoomType;
+
+  @IsNotEmpty()
+  amount: number;
 
   @ApiHideProperty()
   listing?: Listing;

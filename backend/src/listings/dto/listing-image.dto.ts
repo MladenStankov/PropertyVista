@@ -2,7 +2,7 @@ import { IsNotEmpty } from 'class-validator';
 import { Listing } from '../entity/listing.entity';
 import { ApiHideProperty } from '@nestjs/swagger';
 
-export class CreateListingImageDto {
+export class ListingImageDto {
   @IsNotEmpty()
   file: Express.Multer.File;
 

@@ -2,7 +2,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 import { Listing } from '../entity/listing.entity';
 import { ApiHideProperty } from '@nestjs/swagger';
 
-export class CreateListingLocationDto {
+export class ListingLocationDto {
   @IsString()
   @IsNotEmpty()
   streetNumber: string;

@@ -256,7 +256,7 @@ export default function WizardForm() {
     try {
       const requestBody = new FormData();
       requestBody.append(
-        "createListing",
+        "listing",
         JSON.stringify({
           description: formData.general.description,
           constructionType: formData.general.constructionType,
@@ -268,7 +268,7 @@ export default function WizardForm() {
       );
 
       requestBody.append(
-        "createLocation",
+        "location",
         JSON.stringify({
           streetNumber: formData.address.streetNumber,
           streetName: formData.address.streetName,
@@ -282,11 +282,11 @@ export default function WizardForm() {
       );
 
       formData.images.forEach((imageFile) => {
-        requestBody.append("createImages", imageFile);
+        requestBody.append("images", imageFile);
       });
 
       requestBody.append(
-        "createAmenities",
+        "amenities",
         JSON.stringify(
           formData.amenities.map((amenity) => {
             return { type: amenity };
@@ -295,7 +295,7 @@ export default function WizardForm() {
       );
 
       requestBody.append(
-        "createRooms",
+        "rooms",
         JSON.stringify([
           { type: "bedroom", amount: formData.rooms.numberOfBedrooms },
           { type: "bathroom", amount: formData.rooms.numberOfBathrooms },

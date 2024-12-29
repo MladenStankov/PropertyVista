@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ListingAmenity } from '../entity/listing-amenity.entity';
 import { Repository } from 'typeorm';
-import { CreateListingAmenityDto } from '../dto/create-listing-amenity.dto';
+import { ListingAmenityDto } from '../dto/listing-amenity.dto';
 
 @Injectable()
 export class ListingAmenitiesService {
@@ -11,14 +11,16 @@ export class ListingAmenitiesService {
     private listingAmenityRepository: Repository<ListingAmenity>,
   ) {}
 
-  async create(
-    createListingAmenityDto: CreateListingAmenityDto,
-  ): Promise<ListingAmenity> {
-    const newListingAmenity = this.listingAmenityRepository.create(
-      createListingAmenityDto,
-    );
+  async create(AmenityDto: ListingAmenityDto): Promise<ListingAmenity> {
+    const newListingAmenity = this.listingAmenityRepository.create(AmenityDto);
 
     return newListingAmenity.save();
+  }
+
+  async delete(amenity: ListingAmenity): Promise<void> {
+    if (amenity) {
+      this.listingAmenityRepository.delete({ id: amenity.id });
+    }
   }
 
   async getAllByListingUuid(listingUuid: string): Promise<ListingAmenity[]> {

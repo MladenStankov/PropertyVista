@@ -4,7 +4,7 @@ import { ListingType } from '../types/listing-type.dto';
 import { User } from 'src/users/entity/user.entity';
 import { ApiHideProperty } from '@nestjs/swagger';
 
-export class CreateListingDto {
+export class ListingDto {
   @IsString()
   description?: string;
 

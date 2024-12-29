@@ -27,7 +27,6 @@ export default function MostViewedCarousel() {
 
         if (Array.isArray(data)) {
           setCarouselItems(data);
-          console.log(data);
         } else {
           console.error("Expected an array but got:", data);
           setCarouselItems([]);

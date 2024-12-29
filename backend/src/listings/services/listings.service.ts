@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Listing } from '../entity/listing.entity';
-import { CreateListingDto } from '../dto/create-listing.dto';
+import { ListingDto } from '../dto/listing.dto';
 import { User } from 'src/users/entity/user.entity';
 import { PublishListingDto } from '../dto/publish-listing.dto';
 import { ListingLocationsService } from './listing-locations.service';
@@ -16,6 +16,8 @@ import { SortType } from '../types/sort-type.type';
 import { IListingExtended } from '../dto/get-by-uuid-listing.dto';
 import { ListingViewsService } from './listing-views.service';
 import { MostViewedListingsDto } from '../dto/most-viewed-listings.dto';
+import { Request } from 'express';
+import { UpdateListingDto } from '../dto/update-listing.dto';
 
 @Injectable()
 export class ListingsService {
@@ -29,7 +31,7 @@ export class ListingsService {
     private listingViewsService: ListingViewsService,
   ) {}
 
-  async create(createListingDto: CreateListingDto): Promise<Listing> {
+  async create(createListingDto: ListingDto): Promise<Listing> {
     const newListing = this.listingRepository.create(createListingDto);
     return newListing.save();
   }
@@ -49,22 +51,22 @@ export class ListingsService {
   }
 
   async publish(publishListingDto: PublishListingDto) {
-    const newListing = await this.create(publishListingDto.createListing);
+    const newListing = await this.create(publishListingDto.listing);
 
-    publishListingDto.createLocation.listing = newListing;
-    this.listingLocationsService.create(publishListingDto.createLocation);
+    publishListingDto.location.listing = newListing;
+    this.listingLocationsService.create(publishListingDto.location);
 
-    publishListingDto.createImages.forEach((createListingImageDto) => {
+    publishListingDto.images.forEach((createListingImageDto) => {
       createListingImageDto.listing = newListing;
       this.listingImagesService.create(createListingImageDto);
     });
 
-    publishListingDto.createAmenities.forEach((createAmenitiesDto) => {
+    publishListingDto.amenities.forEach((createAmenitiesDto) => {
       createAmenitiesDto.listing = newListing;
       this.listingAmenitiesService.create(createAmenitiesDto);
     });
 
-    publishListingDto.createRooms.forEach((createListingRoomDto) => {
+    publishListingDto.rooms.forEach((createListingRoomDto) => {
       createListingRoomDto.listing = newListing;
       this.listingRoomsService.create(createListingRoomDto);
     });
@@ -252,28 +254,7 @@ export class ListingsService {
 
     await this.listingViewsService.create(listing);
 
-    const formattedAddress = `${listing.location.streetName} ${listing.location.streetNumber}, ${listing.location.postalCode}, ${listing.location.city}, ${listing.location.country}`;
-
-    return {
-      userId: listing.user.id,
-      userFullName: listing.user.fullName,
-      userImage: listing.user.imageUrl,
-      address: formattedAddress,
-      images: listing.images.map((image) => image.imageUrl),
-      type: listing.type,
-      constructionType: listing.constructionType,
-      numberOfBedrooms: this.getNumberOfRooms(listing, RoomType.BEDROOM),
-      numberOfBathrooms: this.getNumberOfRooms(listing, RoomType.BATHROOM),
-      numberOfOtherRooms: this.getNumberOfRooms(listing, RoomType.OTHER),
-      numberOfFloors: this.getNumberOfRooms(listing, RoomType.FLOOR),
-      surfaceArea: listing.livingSurface,
-      price: listing.price,
-      description: listing.description,
-      amenities: listing.amenities.map((amenity) => amenity.type),
-      longitude: listing.location.longitude,
-      latitude: listing.location.latitude,
-      constructionYear: listing.constructionYear,
-    };
+    return this.formatListingResponse(listing);
   }
 
   async getTopViewed(): Promise<MostViewedListingsDto[]> {
@@ -305,5 +286,125 @@ export class ListingsService {
       imageUrl: listing.imageurl || '',
       type: listing.type,
     }));
+  }
+
+  async deleteByUuid(uuid: string, req: Request): Promise<void> {
+    const { id } = req.user as User;
+
+    const listing = await this.listingRepository.findOne({
+      where: { uuid },
+      relations: ['user'],
+    });
+
+    if (listing.user.id !== id) {
+      throw new UnauthorizedException(
+        'You are not authorized to delete this listing.',
+      );
+    }
+
+    await this.listingRepository.remove(listing);
+  }
+
+  async updateListingByUuid(
+    uuid: string,
+    updateData: UpdateListingDto,
+  ): Promise<string> {
+    const listing = await this.listingRepository.findOne({
+      where: { uuid },
+      relations: ['user', 'images', 'location', 'amenities', 'rooms'],
+    });
+
+    if (listing.user.id !== updateData.listing.user.id) {
+      throw new UnauthorizedException(
+        'You are not authorized to update this listing.',
+      );
+    }
+
+    Object.assign(listing, {
+      description: updateData.listing.description ?? listing.description,
+      price: updateData.listing.price ?? listing.price,
+      livingSurface: updateData.listing.livingSurface ?? listing.livingSurface,
+      constructionYear:
+        updateData.listing.constructionYear ?? listing.constructionYear,
+      constructionType:
+        updateData.listing.constructionType ?? listing.constructionType,
+      type: updateData.listing.type ?? listing.type,
+    });
+
+    Object.assign(listing.location, {
+      streetNumber:
+        updateData.location.streetNumber ?? listing.location.streetNumber,
+      streetName: updateData.location.streetName ?? listing.location.streetName,
+      postalCode: updateData.location.postalCode ?? listing.location.postalCode,
+      city: updateData.location.city ?? listing.location.city,
+      state: updateData.location.state ?? listing.location.state,
+      country: updateData.location.country ?? listing.location.country,
+      longitude: updateData.location.longitude ?? listing.location.longitude,
+      latitude: updateData.location.latitude ?? listing.location.latitude,
+    });
+
+    if (updateData.rooms.length > 0) {
+      listing.rooms.forEach((room) => {
+        const roomToUpdate = updateData.rooms.find((r) => r.type === room.type);
+        if (roomToUpdate) {
+          room.amount = roomToUpdate.amount;
+        }
+      });
+    }
+
+    updateData.images.forEach((image) => {
+      image.listing = listing;
+      this.listingImagesService.create(image);
+    });
+
+    updateData.amenities.forEach((amenity) => {
+      const alreadyExists = listing.amenities.find(
+        (a) => a.type === amenity.type,
+      );
+      if (alreadyExists) return;
+      amenity.listing = listing;
+      this.listingAmenitiesService.create(amenity);
+    });
+
+    updateData.deletedImages.forEach((image) => {
+      this.listingImagesService.delete(image.imageUrl, listing);
+    });
+
+    updateData.deletedAmenities.forEach((amenity) => {
+      const alreadyExists = listing.amenities.find(
+        (a) => a.type === amenity.type,
+      );
+      if (!alreadyExists) return;
+      this.listingAmenitiesService.delete(alreadyExists);
+    });
+
+    await this.listingRepository.save(listing);
+
+    return uuid;
+  }
+
+  private formatListingResponse(listing: Listing): IListingExtended {
+    const formattedAddress = `${listing.location.streetName} ${listing.location.streetNumber}, ${listing.location.postalCode}, ${listing.location.city}, ${listing.location.country}`;
+
+    return {
+      userId: listing.user.id,
+      userFullName: listing.user.fullName,
+      userImage: listing.user.imageUrl,
+      address: formattedAddress,
+      images: listing.images.map((image) => image.imageUrl),
+      type: listing.type,
+      constructionType: listing.constructionType,
+      numberOfBedrooms: this.getNumberOfRooms(listing, RoomType.BEDROOM),
+      numberOfBathrooms: this.getNumberOfRooms(listing, RoomType.BATHROOM),
+      numberOfOtherRooms: this.getNumberOfRooms(listing, RoomType.OTHER),
+      numberOfFloors: this.getNumberOfRooms(listing, RoomType.FLOOR),
+      surfaceArea: listing.livingSurface,
+      price: listing.price,
+      description: listing.description,
+      amenities: listing.amenities.map((amenity) => amenity.type),
+      longitude: listing.location.longitude,
+      latitude: listing.location.latitude,
+      constructionYear: listing.constructionYear,
+    };
   }
 }

@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   Req,
@@ -21,6 +23,8 @@ import { GetAllQueryDto } from './dto/get-all-query.dto';
 import { IFilter } from './dto/filter-inteface';
 import { IListingExtended } from './dto/get-by-uuid-listing.dto';
 import { MostViewedListingsDto } from './dto/most-viewed-listings.dto';
+import { Request } from 'express';
+import { UpdateListingDto } from './dto/update-listing.dto';
 
 const MAX_IMAGES = 50;
 
@@ -36,23 +40,21 @@ export class ListingsController {
     description: 'Create a new listing',
     type: PublishListingDto,
   })
-  @UseInterceptors(FilesInterceptor('createImages', MAX_IMAGES))
+  @UseInterceptors(FilesInterceptor('images', MAX_IMAGES))
   async publish(
     @Req() req: Request,
     @Body() body: any,
     @UploadedFiles() files: Express.Multer.File[],
   ): Promise<{ uuid: string }> {
     const publishListingDto: PublishListingDto = {
-      createListing: JSON.parse(body.createListing),
-      createLocation: JSON.parse(body.createLocation),
-      createImages: files.map((file) => ({ file })),
-      createAmenities: body.createAmenities
-        ? JSON.parse(body.createAmenities)
-        : [],
-      createRooms: body.createRooms ? JSON.parse(body.createRooms) : [],
+      listing: JSON.parse(body.listing),
+      location: JSON.parse(body.location),
+      images: files.map((file) => ({ file })),
+      amenities: body.amenities ? JSON.parse(body.amenities) : [],
+      rooms: body.rooms ? JSON.parse(body.rooms) : [],
     };
 
-    publishListingDto.createListing.user = (req as any).user;
+    publishListingDto.listing.user = (req as any).user;
     return { uuid: await this.listingService.publish(publishListingDto) };
   }
 
@@ -92,5 +94,57 @@ export class ListingsController {
   @Get(':uuid')
   async getByUUID(@Param('uuid') uuid: string): Promise<IListingExtended> {
     return this.listingService.getByUUID(uuid);
+  }
+
+  @Throttle({ default: { limit: 10, ttl: 1000 } })
+  @Delete(':uuid')
+  @UseGuards(JwtGuard)
+  async deleteByUUID(@Param('uuid') uuid: string, @Req() req: Request) {
+    return this.listingService.deleteByUuid(uuid, req);
+  }
+
+  @Throttle({ default: { limit: 100, ttl: 1000 } })
+  @Patch(':uuid')
+  @UseGuards(JwtGuard)
+  @ApiBody({
+    description: 'Update a listing',
+    type: UpdateListingDto,
+  })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FilesInterceptor('images', MAX_IMAGES))
+  async patchListing(
+    @Param('uuid') uuid: string,
+    @Body() body: any,
+    @UploadedFiles() files: Express.Multer.File[],
+    @Req() req: Request,
+  ): Promise<{ uuid: string }> {
+    const updateListingDto: UpdateListingDto = {
+      listing: this.safeParse(body.listing),
+      location: this.safeParse(body.location),
+      images: files ? files.map((file) => ({ file })) : [],
+      deletedImages: body.deletedImages
+        ? this.safeParse(body.deletedImages)
+        : [],
+      amenities: body.amenities ? this.safeParse(body.amenities) : [],
+      deletedAmenities: body.deletedAmenities
+        ? this.safeParse(body.deletedAmenities)
+        : [],
+      rooms: body.rooms ? this.safeParse(body.rooms) : [],
+    };
+
+    updateListingDto.listing.user = (req as any).user;
+    return {
+      uuid: await this.listingService.updateListingByUuid(
+        uuid,
+        updateListingDto,
+      ),
+    };
+  }
+  private safeParse(jsonString: string): any {
+    try {
+      return JSON.parse(jsonString);
+    } catch {
+      return {};
+    }
   }
 }

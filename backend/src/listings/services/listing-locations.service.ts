@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ListingLocation } from '../entity/listing-location.entity';
-import { CreateListingLocationDto } from '../dto/create-listing-location.dto';
+import { ListingLocationDto } from '../dto/listing-location.dto';
 
 @Injectable()
 export class ListingLocationsService {
@@ -12,7 +12,7 @@ export class ListingLocationsService {
   ) {}
 
   async create(
-    createListingLocationDto: CreateListingLocationDto,
+    createListingLocationDto: ListingLocationDto,
   ): Promise<ListingLocation> {
     const newListingLocation = this.listingLocationRepository.create(
       createListingLocationDto,

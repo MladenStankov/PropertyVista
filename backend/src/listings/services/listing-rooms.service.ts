@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ListingRoom } from '../entity/listing-room.entity';
 import { Repository } from 'typeorm';
-import { CreateListingRoomDto } from '../dto/create-listing-room.dto';
+import { ListingRoomDto } from '../dto/listing-room.dto';
 
 @Injectable()
 export class ListingRoomsService {
@@ -11,9 +11,7 @@ export class ListingRoomsService {
     private listingRoomRepository: Repository<ListingRoom>,
   ) {}
 
-  async create(
-    createListingRoomDto: CreateListingRoomDto,
-  ): Promise<ListingRoom> {
+  async create(createListingRoomDto: ListingRoomDto): Promise<ListingRoom> {
     const newListingAmenity =
       this.listingRoomRepository.create(createListingRoomDto);
 
