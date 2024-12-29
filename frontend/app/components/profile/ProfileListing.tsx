@@ -51,9 +51,12 @@ export default function ProfileListing({
               View
             </button>
           </Link>
-          <button className="px-4 py-2 bg-yellow-500 text-white rounded-md font-bold hover:bg-yellow-600 w-full">
-            Edit
-          </button>
+          <Link href={`listings/edit/${listing.uuid}`}>
+            <button className="px-4 py-2 bg-yellow-500 text-white rounded-md font-bold hover:bg-yellow-600 w-full">
+              Edit
+            </button>
+          </Link>
+
           <button
             onClick={() => handleDelete(listing.uuid)}
             className="px-4 py-2 bg-red-500 text-white rounded-md font-bold hover:bg-red-600"

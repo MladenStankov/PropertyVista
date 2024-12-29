@@ -9,6 +9,10 @@ import ImageForm from "./ImageForm";
 import RoomForm from "./RoomForm";
 import AmenitiesForm from "./AmenitiesForm";
 import Link from "next/link";
+import {
+  IListingEditing,
+  IUpdatedListing,
+} from "@/app/profile/listings/edit/[uuid]/page";
 
 export type PropertyType = "buy" | "rent";
 
@@ -59,7 +63,7 @@ export interface IWizardForm {
 }
 
 export interface IForm {
-  formData: IWizardForm;
+  updatedListing: IUpdatedListing;
   handleChange: (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -67,38 +71,20 @@ export interface IForm {
   ) => void;
 }
 
-export default function WizardForm() {
+interface IProps {
+  uuid: string;
+  listing: IListingEditing;
+  updatedListing: IUpdatedListing;
+  setUpdatedListing: React.Dispatch<React.SetStateAction<IUpdatedListing>>;
+}
+
+export default function WizardForm({
+  uuid,
+  listing,
+  updatedListing,
+  setUpdatedListing,
+}: IProps) {
   const [step, setStep] = useState<number>(1);
-  const [formData, setFormData] = useState<IWizardForm>({
-    address: {
-      streetNumber: "",
-      streetName: "",
-      postalCode: "",
-      city: "",
-      state: "",
-      country: "",
-    },
-    location: {
-      latitude: 0,
-      longitude: 0,
-    },
-    general: {
-      type: "buy",
-      price: "",
-      constructionType: ConstructionType.HOUSE,
-      surfaceArea: "",
-      constructionYear: "",
-      description: "",
-    },
-    images: [],
-    rooms: {
-      numberOfBedrooms: "",
-      numberOfBathrooms: "",
-      numberOfOtherRooms: "",
-      numberOfFloors: "",
-    },
-    amenities: [],
-  });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [newListingUUID, setNewListingUUID] = useState<string | null>(null);
@@ -110,11 +96,11 @@ export default function WizardForm() {
   ) => {
     const { name, value } = e.target;
 
-    setFormData((prevFormData) => {
+    setUpdatedListing((prevUpdatedListing) => {
       const keys = name.split(".");
-      const updatedFormData = { ...prevFormData };
+      const updatedUpdatedListing = { ...prevUpdatedListing };
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let currentLevel: any = updatedFormData;
+      let currentLevel: any = updatedUpdatedListing;
 
       for (let i = 0; i < keys.length - 1; i++) {
         const key = keys[i] as keyof typeof currentLevel;
@@ -125,27 +111,27 @@ export default function WizardForm() {
       const lastKey = keys[keys.length - 1] as keyof typeof currentLevel;
       currentLevel[lastKey] = value;
 
-      return updatedFormData;
+      return updatedUpdatedListing;
     });
   };
 
   const handleLocationChange = (longitude: number, latitude: number) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
+    setUpdatedListing((prevUpdatedListing) => ({
+      ...prevUpdatedListing,
       location: { longitude: longitude, latitude: latitude },
     }));
   };
 
   const handleImageChange = (images: File[]) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      images: [...images],
+    setUpdatedListing((prevUpdatedListing) => ({
+      ...prevUpdatedListing,
+      files: [...images],
     }));
   };
 
   const handleAmenityChange = (amenities: AmenityType[]) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
+    setUpdatedListing((prevUpdatedListing) => ({
+      ...prevUpdatedListing,
       amenities: [...amenities],
     }));
   };
@@ -182,7 +168,7 @@ export default function WizardForm() {
   } => {
     const errors: Record<string, string> = {};
 
-    const { address, general, rooms, images } = formData;
+    const { address, general, rooms, images } = updatedListing;
     if (!address.streetNumber)
       errors["address.streetNumber"] = "Street number is required.";
     if (!address.streetName)
@@ -245,8 +231,6 @@ export default function WizardForm() {
         }
       });
 
-      console.log(firstErrorStep);
-
       setStep(Number(firstErrorStep));
       return;
     }
@@ -258,37 +242,111 @@ export default function WizardForm() {
       requestBody.append(
         "listing",
         JSON.stringify({
-          description: formData.general.description,
-          constructionType: formData.general.constructionType,
-          constructionYear: formData.general.constructionYear,
-          price: formData.general.price,
-          livingSurface: formData.general.surfaceArea,
-          type: formData.general.type,
+          description:
+            updatedListing.general.description !== listing.general.description
+              ? updatedListing.general.description
+              : listing.general.description,
+          constructionType:
+            updatedListing.general.constructionType !==
+            listing.general.constructionType
+              ? updatedListing.general.constructionType
+              : listing.general.constructionType,
+          constructionYear:
+            updatedListing.general.constructionYear !==
+            listing.general.constructionYear
+              ? updatedListing.general.constructionYear
+              : listing.general.constructionYear,
+          price:
+            updatedListing.general.price !== listing.general.price
+              ? updatedListing.general.price
+              : listing.general.price,
+          livingSurface:
+            updatedListing.general.surfaceArea !== listing.general.surfaceArea
+              ? updatedListing.general.surfaceArea
+              : listing.general.surfaceArea,
+          type:
+            updatedListing.general.type !== listing.general.type
+              ? updatedListing.general.type
+              : listing.general.type,
         })
       );
 
       requestBody.append(
         "location",
         JSON.stringify({
-          streetNumber: formData.address.streetNumber,
-          streetName: formData.address.streetName,
-          postalCode: formData.address.postalCode,
-          city: formData.address.city,
-          state: formData.address.state,
-          country: formData.address.country,
-          longitude: formData.location.longitude,
-          latitude: formData.location.latitude,
+          streetNumber:
+            updatedListing.address.streetNumber !== listing.address.streetNumber
+              ? updatedListing.address.streetNumber
+              : listing.address.streetNumber,
+          streetName:
+            updatedListing.address.streetName !== listing.address.streetName
+              ? updatedListing.address.streetName
+              : listing.address.streetName,
+          postalCode:
+            updatedListing.address.postalCode !== listing.address.postalCode
+              ? updatedListing.address.postalCode
+              : listing.address.postalCode,
+          city:
+            updatedListing.address.city !== listing.address.city
+              ? updatedListing.address.city
+              : listing.address.city,
+          state:
+            updatedListing.address.state !== listing.address.state
+              ? updatedListing.address.state
+              : listing.address.state,
+          country:
+            updatedListing.address.country !== listing.address.country
+              ? updatedListing.address.country
+              : listing.address.country,
+          longitude:
+            updatedListing.location.longitude !== listing.location.longitude
+              ? updatedListing.location.longitude
+              : listing.location.longitude,
+          latitude:
+            updatedListing.location.latitude !== listing.location.latitude
+              ? updatedListing.location.latitude
+              : listing.location.latitude,
         })
       );
 
-      formData.images.forEach((imageFile) => {
+      updatedListing.files?.forEach((imageFile) => {
         requestBody.append("images", imageFile);
       });
+
+      const deletedImages = listing.images.filter(
+        (image) => !updatedListing.images.includes(image)
+      );
+
+      requestBody.append(
+        "deletedImages",
+        JSON.stringify(
+          deletedImages.map((image) => {
+            return { imageUrl: image };
+          })
+        )
+      );
+
+      const newAmenities = updatedListing.amenities.filter(
+        (amenity) => !listing.amenities.includes(amenity)
+      );
 
       requestBody.append(
         "amenities",
         JSON.stringify(
-          formData.amenities.map((amenity) => {
+          newAmenities.map((amenity) => {
+            return { type: amenity };
+          })
+        )
+      );
+
+      const deletedAmenities = listing.amenities.filter(
+        (amenity) => !updatedListing.amenities.includes(amenity)
+      );
+
+      requestBody.append(
+        "deletedAmenities",
+        JSON.stringify(
+          deletedAmenities.map((amenity) => {
             return { type: amenity };
           })
         )
@@ -297,17 +355,20 @@ export default function WizardForm() {
       requestBody.append(
         "rooms",
         JSON.stringify([
-          { type: "bedroom", amount: formData.rooms.numberOfBedrooms },
-          { type: "bathroom", amount: formData.rooms.numberOfBathrooms },
-          { type: "other_room", amount: formData.rooms.numberOfOtherRooms },
-          { type: "floor", amount: formData.rooms.numberOfFloors },
+          { type: "bedroom", amount: updatedListing.rooms.numberOfBedrooms },
+          { type: "bathroom", amount: updatedListing.rooms.numberOfBathrooms },
+          {
+            type: "other_room",
+            amount: updatedListing.rooms.numberOfOtherRooms,
+          },
+          { type: "floor", amount: updatedListing.rooms.numberOfFloors },
         ])
       );
 
       const response = await fetch(
-        `${String(process.env.NEXT_PUBLIC_API_URL)}/listings`,
+        `${String(process.env.NEXT_PUBLIC_API_URL)}/listings/${uuid}`,
         {
-          method: "POST",
+          method: "PATCH",
           credentials: "include",
           body: requestBody,
         }
@@ -339,7 +400,7 @@ export default function WizardForm() {
         )}
 
         <h1 className="text-left self-start text-2xl md:text-4xl">
-          <span className="underline">Create a Listing</span>
+          <span className="underline">Update a Listing</span>
         </h1>
 
         <div className="flex flex-wrap md:flex-nowrap justify-between w-full mt-10 divide-y-2 md:divide-y-0 md:divide-x-2">
@@ -365,7 +426,7 @@ export default function WizardForm() {
           <div className="w-full md:w-2/3 flex flex-col gap-6 md:gap-10 px-4 md:px-10 relative">
             {step === 1 && (
               <AddressForm
-                formData={formData}
+                updatedListing={updatedListing}
                 handleChange={handleChange}
                 handleLocationChange={handleLocationChange}
                 errors={errors}
@@ -373,28 +434,29 @@ export default function WizardForm() {
             )}
             {step === 2 && (
               <GeneralInformationForm
-                formData={formData}
+                updatedListing={updatedListing}
                 handleChange={handleChange}
                 errors={errors}
               />
             )}
             {step === 3 && (
               <ImageForm
-                formData={formData}
+                updatedListing={updatedListing}
                 handleImageChange={handleImageChange}
                 errors={errors}
+                setUpdatedListing={setUpdatedListing}
               />
             )}
             {step === 4 && (
               <RoomForm
-                formData={formData}
+                updatedListing={updatedListing}
                 handleChange={handleChange}
                 errors={errors}
               />
             )}
             {step === 5 && (
               <AmenitiesForm
-                formData={formData}
+                updatedListing={updatedListing}
                 handleAmenityChange={handleAmenityChange}
               />
             )}

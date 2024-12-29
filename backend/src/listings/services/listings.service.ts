@@ -18,6 +18,7 @@ import { ListingViewsService } from './listing-views.service';
 import { MostViewedListingsDto } from '../dto/most-viewed-listings.dto';
 import { Request } from 'express';
 import { UpdateListingDto } from '../dto/update-listing.dto';
+import { IForEditing } from '../dto/get-for-editing.dto';
 
 @Injectable()
 export class ListingsService {
@@ -254,7 +255,74 @@ export class ListingsService {
 
     await this.listingViewsService.create(listing);
 
-    return this.formatListingResponse(listing);
+    const formattedAddress = `${listing.location.streetName} ${listing.location.streetNumber}, ${listing.location.postalCode}, ${listing.location.city}, ${listing.location.country}`;
+
+    return {
+      userId: listing.user.id,
+      userFullName: listing.user.fullName,
+      userImage: listing.user.imageUrl,
+      address: formattedAddress,
+      images: listing.images.map((image) => image.imageUrl),
+      type: listing.type,
+      constructionType: listing.constructionType,
+      numberOfBedrooms: this.getNumberOfRooms(listing, RoomType.BEDROOM),
+      numberOfBathrooms: this.getNumberOfRooms(listing, RoomType.BATHROOM),
+      numberOfOtherRooms: this.getNumberOfRooms(listing, RoomType.OTHER),
+      numberOfFloors: this.getNumberOfRooms(listing, RoomType.FLOOR),
+      surfaceArea: listing.livingSurface,
+      price: listing.price,
+      description: listing.description,
+      amenities: listing.amenities.map((amenity) => amenity.type),
+      longitude: listing.location.longitude,
+      latitude: listing.location.latitude,
+      constructionYear: listing.constructionYear,
+    };
+  }
+
+  async getForEditingByUUID(uuid: string): Promise<IForEditing> {
+    const listing = await this.listingRepository.findOne({
+      where: { uuid },
+      relations: ['location', 'images', 'amenities', 'rooms', 'user'],
+    });
+
+    await this.listingViewsService.create(listing);
+
+    return {
+      address: {
+        streetNumber: listing.location.streetNumber,
+        streetName: listing.location.streetName,
+        postalCode: listing.location.postalCode,
+        city: listing.location.city,
+        country: listing.location.country,
+        state: listing.location.state,
+      },
+      location: {
+        longitude: listing.location.longitude,
+        latitude: listing.location.latitude,
+      },
+      images: listing.images.map((image) => image.imageUrl),
+      rooms: {
+        numberOfBedrooms: String(
+          this.getNumberOfRooms(listing, RoomType.BEDROOM),
+        ),
+        numberOfBathrooms: String(
+          this.getNumberOfRooms(listing, RoomType.BATHROOM),
+        ),
+        numberOfOtherRooms: String(
+          this.getNumberOfRooms(listing, RoomType.OTHER),
+        ),
+        numberOfFloors: String(this.getNumberOfRooms(listing, RoomType.FLOOR)),
+      },
+      amenities: listing.amenities.map((amenity) => amenity.type),
+      general: {
+        constructionType: listing.constructionType,
+        constructionYear: String(listing.constructionYear),
+        surfaceArea: String(listing.livingSurface),
+        price: String(listing.price),
+        description: listing.description,
+        type: listing.type,
+      },
+    };
   }
 
   async getTopViewed(): Promise<MostViewedListingsDto[]> {
@@ -381,30 +449,5 @@ export class ListingsService {
     await this.listingRepository.save(listing);
 
     return uuid;
-  }
-
-  private formatListingResponse(listing: Listing): IListingExtended {
-    const formattedAddress = `${listing.location.streetName} ${listing.location.streetNumber}, ${listing.location.postalCode}, ${listing.location.city}, ${listing.location.country}`;
-
-    return {
-      userId: listing.user.id,
-      userFullName: listing.user.fullName,
-      userImage: listing.user.imageUrl,
-      address: formattedAddress,
-      images: listing.images.map((image) => image.imageUrl),
-      type: listing.type,
-      constructionType: listing.constructionType,
-      numberOfBedrooms: this.getNumberOfRooms(listing, RoomType.BEDROOM),
-      numberOfBathrooms: this.getNumberOfRooms(listing, RoomType.BATHROOM),
-      numberOfOtherRooms: this.getNumberOfRooms(listing, RoomType.OTHER),
-      numberOfFloors: this.getNumberOfRooms(listing, RoomType.FLOOR),
-      surfaceArea: listing.livingSurface,
-      price: listing.price,
-      description: listing.description,
-      amenities: listing.amenities.map((amenity) => amenity.type),
-      longitude: listing.location.longitude,
-      latitude: listing.location.latitude,
-      constructionYear: listing.constructionYear,
-    };
   }
 }

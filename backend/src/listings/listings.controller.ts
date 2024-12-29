@@ -25,6 +25,7 @@ import { IListingExtended } from './dto/get-by-uuid-listing.dto';
 import { MostViewedListingsDto } from './dto/most-viewed-listings.dto';
 import { Request } from 'express';
 import { UpdateListingDto } from './dto/update-listing.dto';
+import { IForEditing } from './dto/get-for-editing.dto';
 
 const MAX_IMAGES = 50;
 
@@ -94,6 +95,12 @@ export class ListingsController {
   @Get(':uuid')
   async getByUUID(@Param('uuid') uuid: string): Promise<IListingExtended> {
     return this.listingService.getByUUID(uuid);
+  }
+
+  @Throttle({ default: { limit: 100, ttl: 1000 } })
+  @Get('/for-editing/:uuid')
+  async getForEditingByUUID(@Param('uuid') uuid: string): Promise<IForEditing> {
+    return this.listingService.getForEditingByUUID(uuid);
   }
 
   @Throttle({ default: { limit: 10, ttl: 1000 } })
