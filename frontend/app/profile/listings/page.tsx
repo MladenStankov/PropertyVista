@@ -18,6 +18,8 @@ export interface ProfileListings {
 export default function ProfileListings() {
   const [listings, setListings] = useState<ProfileListings[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [selectedUuid, setSelectedUuid] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchListings() {
@@ -45,9 +47,15 @@ export default function ProfileListings() {
         credentials: "include",
       });
       setListings(listings?.filter((listing) => listing.uuid !== uuid) || null);
+      setShowPopup(false);
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const confirmDelete = (uuid: string) => {
+    setSelectedUuid(uuid);
+    setShowPopup(true);
   };
 
   return (
@@ -64,7 +72,7 @@ export default function ProfileListings() {
                 <ProfileListing
                   key={listing.uuid}
                   listing={listing}
-                  handleDelete={handleDelete}
+                  handleDelete={confirmDelete}
                 />
               ))
             ) : (
@@ -72,6 +80,29 @@ export default function ProfileListings() {
                 No Listings
               </div>
             )}
+          </div>
+        </div>
+      )}
+      {showPopup && selectedUuid && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-md p-6 w-full max-w-md">
+            <h2 className="text-xl font-semibold text-gray-800">
+              Are you sure you want to delete this listing?
+            </h2>
+            <div className="mt-4 flex justify-end gap-4">
+              <button
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+                onClick={() => setShowPopup(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                onClick={() => handleDelete(selectedUuid)}
+              >
+                Confirm
+              </button>
+            </div>
           </div>
         </div>
       )}
