@@ -389,7 +389,7 @@ export default function WizardForm({
         {newListingUUID && (
           <div className="inset-0 w-full h-full bg-white absolute z-[1] flex flex-col items-center justify-center gap-10 p-10  ">
             <h1 className="text-center text-5xl font-medium drop-shadow-2xl text-slate-600 ">
-              Your have successfully published your listing!
+              Your have successfully updated your listing!
             </h1>
             <Link href={`/listings/${newListingUUID}`}>
               <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 text-2xl font-semibold shadow-md rounded-md">
