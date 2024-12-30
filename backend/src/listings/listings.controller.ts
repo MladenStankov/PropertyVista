@@ -103,9 +103,13 @@ export class ListingsController {
   }
 
   @Throttle({ default: { limit: 100, ttl: 1000 } })
+  @UseGuards(JwtOptionalGuard)
   @Get(':uuid')
-  async getByUUID(@Param('uuid') uuid: string): Promise<IListingExtended> {
-    return this.listingService.getByUUID(uuid);
+  async getByUUID(
+    @Param('uuid') uuid: string,
+    @Req() req: Request,
+  ): Promise<IListingExtended> {
+    return this.listingService.getByUUID(uuid, req.user as User);
   }
 
   @Throttle({ default: { limit: 100, ttl: 1000 } })

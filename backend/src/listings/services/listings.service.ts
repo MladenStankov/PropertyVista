@@ -263,15 +263,27 @@ export class ListingsService {
     }
   }
 
-  async getByUUID(uuid: string): Promise<IListingExtended> {
+  async getByUUID(uuid: string, user?: User): Promise<IListingExtended> {
     const listing = await this.listingRepository.findOne({
       where: { uuid },
-      relations: ['location', 'images', 'amenities', 'rooms', 'user'],
+      relations: [
+        'location',
+        'images',
+        'amenities',
+        'rooms',
+        'user',
+        'favourites',
+        'favourites.user',
+      ],
     });
 
     await this.listingViewsService.create(listing);
 
     const formattedAddress = `${listing.location.streetName} ${listing.location.streetNumber}, ${listing.location.postalCode}, ${listing.location.city}, ${listing.location.country}`;
+
+    const isFavourited = user
+      ? listing.favourites.some((fav) => fav.user?.id === user.id)
+      : false;
 
     return {
       userId: listing.user.id,
@@ -292,6 +304,7 @@ export class ListingsService {
       longitude: listing.location.longitude,
       latitude: listing.location.latitude,
       constructionYear: listing.constructionYear,
+      isFavourited,
     };
   }
 

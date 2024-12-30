@@ -38,4 +38,6 @@ export interface IListingExtended {
   latitude: number;
 
   constructionYear: number;
+
+  isFavourited: boolean;
 }

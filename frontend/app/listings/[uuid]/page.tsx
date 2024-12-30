@@ -29,6 +29,7 @@ import { PiTowelLight } from "react-icons/pi";
 import { IconType } from "react-icons";
 import Map from "@/app/components/listings/Map";
 import Loading from "@/app/components/Loading";
+import { list } from "postcss";
 
 export interface IListingExtended {
   userId: number;
@@ -49,6 +50,7 @@ export interface IListingExtended {
   longitude: number;
   latitude: number;
   constructionYear: number;
+  isFavourited: boolean;
 }
 
 const amenityIcons: { [key: string]: IconType } = {
@@ -77,7 +79,10 @@ export default function Listing() {
   useEffect(() => {
     async function fetchListing() {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/listings/${uuid}`
+        `${process.env.NEXT_PUBLIC_API_URL}/listings/${uuid}`,
+        {
+          credentials: "include",
+        }
       );
 
       if (!response.ok) {
@@ -112,6 +117,31 @@ export default function Listing() {
     if (listing) {
       navigator.clipboard.writeText(window.location.href);
       toast.success("Link copied to clipboard!");
+    }
+  };
+
+  const handleFavourite = async () => {
+    if (!listing) return;
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/listings/favourite/${uuid}`,
+      {
+        method: listing?.isFavourited ? "DELETE" : "POST",
+        credentials: "include",
+      }
+    );
+
+    if (response.ok) {
+      setListing((prevListing) => {
+        return {
+          ...prevListing,
+          isFavourited: !prevListing?.isFavourited,
+        };
+      });
+    } else if (response.status === 401) {
+      window.location.href = "/login";
+    } else {
+      const errorData = await response.json();
+      toast.error(errorData.message || "An unexpected error occurred.");
     }
   };
 
@@ -181,12 +211,17 @@ export default function Listing() {
           </div>
 
           <div className="flex flex-row gap-2 place-self-end mt-2 mr-2">
-            <div className="bg-white rounded-full p-3 border w-fit border-black hover:cursor-pointer hover:bg-gray-200">
-              <FaRegHeart size={40} />
+            <div
+              onClick={() => handleFavourite()}
+              className={`bg-white rounded-full p-3 w-fit border-black border-2 hover:cursor-pointer hover:bg-gray-200 ${
+                listing.isFavourited ? "border-red-500" : ""
+              }`}
+            >
+              <FaRegHeart size={40} color={listing.isFavourited ? "red" : ""} />
             </div>
             <div
               onClick={() => handleShareButton()}
-              className="bg-white rounded-full p-3 border w-fit border-black hover:cursor-pointer hover:bg-gray-200"
+              className="bg-white rounded-full p-3 border-2 w-fit border-black hover:cursor-pointer hover:bg-gray-200"
             >
               <MdIosShare size={40} />
             </div>
