@@ -93,4 +93,11 @@ export class AuthController {
   async profileListings(@Req() req: Request) {
     return this.authService.profileListings(req);
   }
+
+  @Throttle({ default: { limit: 100, ttl: 1000 } })
+  @UseGuards(JwtGuard)
+  @Get('/profile-favourite-listings')
+  async profileFavouriteListings(@Req() req: Request) {
+    return this.authService.profileFavouriteListings(req);
+  }
 }

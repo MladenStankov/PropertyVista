@@ -123,4 +123,9 @@ export class AuthService {
     const { id } = req.user as User;
     return await this.userService.profileListings(id);
   }
+
+  async profileFavouriteListings(req: Request): Promise<ProfileListings[]> {
+    const { id } = req.user as User;
+    return await this.userService.profileFavouriteListings(id);
+  }
 }

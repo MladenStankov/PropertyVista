@@ -148,4 +148,27 @@ export class UsersService {
       favourites: listing.favourites.length,
     }));
   }
+
+  async profileFavouriteListings(id: number): Promise<ProfileListings[]> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      relations: [
+        'favourites',
+        'favourites.listing',
+        'favourites.listing.favourites',
+        'favourites.listing.images',
+        'favourites.listing.views',
+      ],
+    });
+
+    return user.favourites.map((favourite) => ({
+      uuid: favourite.listing.uuid,
+      imageUrl: favourite.listing.images[0].imageUrl,
+      createdAt: favourite.listing.createdAt,
+      price: favourite.listing.price,
+      type: favourite.listing.type,
+      views: favourite.listing.views.length,
+      favourites: favourite.listing.favourites.length,
+    }));
+  }
 }
