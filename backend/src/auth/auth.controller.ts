@@ -129,7 +129,7 @@ export class AuthController {
   async changeImage(
     @UploadedFile() file: Express.Multer.File,
     @Req() req: Request,
-  ) {
+  ): Promise<{ newImage: string }> {
     return this.authService.changeImage(file, req.user as User);
   }
 }

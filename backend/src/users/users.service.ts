@@ -179,7 +179,10 @@ export class UsersService {
     await user.save();
   }
 
-  async changeImage(file: Express.Multer.File, user: User) {
+  async changeImage(
+    file: Express.Multer.File,
+    user: User,
+  ): Promise<{ newImage: string }> {
     const oldImage = user.imageUrl;
     const newImage = await this.awsService.uploadFile(file);
 
@@ -188,5 +191,6 @@ export class UsersService {
       await this.awsService.deleteFile(oldImage);
 
     await user.save();
+    return { newImage };
   }
 }

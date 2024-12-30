@@ -277,8 +277,8 @@ export default function Listing() {
                   <Image
                     src={listing.userImage}
                     alt="Broker Image"
-                    width={35}
-                    height={35}
+                    width={170}
+                    height={170}
                     className="object-cover w-full h-full"
                   />
                 </div>

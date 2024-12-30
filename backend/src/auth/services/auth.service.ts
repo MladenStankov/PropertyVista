@@ -133,7 +133,10 @@ export class AuthService {
     return await this.userService.changeName(name, user);
   }
 
-  async changeImage(file: Express.Multer.File, user: User) {
+  async changeImage(
+    file: Express.Multer.File,
+    user: User,
+  ): Promise<{ newImage: string }> {
     return await this.userService.changeImage(file, user);
   }
 }

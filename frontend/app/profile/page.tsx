@@ -26,6 +26,8 @@ interface ProfileInfo {
 
 export default function Profile() {
   const [profileInfo, setProfileInfo] = useState<ProfileInfo | null>(null);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [newName, setNewName] = useState(profileInfo?.fullName || "");
 
   useEffect(() => {
     async function fetchProfileInfo() {
@@ -41,15 +43,81 @@ export default function Profile() {
       }
       const data: ProfileInfo = await response.json();
       setProfileInfo(data);
-      console.log(data);
+      setNewName(data.fullName);
     }
 
     fetchProfileInfo();
   }, []);
 
-  const handleImageEdit = () => {};
+  const handleImageEdit = async () => {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.onchange = async (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (!file) return;
 
-  const handleNameEdit = () => {};
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/change-image`,
+          {
+            method: "PUT",
+            credentials: "include",
+            body: formData,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to update profile image");
+        }
+
+        const data = await response.json();
+        setProfileInfo((prev) =>
+          prev ? { ...prev, imageUrl: data.newImage } : null
+        );
+      } catch (error) {
+        console.error("Error updating profile image:", error);
+      }
+    };
+    fileInput.click();
+  };
+
+  const handleNameEdit = async () => {
+    if (isEditingName) {
+      if (!newName || newName.trim() === "") {
+        alert("Name cannot be empty.");
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/auth/change-name`,
+          {
+            method: "PUT",
+            credentials: "include",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ fullName: newName }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to update profile name");
+        }
+
+        setProfileInfo((prev) =>
+          prev ? { ...prev, fullName: newName } : null
+        );
+      } catch (error) {
+        console.error("Error updating profile name:", error);
+      }
+    }
+    setIsEditingName(!isEditingName);
+  };
 
   return (
     <div className="w-full h-full bg-gradient-to-t from-sky-500 to-cyan-400 flex justify-center items-center py-10">
@@ -74,9 +142,18 @@ export default function Profile() {
               </div>
               <div className="text-gray-600 text-center sm:text-left">
                 <div className="flex gap-2 items-center">
-                  <h1 className="text-2xl sm:text-4xl font-semibold">
-                    {profileInfo.fullName}
-                  </h1>
+                  {isEditingName ? (
+                    <input
+                      type="text"
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      className="text-2xl sm:text-4xl font-semibold bg-transparent border-b-2 border-gray-500 focus:outline-none"
+                    />
+                  ) : (
+                    <h1 className="text-2xl sm:text-4xl font-semibold">
+                      {profileInfo.fullName}
+                    </h1>
+                  )}
                   <CiEdit
                     onClick={() => handleNameEdit()}
                     size={30}

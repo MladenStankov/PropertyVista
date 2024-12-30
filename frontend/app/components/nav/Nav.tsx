@@ -42,14 +42,14 @@ export default function Nav() {
           <div className="flex flex-row gap-3 relative">
             {profile ? (
               <div
-                className="rounded-full overflow-hidden -my-2 cursor-pointer hover:scale-105 transition-all duration-300"
+                className="rounded-full overflow-hidden -my-2 cursor-pointer hover:scale-105 transition-all duration-300 w-12 h-12"
                 onClick={() => setIsProfileMenuVisible(!isProfileMenuVisible)}
               >
                 <Image
                   src={profile.imageUrl}
                   alt="Profile Image"
-                  width={35}
-                  height={35}
+                  width={170}
+                  height={170}
                   className="object-cover w-full h-full"
                 />
               </div>
