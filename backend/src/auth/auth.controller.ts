@@ -3,11 +3,14 @@ import {
   Controller,
   Get,
   Post,
+  Put,
   Req,
   Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './services/auth.service';
 import { LoginDto } from './dto/login.dto';
 import { LocalGuard } from './guards/local.guard';
@@ -20,6 +23,9 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { EmailSendingService } from 'src/email-sending/email-sending.service';
 import { User } from 'src/users/entity/user.entity';
 import { ConfigService } from '@nestjs/config';
+import { ChangeNameDto } from './dto/change-name.dto';
+import { ChangeImageDto } from './dto/change-image.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -99,5 +105,31 @@ export class AuthController {
   @Get('/profile-favourite-listings')
   async profileFavouriteListings(@Req() req: Request) {
     return this.authService.profileFavouriteListings(req);
+  }
+
+  @Throttle({ default: { limit: 100, ttl: 1000 } })
+  @UseGuards(JwtGuard)
+  @Put('/change-name')
+  async changeName(@Body() changeNameDto: ChangeNameDto, @Req() req: Request) {
+    return this.authService.changeName(
+      changeNameDto.fullName,
+      req.user as User,
+    );
+  }
+
+  @Throttle({ default: { limit: 100, ttl: 1000 } })
+  @UseGuards(JwtGuard)
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Update the image',
+    type: ChangeImageDto,
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  @Put('/change-image')
+  async changeImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Req() req: Request,
+  ) {
+    return this.authService.changeImage(file, req.user as User);
   }
 }

@@ -8,6 +8,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { ProfileInfo } from 'src/auth/dto/profile-info.dto';
 import { ProfileListings } from 'src/auth/dto/profile-listings.dto';
+import { AwsService } from 'src/aws/aws.service';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +16,7 @@ export class UsersService {
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     private readonly configService: ConfigService,
+    private readonly awsService: AwsService,
   ) {}
 
   async create(createLocalUserDto: CreateUserDto): Promise<User> {
@@ -170,5 +172,21 @@ export class UsersService {
       views: favourite.listing.views.length,
       favourites: favourite.listing.favourites.length,
     }));
+  }
+
+  async changeName(fullName: string, user: User) {
+    user.fullName = fullName;
+    await user.save();
+  }
+
+  async changeImage(file: Express.Multer.File, user: User) {
+    const oldImage = user.imageUrl;
+    const newImage = await this.awsService.uploadFile(file);
+
+    user.imageUrl = newImage;
+    if (!oldImage.includes('default-profile-image.png'))
+      await this.awsService.deleteFile(oldImage);
+
+    await user.save();
   }
 }

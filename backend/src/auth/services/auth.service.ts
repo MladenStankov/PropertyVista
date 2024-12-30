@@ -128,4 +128,12 @@ export class AuthService {
     const { id } = req.user as User;
     return await this.userService.profileFavouriteListings(id);
   }
+
+  async changeName(name: string, user: User) {
+    return await this.userService.changeName(name, user);
+  }
+
+  async changeImage(file: Express.Multer.File, user: User) {
+    return await this.userService.changeImage(file, user);
+  }
 }
