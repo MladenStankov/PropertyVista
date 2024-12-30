@@ -17,6 +17,7 @@ export async function middleware(request: NextRequest) {
     "/profile",
     "/sell",
     "/profile/listings",
+    "/profile/listings/edit/",
     "/profile/favourite-listings",
     "/profile/chats",
   ];
@@ -28,7 +29,11 @@ export async function middleware(request: NextRequest) {
 
   if (user && authRoutes.includes(pathname)) {
     response = NextResponse.redirect(new URL("/", request.url));
-  } else if (!user && protectedRoutes.includes(pathname)) {
+  } else if (
+    !user &&
+    (protectedRoutes.includes(pathname) ||
+      protectedRoutes.some((route) => pathname.startsWith(route)))
+  ) {
     response = NextResponse.redirect(new URL("/login", request.url));
   } else {
     response = NextResponse.next();

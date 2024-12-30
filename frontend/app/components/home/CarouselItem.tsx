@@ -37,8 +37,11 @@ export default function CarouselItem({
         style={{ boxShadow: "0 4px 8px rgba(0, 0, 0, 0.5)" }}
       >
         <p>
-          € <span>{item.price}</span>
-          {item.type === "rent" && <span className="font-normal">/ month</span>}
+          {new Intl.NumberFormat("en-IE", {
+            style: "currency",
+            currency: "EUR",
+          }).format(item.price)}
+          {item.type === "rent" && <span className="font-light">/month</span>}
         </p>
       </div>
     </Link>
