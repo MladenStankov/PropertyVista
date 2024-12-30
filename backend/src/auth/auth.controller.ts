@@ -20,7 +20,6 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { EmailSendingService } from 'src/email-sending/email-sending.service';
 import { User } from 'src/users/entity/user.entity';
 import { ConfigService } from '@nestjs/config';
-import { ProfileListings } from './dto/profile-listings.dto';
 
 @Controller('auth')
 @ApiTags('Auth')

@@ -106,7 +106,10 @@ export default function ListingsPage() {
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/listings${
             queryString ? `?${queryString}` : ""
-          }`
+          }`,
+          {
+            credentials: "include",
+          }
         );
 
         if (!response.ok) {
@@ -142,6 +145,17 @@ export default function ListingsPage() {
       .filter(Boolean)
       .join("&");
     window.location.href = `listings?${queriesString}`;
+  };
+
+  const handleFavouriteChange = (uuid: string) => {
+    setListingsCards((prevListingsCards) =>
+      prevListingsCards.map((listingCard) => {
+        if (listingCard.uuid === uuid) {
+          return { ...listingCard, isFavourited: !listingCard.isFavourited };
+        }
+        return listingCard;
+      })
+    );
   };
 
   return (
@@ -222,7 +236,11 @@ export default function ListingsPage() {
       ) : listingsCards.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {listingsCards.map((listing, index) => (
-            <ListingsCard key={index} {...listing} />
+            <ListingsCard
+              key={index}
+              {...listing}
+              handleFavouriteChange={handleFavouriteChange}
+            />
           ))}
         </div>
       ) : (

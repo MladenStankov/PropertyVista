@@ -16,6 +16,7 @@ import { EmailSendingModule } from 'src/email-sending/email-sending.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthRefreshToken } from 'src/auth/entity/auth-refresh-token.entity';
 import { AuthRefreshTokenService } from './services/auth-refresh-token.service';
+import { JwtOptionalGuard } from './guards/jwt-optional.guard';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { AuthRefreshTokenService } from './services/auth-refresh-token.service';
     JwtRefreshStrategy,
     LocalStrategy,
     JwtGuard,
+    JwtOptionalGuard,
     GoogleStrategy,
     GoogleOAuthGuard,
     AuthRefreshTokenService,
@@ -43,6 +45,6 @@ import { AuthRefreshTokenService } from './services/auth-refresh-token.service';
       useClass: ThrottlerGuard,
     },
   ],
-  exports: [JwtGuard, AuthService],
+  exports: [JwtGuard, AuthService, JwtOptionalGuard],
 })
 export class AuthModule {}

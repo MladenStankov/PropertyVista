@@ -37,7 +37,10 @@ export default function EditListing() {
   useEffect(() => {
     async function fetchListing() {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/listings/for-editing/${uuid}`
+        `${process.env.NEXT_PUBLIC_API_URL}/listings/for-editing/${uuid}`,
+        {
+          credentials: "include",
+        }
       );
 
       if (!response.ok) {
@@ -60,15 +63,20 @@ export default function EditListing() {
     <div>
       {isLoading ? (
         <Loading />
+      ) : uuid &&
+        listing.address &&
+        listing.location &&
+        listing.general &&
+        listing.rooms &&
+        listing.amenities ? (
+        <WizardForm
+          uuid={uuid}
+          listing={listing}
+          updatedListing={updatedListing}
+          setUpdatedListing={setUpdatedListing}
+        />
       ) : (
-        uuid && (
-          <WizardForm
-            uuid={uuid}
-            listing={listing}
-            updatedListing={updatedListing}
-            setUpdatedListing={setUpdatedListing}
-          />
-        )
+        <h1 className="text-4xl font-bold text-center m-10">Unauthorized</h1>
       )}
     </div>
   );

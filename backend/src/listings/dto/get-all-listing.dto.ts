@@ -21,4 +21,6 @@ export interface IListing {
   surfaceArea: number;
 
   price: number;
+
+  isFavourited: boolean;
 }

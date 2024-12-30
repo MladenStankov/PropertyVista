@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Listing } from '../entity/listing.entity';
@@ -19,6 +23,7 @@ import { MostViewedListingsDto } from '../dto/most-viewed-listings.dto';
 import { Request } from 'express';
 import { UpdateListingDto } from '../dto/update-listing.dto';
 import { IForEditing } from '../dto/get-for-editing.dto';
+import { ListingFavourite } from '../entity/listing-favourite.entity';
 
 @Injectable()
 export class ListingsService {
@@ -30,6 +35,9 @@ export class ListingsService {
     private listingAmenitiesService: ListingAmenitiesService,
     private listingRoomsService: ListingRoomsService,
     private listingViewsService: ListingViewsService,
+
+    @InjectRepository(ListingFavourite)
+    private listingFavouriteRepository: Repository<ListingFavourite>,
   ) {}
 
   async create(createListingDto: ListingDto): Promise<Listing> {
@@ -87,6 +95,7 @@ export class ListingsService {
     filter?: IFilter,
     sort?: SortType,
     search?: string,
+    user?: User | null,
   ): Promise<IListing[]> {
     const query = this.listingRepository.createQueryBuilder('listing');
 
@@ -94,7 +103,9 @@ export class ListingsService {
       .leftJoinAndSelect('listing.images', 'images')
       .leftJoinAndSelect('listing.location', 'location')
       .leftJoinAndSelect('listing.rooms', 'rooms')
-      .leftJoinAndSelect('listing.amenities', 'amenities');
+      .leftJoinAndSelect('listing.amenities', 'amenities')
+      .leftJoinAndSelect('listing.favourites', 'favourites')
+      .leftJoinAndSelect('favourites.user', 'favouriteUser');
 
     if (search) {
       query.andWhere(
@@ -231,6 +242,10 @@ export class ListingsService {
       return listings.map((listing) => {
         const formattedAddress = `${listing.location.streetName} ${listing.location.streetNumber}, ${listing.location.postalCode}, ${listing.location.city}, ${listing.location.country}`;
 
+        const isFavourited = user
+          ? listing.favourites.some((fav) => fav.user?.id === user.id)
+          : false;
+
         return {
           uuid: listing.uuid,
           address: formattedAddress,
@@ -242,6 +257,7 @@ export class ListingsService {
           numberOfFloors: this.getNumberOfRooms(listing, RoomType.FLOOR),
           surfaceArea: listing.livingSurface,
           price: listing.price,
+          isFavourited,
         };
       });
     }
@@ -279,13 +295,15 @@ export class ListingsService {
     };
   }
 
-  async getForEditingByUUID(uuid: string): Promise<IForEditing> {
+  async getForEditingByUUID(uuid: string, user: User): Promise<IForEditing> {
     const listing = await this.listingRepository.findOne({
       where: { uuid },
       relations: ['location', 'images', 'amenities', 'rooms', 'user'],
     });
 
-    await this.listingViewsService.create(listing);
+    if (listing.user.id !== user.id) {
+      throw new UnauthorizedException();
+    }
 
     return {
       address: {
@@ -449,5 +467,49 @@ export class ListingsService {
     await this.listingRepository.save(listing);
 
     return uuid;
+  }
+
+  async favourite(uuid: string, req: Request): Promise<void> {
+    const user = req.user as User;
+    const listing = await this.listingRepository.findOne({
+      where: { uuid },
+      relations: ['user'],
+    });
+
+    if (listing.user.id === user.id) {
+      throw new BadRequestException('You cannot favourite your own listing.');
+    }
+    const alreadyExisting = await this.listingFavouriteRepository.findOneBy({
+      listing: { uuid: listing.uuid },
+      user: { id: user.id },
+    });
+    if (alreadyExisting)
+      throw new BadRequestException('Listing already favourited.');
+
+    const favourite = this.listingFavouriteRepository.create({
+      listing,
+      user,
+    });
+    await favourite.save();
+  }
+
+  async deleteFavourite(uuid: string, req: Request): Promise<void> {
+    const user = req.user as User;
+    const listing = await this.listingRepository.findOne({
+      where: { uuid },
+      relations: ['user'],
+    });
+
+    if (listing.user.id === user.id) {
+      throw new BadRequestException('You cannot favourite your own listing.');
+    }
+    const alreadyExisting = await this.listingFavouriteRepository.findOneBy({
+      listing: { uuid: listing.uuid },
+      user: { id: user.id },
+    });
+    if (!alreadyExisting)
+      throw new BadRequestException('You have not favourited this listing.');
+
+    await this.listingFavouriteRepository.remove(alreadyExisting);
   }
 }

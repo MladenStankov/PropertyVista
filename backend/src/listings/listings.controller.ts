@@ -26,6 +26,8 @@ import { MostViewedListingsDto } from './dto/most-viewed-listings.dto';
 import { Request } from 'express';
 import { UpdateListingDto } from './dto/update-listing.dto';
 import { IForEditing } from './dto/get-for-editing.dto';
+import { JwtOptionalGuard } from 'src/auth/guards/jwt-optional.guard';
+import { User } from 'src/users/entity/user.entity';
 
 const MAX_IMAGES = 50;
 
@@ -61,7 +63,11 @@ export class ListingsController {
 
   @Throttle({ default: { limit: 100, ttl: 1000 } })
   @Get()
-  async getAll(@Query() body: GetAllQueryDto): Promise<IListing[]> {
+  @UseGuards(JwtOptionalGuard)
+  async getAll(
+    @Query() body: GetAllQueryDto,
+    @Req() req: Request,
+  ): Promise<IListing[]> {
     const filter: IFilter = {
       type: body.type,
       constructionType: body.constructionType,
@@ -82,7 +88,12 @@ export class ListingsController {
       amenities:
         typeof body.amenities === 'string' ? [body.amenities] : body.amenities,
     };
-    return this.listingService.getAll(filter, body.sort, body.search);
+    return this.listingService.getAll(
+      filter,
+      body.sort,
+      body.search,
+      req.user as User,
+    );
   }
 
   @Throttle({ default: { limit: 100, ttl: 1000 } })
@@ -98,9 +109,13 @@ export class ListingsController {
   }
 
   @Throttle({ default: { limit: 100, ttl: 1000 } })
+  @UseGuards(JwtGuard)
   @Get('/for-editing/:uuid')
-  async getForEditingByUUID(@Param('uuid') uuid: string): Promise<IForEditing> {
-    return this.listingService.getForEditingByUUID(uuid);
+  async getForEditingByUUID(
+    @Param('uuid') uuid: string,
+    @Req() req: Request,
+  ): Promise<IForEditing> {
+    return this.listingService.getForEditingByUUID(uuid, req.user as User);
   }
 
   @Throttle({ default: { limit: 10, ttl: 1000 } })
@@ -147,6 +162,21 @@ export class ListingsController {
       ),
     };
   }
+
+  @Throttle({ default: { limit: 100, ttl: 1000 } })
+  @UseGuards(JwtGuard)
+  @Post('/favourite/:uuid')
+  async favourite(@Param('uuid') uuid: string, @Req() req: Request) {
+    return this.listingService.favourite(uuid, req);
+  }
+
+  @Throttle({ default: { limit: 100, ttl: 1000 } })
+  @UseGuards(JwtGuard)
+  @Delete('/favourite/:uuid')
+  async deleteFavourite(@Param('uuid') uuid: string, @Req() req: Request) {
+    return this.listingService.deleteFavourite(uuid, req);
+  }
+
   private safeParse(jsonString: string): any {
     try {
       return JSON.parse(jsonString);
