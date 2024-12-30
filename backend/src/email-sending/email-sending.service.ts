@@ -61,10 +61,52 @@ export class EmailSendingService {
 
     const verificationLink = `${this.configService.get<string>('BACKEND_URL')}/email-sending/verify-email/${token}`;
 
+    const emailHtml = `
+      <html>
+      <head>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+          }
+          .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+          }
+          .button {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #007BFF;
+            text-decoration: none;
+            border-radius: 5px;
+          }
+          .button:hover {
+            background-color: #0056b3;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h2>Verify Your Account</h2>
+          <p>Thank you for signing up! To complete your registration, please verify your email by clicking the button below:</p>
+          <a href="${verificationLink}" class="button">Verify Email</a>
+          <p>Thank you,<br/>Property Vista</p>
+        </div>
+      </body>
+      </html>
+    `;
+
     this.mailerService.sendMail({
       to: userEmail,
       subject: 'Verify your account',
-      html: verificationLink,
+      html: emailHtml,
     });
   }
 
@@ -113,10 +155,53 @@ export class EmailSendingService {
 
     const resetPasswordLink = `${this.configService.get<string>('FRONTEND_URL')}/login/reset-password?token=${token}`;
 
+    const emailHtml = `
+      <html>
+      <head>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+          }
+          .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+          }
+          .button {
+            display: inline-block;
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #007BFF;
+            text-decoration: none;
+            border-radius: 5px;
+          }
+          .button:hover {
+            background-color: #c33229;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h2>Reset Your Password</h2>
+          <p>We received a request to reset your password. Click the button below to proceed:</p>
+          <a href="${resetPasswordLink}" class="button">Reset Password</a>
+          <p>If you did not request a password reset, you can ignore this email.</p>
+          <p>Thank you,<br/>Property Vista</p>
+        </div>
+      </body>
+      </html>
+    `;
+
     this.mailerService.sendMail({
       to: userEmail,
       subject: 'Reset your password',
-      html: resetPasswordLink,
+      html: emailHtml,
     });
   }
 
