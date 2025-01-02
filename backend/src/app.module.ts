@@ -9,6 +9,7 @@ import { AwsModule } from './aws/aws.module';
 import { ListingsModule } from './listings/listings.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AwsCleanupModule } from './aws-cleanup/aws-cleanup.module';
+import { CalculatorModule } from './calculator/calculator.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { AwsCleanupModule } from './aws-cleanup/aws-cleanup.module';
     AwsModule,
     ListingsModule,
     AwsCleanupModule,
+    CalculatorModule,
   ],
   controllers: [],
   providers: [

@@ -37,7 +37,7 @@ export default function Nav() {
             <Link href="/sell">Sell</Link>
           </li>
           <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
-            <Link href="#">Calculators</Link>
+            <Link href="/calculator">Calculator</Link>
           </li>
           <div className="flex flex-row gap-3 relative">
             {profile ? (
@@ -99,8 +99,11 @@ export default function Nav() {
               </Link>
             </li>
             <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
-              <Link href="#" onClick={() => setIsMobileMenuVisible(false)}>
-                Calculators
+              <Link
+                href="/calculator"
+                onClick={() => setIsMobileMenuVisible(false)}
+              >
+                Calculator
               </Link>
             </li>
             {profile ? (
