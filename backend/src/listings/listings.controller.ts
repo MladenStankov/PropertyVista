@@ -28,6 +28,7 @@ import { UpdateListingDto } from './dto/update-listing.dto';
 import { IForEditing } from './dto/get-for-editing.dto';
 import { JwtOptionalGuard } from 'src/auth/guards/jwt-optional.guard';
 import { User } from 'src/users/entity/user.entity';
+import { IMapListing } from './dto/map-listings.dto';
 
 const MAX_IMAGES = 50;
 
@@ -179,6 +180,12 @@ export class ListingsController {
   @Delete('/favourite/:uuid')
   async deleteFavourite(@Param('uuid') uuid: string, @Req() req: Request) {
     return this.listingService.deleteFavourite(uuid, req);
+  }
+
+  @Throttle({ default: { limit: 100, ttl: 1000 } })
+  @Get('/map/locations')
+  async getMapListings(): Promise<IMapListing[]> {
+    return this.listingService.getMapListings();
   }
 
   private safeParse(jsonString: string): any {

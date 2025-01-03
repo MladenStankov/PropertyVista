@@ -39,6 +39,9 @@ export default function Nav() {
           <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
             <Link href="/calculator">Calculator</Link>
           </li>
+          <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
+            <Link href="/map">Map</Link>
+          </li>
           <div className="flex flex-row gap-3 relative">
             {profile ? (
               <div
@@ -104,6 +107,11 @@ export default function Nav() {
                 onClick={() => setIsMobileMenuVisible(false)}
               >
                 Calculator
+              </Link>
+            </li>
+            <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
+              <Link href="/map" onClick={() => setIsMobileMenuVisible(false)}>
+                Map
               </Link>
             </li>
             {profile ? (

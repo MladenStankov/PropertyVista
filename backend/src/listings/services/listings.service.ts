@@ -24,6 +24,7 @@ import { Request } from 'express';
 import { UpdateListingDto } from '../dto/update-listing.dto';
 import { IForEditing } from '../dto/get-for-editing.dto';
 import { ListingFavourite } from '../entity/listing-favourite.entity';
+import { IMapListing } from '../dto/map-listings.dto';
 
 @Injectable()
 export class ListingsService {
@@ -524,5 +525,21 @@ export class ListingsService {
       throw new BadRequestException('You have not favourited this listing.');
 
     await this.listingFavouriteRepository.remove(alreadyExisting);
+  }
+
+  async getMapListings(): Promise<IMapListing[]> {
+    const listings = await this.listingRepository.find({
+      select: ['uuid', 'location', 'location', 'price', 'type', 'images'],
+      relations: ['images', 'location'],
+    });
+
+    return listings.map((listing) => ({
+      uuid: listing.uuid,
+      lat: listing.location.latitude,
+      lng: listing.location.longitude,
+      price: listing.price,
+      type: listing.type,
+      imageUrl: listing.images[0].imageUrl,
+    }));
   }
 }
