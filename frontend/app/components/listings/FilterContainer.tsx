@@ -3,14 +3,17 @@ import { IFilter } from "@/app/listings/page";
 import RangeSlider from "./RangeSlider";
 import { FaHouseChimney } from "react-icons/fa6";
 import { PiBuildingFill } from "react-icons/pi";
-import { ConstructionType, PropertyType } from "../sell/WizardForm";
+import {
+  AmenityType,
+  ConstructionType,
+  PropertyType,
+} from "../sell/WizardForm";
 import { BsArrows } from "react-icons/bs";
 import AmenitiesSelector from "./AmenitiesSelector";
-import { useRouter } from "next/router";
 
 interface IFilterContainer {
   filter: IFilter | null;
-  setFilter: (filter: IFilter) => void;
+  setFilter: React.Dispatch<React.SetStateAction<IFilter | null>>;
   setShowFilters: (showFilters: boolean) => void;
 }
 
@@ -167,7 +170,7 @@ export default function FilterContainer({
       ? parseInt(value.replace(/[^0-9]/g, ""), 10)
       : null;
 
-    setFilter((prevFilter: IFilter | null): IFilter | null => {
+    setFilter((prevFilter: IFilter | null) => {
       if (!prevFilter) return {};
 
       if (valueName === "minYear" || valueName === "maxYear") {
@@ -339,10 +342,12 @@ export default function FilterContainer({
             <AmenitiesSelector
               selectedAmenities={filter?.amenities || []}
               setSelectedAmenities={(amenities) =>
-                setFilter((prevFilter) => ({
-                  ...prevFilter,
-                  amenities,
-                }))
+                setFilter((prevFilter: IFilter | null) => {
+                  return {
+                    ...prevFilter,
+                    amenities: amenities as AmenityType[],
+                  };
+                })
               }
             />
           </div>

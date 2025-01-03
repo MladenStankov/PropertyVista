@@ -85,7 +85,9 @@ export default function RangeSlider({
                 : ""
             }
             placeholder="No min"
-            onChange={(e) => handleInputRangeChange(e, "min" + valueName)}
+            onChange={(e) =>
+              handleInputRangeChange(e, ("min" + valueName) as keyof IFilter)
+            }
             className="border rounded px-3 py-2 w-full text-right text-sm md:text-base"
           />
         </div>
@@ -107,7 +109,9 @@ export default function RangeSlider({
                 : ""
             }
             placeholder="No max"
-            onChange={(e) => handleInputRangeChange(e, "max" + valueName)}
+            onChange={(e) =>
+              handleInputRangeChange(e, ("max" + valueName) as keyof IFilter)
+            }
             className="border rounded px-3 py-2 w-full text-right text-sm md:text-base"
           />
         </div>

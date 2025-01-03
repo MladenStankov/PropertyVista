@@ -28,12 +28,12 @@ export default function CalculatorAfterSubmit({ results, location }: IProps) {
               {new Intl.NumberFormat("en-IE", {
                 style: "currency",
                 currency: "EUR",
-              }).format(results?.easy[0])}{" "}
+              }).format(Number(results?.easy[0]))}{" "}
               -{" "}
               {new Intl.NumberFormat("en-IE", {
                 style: "currency",
                 currency: "EUR",
-              }).format(results?.easy[1])}
+              }).format(Number(results?.easy[1]))}
             </div>
             <p className="text-sm sm:text-base">Easy to afford</p>
           </div>
@@ -46,12 +46,12 @@ export default function CalculatorAfterSubmit({ results, location }: IProps) {
               {new Intl.NumberFormat("en-IE", {
                 style: "currency",
                 currency: "EUR",
-              }).format(results?.stretch[0])}{" "}
+              }).format(Number(results?.stretch[0]))}{" "}
               -{" "}
               {new Intl.NumberFormat("en-IE", {
                 style: "currency",
                 currency: "EUR",
-              }).format(results?.stretch[1])}
+              }).format(Number(results?.stretch[1]))}
             </div>
             <p className="text-sm sm:text-base">Stretches your budget</p>
           </div>
@@ -64,12 +64,12 @@ export default function CalculatorAfterSubmit({ results, location }: IProps) {
               {new Intl.NumberFormat("en-IE", {
                 style: "currency",
                 currency: "EUR",
-              }).format(results?.difficult[0])}{" "}
+              }).format(Number(results?.difficult[0]))}{" "}
               -{" "}
               {new Intl.NumberFormat("en-IE", {
                 style: "currency",
                 currency: "EUR",
-              }).format(results?.difficult[1])}
+              }).format(Number(results?.difficult[1]))}
             </div>
             <p className="text-sm sm:text-base">Over your budget</p>
           </div>

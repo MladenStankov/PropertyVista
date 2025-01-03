@@ -29,7 +29,6 @@ import { PiTowelLight } from "react-icons/pi";
 import { IconType } from "react-icons";
 import Map from "@/app/components/listings/Map";
 import Loading from "@/app/components/Loading";
-import { list } from "postcss";
 
 export interface IListingExtended {
   userId: number;
@@ -131,12 +130,11 @@ export default function Listing() {
     );
 
     if (response.ok) {
-      setListing((prevListing) => {
-        return {
-          ...prevListing,
-          isFavourited: !prevListing?.isFavourited,
-        };
-      });
+      setListing((prevListing) =>
+        prevListing
+          ? { ...prevListing, isFavourited: !prevListing.isFavourited }
+          : null
+      );
     } else if (response.status === 401) {
       window.location.href = "/login";
     } else {

@@ -9,15 +9,19 @@ import { IoSearch } from "react-icons/io5";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { LuSettings2 } from "react-icons/lu";
 import { IoIosArrowDown } from "react-icons/io";
-import FilterContainer from "../components/listings/FilterContainer";
+const FilterContainer = dynamic(
+  () => import("../components/listings/FilterContainer"),
+  { ssr: false }
+);
 import {
   AmenityType,
   ConstructionType,
   PropertyType,
 } from "../components/sell/WizardForm";
 import Loading from "../components/Loading";
+import dynamic from "next/dynamic";
 
-export enum SortType {
+enum SortType {
   PRICE_ASC = "price-asc",
   PRICE_DESC = "price-desc",
   SURFACE_AREA_ASC = "surface-area-asc",
@@ -66,16 +70,19 @@ export default function ListingsPage() {
     params.getAll("amenities").forEach((value) => {
       if (value) {
         initialFilter.amenities = initialFilter.amenities
-          ? [...initialFilter.amenities, value as any]
-          : [value as any];
+          ? [...initialFilter.amenities, value as unknown]
+          : // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            [value as any];
       }
     });
 
     params.forEach((value, key) => {
       if (key !== "amenities") {
         if (!isNaN(Number(value))) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (initialFilter as any)[key] = parseInt(value, 10);
         } else {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (initialFilter as any)[key] = value;
         }
       }

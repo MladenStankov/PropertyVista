@@ -2,7 +2,6 @@
 
 import Loading from "@/app/components/Loading";
 import ProfileFavouriteListing from "@/app/components/profile/ProfileFavouriteListings";
-import ProfileListing from "@/app/components/profile/ProfileListing";
 import { PropertyType } from "@/app/components/sell/WizardForm";
 import React, { useEffect, useState } from "react";
 

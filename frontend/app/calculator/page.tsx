@@ -84,7 +84,7 @@ export default function Calculator() {
       setResults(data);
       setSubmitted(true);
     } catch (error) {
-      console.error("Error:", error.message);
+      console.error("Error with calculator:", error);
     }
   };
 
