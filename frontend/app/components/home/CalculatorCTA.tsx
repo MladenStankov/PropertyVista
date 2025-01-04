@@ -12,7 +12,7 @@ export default function CalculatorCTA() {
         <p className="font-light text-xl sm:text-2xl md:text-3xl text-center">
           We’ll assist you in estimating your budget range.
         </p>
-        <Link href="/calculators" className="self-center">
+        <Link href="/calculator" className="self-center">
           <button className="border-blue-500 bg-white px-6 py-3 md:px-8 md:py-4 border-2 rounded-full text-blue-500 text-xl sm:text-2xl font-semibold hover:bg-slate-300">
             See our calculators
           </button>
