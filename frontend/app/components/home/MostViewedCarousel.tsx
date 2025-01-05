@@ -70,17 +70,17 @@ export default function MostViewedCarousel() {
       </h2>
       {Array.isArray(carouselItems) && carouselItems.length > 0 ? (
         <>
-          <div className="flex flex-row justify-center items-center gap-2">
+          <div className="flex flex-row justify-center items-center">
             <FaArrowLeft
               onClick={decrementItem}
-              className="hover:cursor-pointer hover:scale-125 transition-transform size-10 lg:size-20 max-md:size-7"
+              className="hover:cursor-pointer hover:scale-125 transition-transform size-10 max-md:size-7 border-2 rounded-full p-2"
             />
             {carouselItems.length > 1 && <CarouselItem item={getPrevItem()} />}
             <CarouselItem item={carouselItems[itemIndex]} isCurrent={true} />
             {carouselItems.length > 1 && <CarouselItem item={getNextItem()} />}
             <FaArrowRight
               onClick={incrementItem}
-              className="hover:cursor-pointer hover:scale-125 transition-transform size-10 lg:size-20 max-md:size-7"
+              className="hover:cursor-pointer hover:scale-125 transition-transform size-10 max-md:size-7 border-2 rounded-full p-2"
             />
           </div>
           <div className="flex justify-center gap-2 mt-4">

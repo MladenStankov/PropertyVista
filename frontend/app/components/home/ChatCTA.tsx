@@ -22,7 +22,10 @@ export default function ChatCTA() {
           Connect with people, using our in-app chat system.
         </p>
         <Link href="/profile/chats" className="self-center">
-          <button className="border-blue-500 bg-blue-500 px-6 py-3 md:px-8 md:py-4 border-2 rounded-full text-white text-xl sm:text-2xl font-semibold hover:bg-blue-600">
+          <button
+            className="border-blue-500 bg-blue-500 px-6 py-3 md:px-8 md:py-4 border-2 rounded-full
+           text-white text-xl sm:text-2xl font-semibold hover:bg-blue-600 transition-colors"
+          >
             Check your chats
           </button>
         </Link>

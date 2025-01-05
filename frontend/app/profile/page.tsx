@@ -120,9 +120,12 @@ export default function Profile() {
   };
 
   return (
-    <div className="w-full h-full bg-gradient-to-t from-sky-500 to-cyan-400 flex justify-center items-center py-10">
+    <div className="w-full h-full flex justify-center items-center py-10">
       {profileInfo ? (
-        <div className="bg-white w-11/12 sm:w-5/6 lg:w-2/3 h-full rounded-2xl shadow-2xl flex flex-col p-5 sm:p-10">
+        <div
+          className="bg-white w-11/12 sm:w-5/6 lg:w-2/3 h-full rounded-2xl
+         border-blue-200 shadow-[0_0_2px_#fff,inset_0_0_2px_#fff,0_0_5px_#08f,0_0_15px_#08f,0_0_30px_#08f] flex flex-col p-5 sm:p-10"
+        >
           <div className="px-5 sm:px-10 lg:pl-32">
             <div className="flex flex-col sm:flex-row items-center gap-5">
               <div className="w-24 sm:w-36 h-24 sm:h-36 rounded-full relative">
@@ -233,9 +236,13 @@ export default function Profile() {
             </div>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-2 sm:gap-5 font-light items-center border-t border-gray-400 w-full mt-20 sm:mt-32 py-3 sm:py-5 text-gray-700">
+          <div
+            className="flex flex-wrap justify-center gap-2 sm:gap-5 font-light items-center border-t
+           border-gray-400 w-full mt-20 sm:mt-32 py-3 sm:py-5 text-gray-700"
+          >
             <Link
-              className="flex-grow sm:flex-grow-0 p-2 sm:p-3 text-lg sm:text-2xl bg-gray-300 rounded-xl hover:scale-105 transition-transform hover:text-gray-800"
+              className="flex-grow sm:flex-grow-0 p-2 sm:p-3 text-lg sm:text-2xl bg-blue-500
+               text-white font-normal rounded-xl hover:scale-105 transition-transform "
               href="/profile/listings"
             >
               <div className="flex items-center gap-2">
@@ -244,7 +251,8 @@ export default function Profile() {
               </div>
             </Link>
             <Link
-              className="flex-grow sm:flex-grow-0 p-2 sm:p-3 text-lg sm:text-2xl bg-gray-300 rounded-xl hover:scale-105 transition-transform hover:text-gray-800"
+              className="flex-grow sm:flex-grow-0 p-2 sm:p-3 text-lg sm:text-2xl bg-blue-500
+               text-white font-normal rounded-xl hover:scale-105 transition-transform "
               href="/profile/chats"
             >
               <div className="flex items-center gap-2">
@@ -253,7 +261,8 @@ export default function Profile() {
               </div>
             </Link>
             <Link
-              className="flex-grow sm:flex-grow-0 p-2 sm:p-3 text-lg sm:text-2xl bg-gray-300 rounded-xl hover:scale-105 transition-transform hover:text-gray-800"
+              className="flex-grow sm:flex-grow-0 p-2 sm:p-3 text-lg sm:text-2xl bg-blue-500
+               text-white font-normal rounded-xl hover:scale-105 transition-transform "
               href="/profile/favourite-listings"
             >
               <div className="flex items-center gap-2">

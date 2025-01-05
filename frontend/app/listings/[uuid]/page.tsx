@@ -211,7 +211,7 @@ export default function Listing() {
           <div className="flex flex-row gap-2 place-self-end mt-2 mr-2">
             <div
               onClick={() => handleFavourite()}
-              className={`bg-white rounded-full p-3 w-fit border-black border-2 hover:cursor-pointer hover:bg-gray-200 ${
+              className={`bg-white rounded-full p-3 w-fit border-black border hover:cursor-pointer hover:bg-gray-200 ${
                 listing.isFavourited ? "border-red-500" : ""
               }`}
             >
@@ -219,7 +219,7 @@ export default function Listing() {
             </div>
             <div
               onClick={() => handleShareButton()}
-              className="bg-white rounded-full p-3 border-2 w-fit border-black hover:cursor-pointer hover:bg-gray-200"
+              className="bg-white rounded-full p-3 border w-fit border-black hover:cursor-pointer hover:bg-gray-200"
             >
               <MdIosShare size={40} />
             </div>
@@ -318,7 +318,7 @@ export default function Listing() {
                     className="flex items-center gap-4 rounded-md p-4 w-full sm:w-auto"
                   >
                     {Icon ? (
-                      <Icon size={70} className="text-gray-600" />
+                      <Icon size={70} className="text-blue-500" />
                     ) : (
                       <div className="text-gray-600">No Icon</div>
                     )}
@@ -346,14 +346,14 @@ export default function Listing() {
           <div className="mt-10 flex flex-col gap-4">
             <h2 className="text-2xl sm:text-4xl font-semibold">Construction</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="border-b-4 border-gray-400 flex justify-between text-base sm:text-xl items-center p-2">
+              <div className="border-b-4 border-blue-500 flex justify-between text-base sm:text-xl items-center p-2">
                 <h3 className="font-light">Type</h3>
                 <p className="text-2xl font-semibold text-gray-500">
                   {listing.constructionType[0].toUpperCase() +
                     listing.constructionType.slice(1)}
                 </p>
               </div>
-              <div className="border-b-4 border-gray-400 flex justify-between text-base sm:text-xl items-center p-2">
+              <div className="border-b-4 border-blue-500 flex justify-between text-base sm:text-xl items-center p-2">
                 <h3 className="font-light">Construction year</h3>
                 <p className="text-2xl font-semibold text-gray-500">
                   {listing.constructionYear}

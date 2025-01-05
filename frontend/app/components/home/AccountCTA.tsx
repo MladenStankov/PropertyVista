@@ -22,7 +22,10 @@ export default function AccountCTA() {
           Publish and save your listings and be able to communicate with others.
         </p>
         <Link href="/register" className="self-center">
-          <button className="border-blue-500 bg-white px-6 py-3 md:px-8 md:py-4 border-2 rounded-full text-blue-500 text-xl sm:text-2xl font-semibold hover:bg-slate-300">
+          <button
+            className="border-blue-500 bg-white px-6 py-3 md:px-8 md:py-3 border rounded-2xl transition-colors
+           text-blue-500 text-xl sm:text-3xl font-semibold hover:bg-slate-100"
+          >
             Sign up
           </button>
         </Link>

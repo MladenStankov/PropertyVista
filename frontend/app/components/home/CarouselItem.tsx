@@ -14,7 +14,7 @@ export default function CarouselItem({
   return (
     <Link
       href={`/listings/${item.uuid}`}
-      className={`relative w-1/3 max-lg:w-1/2 h-72 shadow-md hover:cursor-pointer transition-transform hover:shadow-2xl ${
+      className={`relative w-1/3 max-lg:w-1/2 h-72 shadow-md hover:cursor-pointer transition-all hover:shadow-2xl ${
         !isCurrent
           ? "scale-90 hover:scale-[95%] max-lg:hidden"
           : "hover:scale-105"
@@ -23,7 +23,7 @@ export default function CarouselItem({
       <img
         src={item.imageUrl}
         alt={item.location}
-        className="absolute inset-0 w-full h-full object-cover filter brightness-75 rounded-lg transition-transform"
+        className="absolute inset-0 w-full h-full object-cover filter brightness-75 rounded-lg"
       />
 
       <div
