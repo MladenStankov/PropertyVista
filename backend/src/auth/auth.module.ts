@@ -17,6 +17,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthRefreshToken } from 'src/auth/entity/auth-refresh-token.entity';
 import { AuthRefreshTokenService } from './services/auth-refresh-token.service';
 import { JwtOptionalGuard } from './guards/jwt-optional.guard';
+import { WebSocketGuard } from './guards/web-socket.guard';
+import { WebSocketStrategy } from './strategies/web-socket.strategy';
 
 @Module({
   imports: [
@@ -40,11 +42,13 @@ import { JwtOptionalGuard } from './guards/jwt-optional.guard';
     GoogleStrategy,
     GoogleOAuthGuard,
     AuthRefreshTokenService,
+    WebSocketGuard,
+    WebSocketStrategy,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
   ],
-  exports: [JwtGuard, AuthService, JwtOptionalGuard],
+  exports: [JwtGuard, AuthService, JwtOptionalGuard, WebSocketGuard],
 })
 export class AuthModule {}

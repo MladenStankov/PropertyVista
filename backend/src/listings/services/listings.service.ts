@@ -64,21 +64,21 @@ export class ListingsService {
     const newListing = await this.create(publishListingDto.listing);
 
     publishListingDto.location.listing = newListing;
-    this.listingLocationsService.create(publishListingDto.location);
+    await this.listingLocationsService.create(publishListingDto.location);
 
-    publishListingDto.images.forEach((createListingImageDto) => {
+    publishListingDto.images.forEach(async (createListingImageDto) => {
       createListingImageDto.listing = newListing;
-      this.listingImagesService.create(createListingImageDto);
+      await this.listingImagesService.create(createListingImageDto);
     });
 
-    publishListingDto.amenities.forEach((createAmenitiesDto) => {
+    publishListingDto.amenities.forEach(async (createAmenitiesDto) => {
       createAmenitiesDto.listing = newListing;
-      this.listingAmenitiesService.create(createAmenitiesDto);
+      await this.listingAmenitiesService.create(createAmenitiesDto);
     });
 
-    publishListingDto.rooms.forEach((createListingRoomDto) => {
+    publishListingDto.rooms.forEach(async (createListingRoomDto) => {
       createListingRoomDto.listing = newListing;
-      this.listingRoomsService.create(createListingRoomDto);
+      await this.listingRoomsService.create(createListingRoomDto);
     });
 
     return newListing.uuid;

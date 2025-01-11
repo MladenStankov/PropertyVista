@@ -4,6 +4,7 @@ import {
   IsString,
   IsStrongPassword,
 } from 'class-validator';
+import { Chat } from 'src/chats/entity/chat.entity';
 import { ListingFavourite } from 'src/listings/entity/listing-favourite.entity';
 import { Listing } from 'src/listings/entity/listing.entity';
 import {
@@ -54,6 +55,11 @@ export class User extends BaseEntity {
     cascade: true,
   })
   favourites: ListingFavourite[];
+
+  @OneToMany(() => Chat, (chat) => chat.sender, {
+    cascade: true,
+  })
+  chats: Chat[];
 
   @CreateDateColumn({
     type: 'timestamp',

@@ -115,24 +115,16 @@ export default function Nav() {
               </Link>
             </li>
             {profile ? (
-              <div
-                className="flex gap-4 items-center mt-4"
+              <Link
+                href="/profile"
+                className="flex gap-4 items-center"
                 onClick={() => {
-                  setIsProfileMenuVisible(!isProfileMenuVisible);
+                  setIsProfileMenuVisible(false);
                   setIsMobileMenuVisible(false);
                 }}
               >
-                <Image
-                  src={profile.imageUrl}
-                  alt="Profile Image"
-                  width={35}
-                  height={35}
-                  className="rounded-full"
-                />
-                <span className="text-lg font-light text-blue-500">
-                  Profile
-                </span>
-              </div>
+                <span className="text-lg font-light">Profile</span>
+              </Link>
             ) : (
               <>
                 <li className="text-lg pt-1 hover:underline hover:text-blue-500">

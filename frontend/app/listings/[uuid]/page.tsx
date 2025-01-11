@@ -17,6 +17,7 @@ import {
   FaChargingStation,
   FaParking,
   FaRegHeart,
+  FaHeart,
 } from "react-icons/fa";
 import { BsChatLeftText } from "react-icons/bs";
 import { MdBalcony, MdIosShare, MdOutlinePool } from "react-icons/md";
@@ -211,11 +212,15 @@ export default function Listing() {
           <div className="flex flex-row gap-2 place-self-end mt-2 mr-2">
             <div
               onClick={() => handleFavourite()}
-              className={`bg-white rounded-full p-3 w-fit border-black border hover:cursor-pointer hover:bg-gray-200 ${
-                listing.isFavourited ? "border-red-500" : ""
-              }`}
+              className="bg-white rounded-full p-3 w-fit border-black border hover:cursor-pointer hover:bg-gray-200"
             >
-              <FaRegHeart size={40} color={listing.isFavourited ? "red" : ""} />
+              {listing.isFavourited && <FaHeart size={40} color="red" />}
+              {!listing.isFavourited && (
+                <FaRegHeart
+                  size={40}
+                  color={listing.isFavourited ? "red" : ""}
+                />
+              )}
             </div>
             <div
               onClick={() => handleShareButton()}

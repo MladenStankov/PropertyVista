@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { ConstructionType, PropertyType } from "../sell/WizardForm";
 import { FaRegHeart } from "react-icons/fa6";
+import { FaHeart } from "react-icons/fa";
 import Link from "next/link";
 
 export interface IListingsCard {
@@ -84,13 +85,13 @@ export default function ListingsCard({
           <button
             onClick={(e) => handleFavourite(e)}
             className={`absolute bottom-0 right-0 flex items-center gap-2 text-sm md:text-xl 
-            bg-white rounded-full border-[1px] p-2 mb-2 mr-2 
+            bg-white rounded-full p-2 mb-2 mr-2 
             hover:bg-gray-100 hover:font-semibold text-blue-500 font-medium
-             border-blue-500 bg-opacity-70 hover:scale-105 transition-transform ${
-               isFavourited ? "text-red-500 border-red-500" : ""
-             }`}
+              bg-opacity-70 hover:scale-105 transition-transform ${
+                isFavourited ? "text-red-500 " : ""
+              }`}
           >
-            <FaRegHeart size={40} />
+            {isFavourited ? <FaHeart size={30} /> : <FaRegHeart size={30} />}
             {/* <span className="text-2xl font-bold">
               {isFavourited ? "Favourited" : "Favourite"}
             </span> */}
