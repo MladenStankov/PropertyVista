@@ -29,8 +29,8 @@ import { ChatsModule } from './chats/chats.module';
     AuthModule,
     ThrottlerModule.forRoot([
       {
-        ttl: 60000,
-        limit: 10,
+        ttl: 6000,
+        limit: 50,
       },
     ]),
     EmailSendingModule,

@@ -16,7 +16,7 @@ import { ProfileListings } from '../dto/profile-listings.dto';
 const cookieOptions: CookieOptions = {
   httpOnly: true,
   maxAge: 30 * 24 * 60 * 60 * 1000,
-  sameSite: 'none',
+  sameSite: 'strict',
   secure: true,
   path: '/',
   domain: 'property-vista-ten.vercel.app',
