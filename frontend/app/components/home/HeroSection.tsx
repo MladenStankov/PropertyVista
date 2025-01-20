@@ -1,10 +1,21 @@
 import Link from "next/link";
+import Image from "next/image";
 import React from "react";
 
 export default function HeroSection() {
   return (
     <section className="relative w-full min-h-[500px] sm:min-h-[400px] xs:min-h-[350px]">
-      <div className="absolute inset-0 bg-[url('/home/hero-section.png')] bg-cover bg-center brightness-[.55]"></div>
+      <div className="absolute inset-0">
+        <Image
+          src="/home/hero-section.png"
+          alt="Hero section background"
+          layout="fill"
+          objectFit="cover"
+          objectPosition="center"
+          priority
+          className="brightness-[.55]"
+        />
+      </div>
       <div className="relative flex flex-col justify-center items-start px-6 sm:px-10 lg:px-20 py-10 h-full gap-5">
         <h1 className="text-white text-6xl sm:text-7xl lg:text-8xl font-bold leading-tight max-w-3xl">
           Find Your Dream Home.
