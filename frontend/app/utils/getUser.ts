@@ -4,7 +4,6 @@ import { IUser } from "./useProfile";
 export default async function getUser(): Promise<IUser | null> {
   const cookieStore = await cookies();
   const API_URL: string = String(process.env.NEXT_PUBLIC_API_URL);
-  console.log(cookieStore.toString());
   let response: Response;
 
   const fetchProfile = async (): Promise<IUser | null> => {
