@@ -1,11 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { CiUser } from "react-icons/ci";
 import { MdOutlineEmail } from "react-icons/md";
-import { IoWarningOutline } from "react-icons/io5";
 import { FaArrowLeft } from "react-icons/fa";
 import Link from "next/link";
 import GoogleButton from "./GoogleButton";
@@ -22,40 +20,56 @@ export default function RegisterBeforeSubmit({
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordHidden, setPasswordHidden] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+
+  const [fullNameError, setFullNameError] = useState<string | undefined>(
+    undefined
+  );
+  const [emailError, setEmailError] = useState<string | undefined>(undefined);
+  const [passwordError, setPasswordError] = useState<string | undefined>(
+    undefined
+  );
 
   const handleSumbit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError(null);
     setLoading(true);
 
     let hasError = false;
+
+    setFullNameError(undefined);
+    setEmailError(undefined);
+    setPasswordError(undefined);
+
     document.getElementById("name")?.classList.remove("border-red-500");
     document.getElementById("email")?.classList.remove("border-red-500");
     document.getElementById("password")?.classList.remove("border-red-500");
 
-    if (fullName === "" || email === "" || password === "") {
-      setError("Fill all the fields!");
+    if (fullName === "") {
+      setFullNameError("Full name is required");
+      document.getElementById("name")?.classList.add("border-red-500");
       hasError = true;
-      if (fullName === "")
-        document.getElementById("name")?.classList.add("border-red-500");
-      if (email === "")
-        document.getElementById("email")?.classList.add("border-red-500");
-      if (password === "")
-        document.getElementById("password")?.classList.add("border-red-500");
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Invalid email!");
-      hasError = true;
+    }
+    if (email === "") {
+      setEmailError("Email is required");
       document.getElementById("email")?.classList.add("border-red-500");
+      hasError = true;
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setEmailError("Invalid email");
+      document.getElementById("email")?.classList.add("border-red-500");
+      hasError = true;
+    }
+    if (password === "") {
+      setPasswordError("Password is required");
+      document.getElementById("password")?.classList.add("border-red-500");
+      hasError = true;
     } else if (
       !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
         password
       )
     ) {
-      setError("Password needs to be strong!");
-      hasError = true;
+      setPasswordError("Password needs to be strong");
       document.getElementById("password")?.classList.add("border-red-500");
+      hasError = true;
     }
 
     if (hasError) {
@@ -72,7 +86,7 @@ export default function RegisterBeforeSubmit({
 
     if (!response.ok) {
       const errorData = await response.json();
-      setError(errorData.message || "Registration failed!");
+      setPasswordError(errorData.message || "Registration failed!");
       setLoading(false);
     } else {
       handleRegistration(email);
@@ -96,14 +110,16 @@ export default function RegisterBeforeSubmit({
         <h1 className="text-center text-3xl mb-4 hover:text-gray-800">
           Create your Account
         </h1>
+
         <div className="relative">
           <FormInput
             id="name"
             label="Full name"
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
+            error={fullNameError}
+            Icon={CiUser}
           />
-          <CiUser className="absolute right-3 bottom-3" />
         </div>
 
         <div className="relative">
@@ -112,8 +128,9 @@ export default function RegisterBeforeSubmit({
             label="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            error={emailError}
+            Icon={MdOutlineEmail}
           />
-          <MdOutlineEmail className="absolute right-3 bottom-3 text-gray-500" />
         </div>
 
         <div className="relative">
@@ -123,24 +140,18 @@ export default function RegisterBeforeSubmit({
             value={password}
             type={passwordHidden ? "password" : "text"}
             onChange={(e) => setPassword(e.target.value)}
+            error={passwordError}
+            Icon={passwordHidden ? FaRegEyeSlash : FaRegEye}
+            iconHandler={() => setPasswordHidden(!passwordHidden)}
           />
-          {passwordHidden ? (
-            <FaRegEyeSlash
-              onClick={() => setPasswordHidden(!passwordHidden)}
-              className="absolute right-3 bottom-3 hover:cursor-pointer hover:text-gray-800 text-gray-500"
-            />
-          ) : (
-            <FaRegEye
-              onClick={() => setPasswordHidden(!passwordHidden)}
-              className="absolute right-3 bottom-3 hover:cursor-pointer hover:text-gray-800 text-gray-500"
-            />
-          )}
         </div>
 
         <button
           type="submit"
-          className={`w-full my-4 border border-gray-400 p-2 rounded-md ${
-            loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+          className={`w-full my-4 border border-gray-400 p-2 rounded-md font-semibold text-lg transition-colors ${
+            loading
+              ? "bg-gray-400"
+              : "bg-blue-500 hover:bg-blue-600 transition-colors"
           } text-white`}
           disabled={loading}
         >
@@ -164,15 +175,6 @@ export default function RegisterBeforeSubmit({
         </div>
 
         <GoogleButton text="Sign up with Google" />
-
-        {error && (
-          <div className="flex flex-row gap-2 mt-3 w-full justify-center">
-            <IoWarningOutline className="text-red-600 mt-[2px]" />
-            <p className="text-sm break-words text-red-600 font-semibold">
-              {error}
-            </p>
-          </div>
-        )}
       </form>
     </div>
   );

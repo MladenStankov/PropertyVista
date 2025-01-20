@@ -156,10 +156,13 @@ export default function Listing() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 sm:grid-rows-2 gap-2">
             <div className="col-span-1 sm:col-span-2 sm:row-span-2 relative">
-              <img
+              <Image
                 src={listing.images[currentImageIndex]}
-                className="w-full h-full object-cover aspect-video"
                 alt="Main image"
+                className="w-full h-full object-cover aspect-video"
+                width={800}
+                height={600}
+                priority
               />
               <div
                 onClick={() => handlePreviousImage()}
@@ -179,7 +182,7 @@ export default function Listing() {
             </div>
 
             <div className="row-span-1">
-              <img
+              <Image
                 src={
                   listing.images[
                     listing.images.length <= currentImageIndex + 1
@@ -187,13 +190,15 @@ export default function Listing() {
                       : currentImageIndex + 1
                   ]
                 }
-                className="w-full aspect-video h-full object-cover max-sm:hidden"
                 alt="Next image"
+                className="w-full aspect-video h-full object-cover max-sm:hidden"
+                width={400}
+                height={300}
               />
             </div>
 
             <div className="row-span-1">
-              <img
+              <Image
                 src={
                   listing.images[
                     listing.images.length <= currentImageIndex + 2
@@ -203,8 +208,10 @@ export default function Listing() {
                       : currentImageIndex + 2
                   ]
                 }
-                className="w-full aspect-video h-full object-cover max-sm:hidden"
                 alt="Next next image"
+                className="w-full aspect-video h-full object-cover max-sm:hidden"
+                width={400}
+                height={300}
               />
             </div>
           </div>
@@ -313,7 +320,7 @@ export default function Listing() {
 
           <div className="mt-10 flex flex-col gap-4">
             <h2 className="text-2xl sm:text-4xl font-semibold">Amenities</h2>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-2">
               {listing.amenities.map((amenity, index) => {
                 const Icon =
                   amenityIcons[amenity.toLowerCase().replace(/ /g, "_")];

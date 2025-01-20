@@ -9,6 +9,7 @@ export interface ICalculator {
   monthlyDebt: number | string;
   availableFunds: number | string;
   location: string;
+  fetchError?: string;
 }
 
 export interface IResults {
@@ -78,7 +79,12 @@ export default function Calculator() {
       );
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message);
+
+        const newError: Partial<ICalculator> = {};
+        newError.fetchError = errorData.message;
+        setErrors((prevErrors) => ({ ...prevErrors, ...newError }));
+        console.log(errors);
+        return;
       }
       const data = await response.json();
       setResults(data);

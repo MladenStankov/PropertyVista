@@ -1,6 +1,7 @@
 import React from "react";
 import { ICarouselItem } from "./MostViewedCarousel";
 import Link from "next/link";
+import Image from "next/image";
 
 interface CarouselItemProps {
   item: ICarouselItem;
@@ -20,11 +21,16 @@ export default function CarouselItem({
           : "hover:scale-105"
       } `}
     >
-      <img
-        src={item.imageUrl}
-        alt={item.location}
-        className="absolute inset-0 w-full h-full object-cover filter brightness-75 rounded-lg"
-      />
+      <div className="absolute inset-0 rounded-lg overflow-hidden">
+        <Image
+          src={item.imageUrl}
+          alt={item.location}
+          layout="fill"
+          objectFit="cover"
+          objectPosition="center"
+          className="filter brightness-75"
+        />
+      </div>
 
       <div
         className="absolute top-4 left-4 text-white text-xl font-bold bg-black bg-opacity-30 px-2 shadow-lg rounded-lg underline"

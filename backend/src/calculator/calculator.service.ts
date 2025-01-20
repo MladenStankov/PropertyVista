@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ICalculateAffordabilityBodyDto } from './dto/calculate-affordability-body.dto';
 import { ICalculateAffordabilityResponseDto } from './dto/calculate-affordability-response.dto';
 
@@ -18,7 +18,9 @@ export class CalculatorService {
     const disposableIncome = monthlyIncome - monthlyDebt;
 
     if (disposableIncome <= 0) {
-      throw new Error('Debt exceeds or equals income. Adjust inputs.');
+      throw new BadRequestException(
+        'Debt exceeds or equals income. Adjust inputs.',
+      );
     }
 
     const easyHousingPayment = disposableIncome * easyDTI;

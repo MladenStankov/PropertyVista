@@ -5,6 +5,7 @@ import { ConstructionType, PropertyType } from "../sell/WizardForm";
 import { FaRegHeart } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa";
 import Link from "next/link";
+import Image from "next/image";
 
 export interface IListingsCard {
   uuid: string;
@@ -77,11 +78,17 @@ export default function ListingsCard({
       )}
       <div className="border-2 shadow-lg hover:shadow-2xl rounded-xl grid grid-rows-2 transition-shadow">
         <Link href={`listings/${uuid}`} className="relative">
-          <img
-            src={imageUrl}
-            className="w-full h-72 object-cover"
-            alt="Listing Image"
-          />
+          <div className="relative w-full h-72">
+            <Image
+              src={imageUrl}
+              alt="Listing Image"
+              layout="fill"
+              objectFit="cover"
+              objectPosition="center"
+              className="rounded-t-xl"
+              priority={true}
+            />
+          </div>
           <button
             onClick={(e) => handleFavourite(e)}
             className={`absolute bottom-0 right-0 flex items-center gap-2 text-sm md:text-xl 
@@ -92,9 +99,6 @@ export default function ListingsCard({
               }`}
           >
             {isFavourited ? <FaHeart size={30} /> : <FaRegHeart size={30} />}
-            {/* <span className="text-2xl font-bold">
-              {isFavourited ? "Favourited" : "Favourite"}
-            </span> */}
           </button>
         </Link>
         <div className="flex flex-wrap sm:flex-col md:flex-row">

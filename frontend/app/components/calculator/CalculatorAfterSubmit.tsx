@@ -1,4 +1,5 @@
 import { IResults } from "@/app/calculator/page";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { FaSearch } from "react-icons/fa";
@@ -11,7 +12,13 @@ interface IProps {
 export default function CalculatorAfterSubmit({ results, location }: IProps) {
   return (
     <div className="w-full h-screen flex flex-col items-center">
-      <div className="w-full h-1/2 relative bg-[url('/calculate-image.jpg')] bg-cover bg-center">
+      <div className="w-full h-full relative">
+        <Image
+          src="/calculate-image.jpg"
+          alt="Calculate background"
+          layout="fill"
+          objectFit="cover"
+        />
         <div className="absolute top-0 left-0 w-full h-full bg-blue-500 opacity-25"></div>
       </div>
 
@@ -20,7 +27,7 @@ export default function CalculatorAfterSubmit({ results, location }: IProps) {
           Your affordability
         </h1>
         <div className="flex flex-col sm:flex-row gap-4 mt-4">
-          <div className="border-2 rounded-xl p-4 hover:shadow-lg flex-1">
+          <div className="border-2 rounded-xl p-4 hover:shadow-lg flex-1 transition-shadow shadow-sm">
             <div className="text-white bg-green-600 p-1 rounded-full px-2 w-fit font-semibold">
               Easy
             </div>
@@ -38,7 +45,7 @@ export default function CalculatorAfterSubmit({ results, location }: IProps) {
             <p className="text-sm sm:text-base">Easy to afford</p>
           </div>
 
-          <div className="border-2 rounded-xl p-4 hover:shadow-lg flex-1">
+          <div className="border-2 rounded-xl p-4 hover:shadow-lg flex-1 transition-shadow">
             <div className="text-white bg-yellow-500 p-1 rounded-full px-2 w-fit font-semibold">
               Stretch
             </div>
@@ -56,7 +63,7 @@ export default function CalculatorAfterSubmit({ results, location }: IProps) {
             <p className="text-sm sm:text-base">Stretches your budget</p>
           </div>
 
-          <div className="border-2 rounded-xl p-4 hover:shadow-lg flex-1">
+          <div className="border-2 rounded-xl p-4 hover:shadow-lg flex-1 transition-shadow">
             <div className="text-white bg-red-500 p-1 rounded-full px-2 w-fit font-semibold">
               Difficult
             </div>
@@ -85,7 +92,10 @@ export default function CalculatorAfterSubmit({ results, location }: IProps) {
           <Link
             href={`/listings?search=${location}&minPrice=${results?.easy[0]}&maxPrice=${results?.easy[1]}&type=buy`}
           >
-            <button className="text-white bg-blue-500 hover:bg-blue-600 font-semibold px-4 py-2 rounded-full text-base sm:text-lg lg:text-xl shadow-md shadow-slate-400 mt-4">
+            <button
+              className="text-white bg-blue-500 hover:bg-blue-600 font-bold px-4 py-2 rounded-full text-base sm:text-lg
+             lg:text-xl shadow-md shadow-slate-400 mt-8 transition-all hover:shadow-xl"
+            >
               Browse homes
             </button>
           </Link>

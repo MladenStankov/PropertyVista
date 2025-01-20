@@ -1,4 +1,5 @@
 import { ProfileListings } from "@/app/profile/listings/page";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -16,11 +17,15 @@ export default function ProfileListing({
 }: IProifleListingProps) {
   return (
     <div className="bg-gray-300 p-4 md:p-6 flex flex-col md:flex-row items-center gap-6 md:gap-10 rounded-md text-base md:text-lg lg:text-xl flex-wrap">
-      <img
-        className="h-40 md:h-52 w-full md:w-auto aspect-video rounded-md object-cover"
-        src={listing.imageUrl}
-        alt="Listing Image"
-      />
+      <div className="relative h-40 md:h-52 w-full md:w-auto aspect-video rounded-md">
+        <Image
+          className="object-cover rounded-md"
+          src={listing.imageUrl}
+          alt="Listing Image"
+          layout="fill"
+          objectFit="cover"
+        />
+      </div>
       <div className="flex flex-col gap-2 text-center md:text-left">
         <p className="font-bold">
           {new Intl.NumberFormat("en-IE", {

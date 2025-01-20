@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { IMapListing } from "../map/page";
+import Image from "next/image";
 
 interface CustomInfoWindowProps {
   listing: IMapListing;
@@ -15,10 +16,13 @@ export default function CustomInfoWindow({ listing }: CustomInfoWindowProps) {
     <div className="w-64 flex flex-col items-center bg-white shadow-lg rounded-lg">
       <Link href={`/listings/${listing.uuid}`}>
         <div className="relative mb-4 aspect-video">
-          <img
+          <Image
             className="w-full h-full object-cover rounded-md hover:shadow-xl"
             src={listing.imageUrl}
             alt={`Listing ${listing.uuid}`}
+            width={640}
+            height={360}
+            layout="responsive"
           />
           <div className="text-blue-500 font-bold text-lg mt-2 text-center">
             {listing.type === "rent"

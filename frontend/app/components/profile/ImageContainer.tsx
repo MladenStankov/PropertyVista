@@ -1,5 +1,6 @@
 import React from "react";
 import { FaTrashAlt } from "react-icons/fa";
+import Image from "next/image";
 
 interface IImageContainer {
   image: File | string;
@@ -12,11 +13,15 @@ export default function ImageContainer({
 }: IImageContainer) {
   return (
     <div className="grid grid-cols-5 gap-4 items-center bg-slate-100 border rounded-md p-4 h-auto">
-      <img
-        className="w-full sm:w-auto sm:h-20 object-cover aspect-video"
-        src={image instanceof File ? URL.createObjectURL(image) : image}
-        alt="Uploaded Image"
-      />
+      <div className="relative w-full sm:w-auto sm:h-20 aspect-video">
+        <Image
+          className="object-cover rounded-md"
+          src={image instanceof File ? URL.createObjectURL(image) : image}
+          alt="Uploaded Image"
+          layout="fill"
+          objectFit="cover"
+        />
+      </div>
 
       <p
         className={`font-semibold text-center sm:text-left text-xs col-span-2 break-words line-clamp-1 ${

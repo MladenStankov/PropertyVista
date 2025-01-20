@@ -1,8 +1,15 @@
 "use client";
 
-import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  Libraries,
+  Marker,
+  useJsApiLoader,
+} from "@react-google-maps/api";
 import React, { useEffect, useState } from "react";
 import { IGeoLocation } from "../../utils/getGeoLocationByAddress";
+
+await google.maps;
 
 const containerStyle = {
   width: "100%",
@@ -15,11 +22,12 @@ interface MapProps {
 
 function MapComponent({ coordinates }: MapProps) {
   const [location, setLocation] = useState<IGeoLocation | null>(null);
+  const [libraries] = useState<Libraries>(["maps", "marker"]);
 
   const { isLoaded } = useJsApiLoader({
     id: "google-map-script",
     googleMapsApiKey: String(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY),
-    libraries: ["maps", "marker"],
+    libraries: libraries,
   });
 
   useEffect(() => {

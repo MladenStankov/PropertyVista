@@ -8,13 +8,15 @@ import { FaArrowLeft, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
 import Link from "next/link";
 import GoogleButton from "../components/auth/GoogleButton";
-import ErrorMessage from "../components/auth/ErrorMessage";
 
 export default function LoginPage() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordHidden, setPasswordHidden] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{
+    email?: string;
+    password?: string;
+  } | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleSumbit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -23,21 +25,21 @@ export default function LoginPage() {
     setLoading(true);
 
     let hasError = false;
-    document.getElementById("name")?.classList.remove("border-red-500");
-    document.getElementById("email")?.classList.remove("border-red-500");
-    document.getElementById("password")?.classList.remove("border-red-500");
+    setError({});
 
     if (email === "" || password === "") {
-      setError("Fill all the fields!");
+      setError((prev) => ({
+        ...prev,
+        email: email === "" ? "Email is required" : undefined,
+        password: password === "" ? "Password is required" : undefined,
+      }));
       hasError = true;
-      if (email === "")
-        document.getElementById("email")?.classList.add("border-red-500");
-      if (password === "")
-        document.getElementById("password")?.classList.add("border-red-500");
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Invalid email!");
+      setError((prev) => ({
+        ...prev,
+        email: "Invalid email format",
+      }));
       hasError = true;
-      document.getElementById("email")?.classList.add("border-red-500");
     }
 
     if (hasError) {
@@ -57,7 +59,7 @@ export default function LoginPage() {
 
     if (!response.ok) {
       const errorData = await response.json();
-      setError(errorData.message || "Login failed!");
+      setError({ email: errorData.message || "Login failed!" });
       setLoading(false);
     } else {
       redirect("/");
@@ -65,7 +67,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-gradient-to-r from-cyan-500 to-blue-500 ">
+    <div className="flex h-screen flex-col bg-gradient-to-r from-cyan-500 to-blue-500">
       <form
         onSubmit={handleSumbit}
         className="m-auto p-10 rounded-md border border-gray-300 shadow-xl bg-white"
@@ -81,41 +83,32 @@ export default function LoginPage() {
 
         <h1 className="text-center text-3xl mb-4">Sign in your Account</h1>
 
-        <div className="relative">
-          <FormInput
-            id="email"
-            label="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <MdOutlineEmail className="absolute right-3 bottom-3 text-gray-500" />
-        </div>
+        <FormInput
+          id="email"
+          label="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          error={error?.email}
+          Icon={MdOutlineEmail}
+        />
 
-        <div className="relative">
-          <FormInput
-            id="password"
-            label="Password"
-            value={password}
-            type={passwordHidden ? "password" : "text"}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          {passwordHidden ? (
-            <FaRegEyeSlash
-              onClick={() => setPasswordHidden(!passwordHidden)}
-              className="absolute right-3 bottom-3 hover:cursor-pointer hover:text-gray-800 text-gray-500"
-            />
-          ) : (
-            <FaRegEye
-              onClick={() => setPasswordHidden(!passwordHidden)}
-              className="absolute right-3 bottom-3 hover:cursor-pointer hover:text-gray-800 text-gray-500"
-            />
-          )}
-        </div>
+        <FormInput
+          id="password"
+          label="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          error={error?.password}
+          Icon={passwordHidden ? FaRegEye : FaRegEyeSlash}
+          iconHandler={() => setPasswordHidden(!passwordHidden)}
+          type={passwordHidden ? "password" : "text"}
+        />
 
         <button
           type="submit"
-          className={`w-full my-4 border border-gray-400 p-2 rounded-md ${
-            loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+          className={`w-full my-4 border border-gray-400 p-2 rounded-md font-semibold text-lg transition-colors ${
+            loading
+              ? "bg-gray-400"
+              : "bg-blue-500 hover:bg-blue-600 transition-colors"
           } text-white`}
           disabled={loading}
         >
@@ -152,8 +145,6 @@ export default function LoginPage() {
         </div>
 
         <GoogleButton text="Sign in with Google" />
-
-        <ErrorMessage error={error} />
       </form>
     </div>
   );

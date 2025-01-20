@@ -167,7 +167,7 @@ export default function ListingsPage() {
 
   return (
     <div
-      className={`flex flex-col px-4 md:px-20 gap-10 py-10 relative ${
+      className={`flex flex-col px-4 md:px-20 gap-10 py-10 ${
         showFilters
           ? "after:absolute after:top-0 after:left-0 after:right-0 after:bottom-0 after:backdrop-blur-sm"
           : ""
@@ -239,7 +239,9 @@ export default function ListingsPage() {
         </select>
       </div>
       {isLoading ? (
-        <Loading />
+        <div className="h-full w-full flex items-center justify-center">
+          <Loading />
+        </div>
       ) : listingsCards.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {listingsCards.map((listing, index) => (
@@ -251,7 +253,9 @@ export default function ListingsPage() {
           ))}
         </div>
       ) : (
-        <h2 className="text-5xl text-center">No listings found</h2>
+        <h2 className="text-2xl text-center m-5 font-light">
+          No listings found
+        </h2>
       )}
     </div>
   );

@@ -1,6 +1,7 @@
 import { ICalculator } from "@/app/calculator/page";
 import React from "react";
 import { IoInformationCircleOutline } from "react-icons/io5";
+import Image from "next/image";
 
 interface ICalculatorBeforeSubmitProps {
   form: ICalculator;
@@ -17,7 +18,14 @@ export default function CalculatorBeforeSubmit({
 }: ICalculatorBeforeSubmitProps) {
   return (
     <div className="w-full h-screen flex justify-center items-center relative">
-      <div className="w-full h-full bg-[url('/calculate-image.jpg')] bg-cover bg-center">
+      <div className="w-full h-full">
+        <Image
+          src="/calculate-image.jpg"
+          alt="Background image"
+          layout="fill"
+          objectFit="cover"
+          priority
+        />
         <div className="absolute top-0 left-0 w-full h-full bg-blue-500 opacity-25"></div>
       </div>
 
@@ -77,6 +85,9 @@ export default function CalculatorBeforeSubmit({
                 </div>
                 {errors.monthlyDebt && (
                   <p className="text-red-500 text-sm">{errors.monthlyDebt}</p>
+                )}
+                {errors.fetchError && (
+                  <p className="text-red-500 text-sm">{errors.fetchError}</p>
                 )}
                 <p className="font-extralight text-sm">
                   Payments you make towards loans or other debts, excluding
