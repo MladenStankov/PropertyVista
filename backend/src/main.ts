@@ -12,7 +12,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   app.enableCors({
-    origin: 'https://property-vista-ten.vercel.app',
+    origin: configService.get<string>('CORS_ORIGIN'),
     credentials: true,
   });
 
