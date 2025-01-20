@@ -49,7 +49,6 @@ export default function ChatsSideBarWithMainContent({
 
   return (
     <div className="flex flex-grow overflow-hidden">
-      {/* Sidebar */}
       <div className="w-1/4 lg:w-1/5 bg-gray-100 p-4 border-r border-gray-300 overflow-y-auto">
         <h2 className="text-xl font-semibold mb-4">Chats</h2>
         {isLoading ? (

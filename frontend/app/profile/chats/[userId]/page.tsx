@@ -19,7 +19,7 @@ export default function Chat() {
     return () => {
       socket.disconnect();
     };
-  }, []);
+  }, [socket]);
 
   return (
     <ChatsSideBarWithMainContent userId={Number(userId)}>

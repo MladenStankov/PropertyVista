@@ -8,7 +8,7 @@ interface GoogleButtonProps {
 
 export default function GoogleButton({ text }: GoogleButtonProps) {
   return (
-    <Link href="http://localhost:3000/auth/google" passHref>
+    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`} passHref>
       <button
         type="button"
         className="w-full border border-gray-400 p-2 rounded-md flex items-center justify-center hover:bg-gray-100"
