@@ -42,7 +42,7 @@ export default function Calculator() {
     if (!form.location.trim()) {
       newErrors.location = "Location is required.";
     }
-    if (form.monthlyIncome < form.monthlyDebt) {
+    if (Number(form.monthlyIncome) < Number(form.monthlyDebt)) {
       newErrors.monthlyIncome =
         "Monthly income cannot be less than monthly debt.";
     }
