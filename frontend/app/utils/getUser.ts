@@ -35,7 +35,6 @@ export default async function getUser(): Promise<IUser | null> {
         sameSite: "none",
         secure: true,
         path: "/",
-        domain: "propertyvista.onrender.com",
       });
 
       cookieStore.set("refresh_token", refresh_token, {
@@ -44,7 +43,6 @@ export default async function getUser(): Promise<IUser | null> {
         sameSite: "none",
         secure: true,
         path: "/",
-        domain: "propertyvista.onrender.com",
       });
       return true;
     } else return false;
