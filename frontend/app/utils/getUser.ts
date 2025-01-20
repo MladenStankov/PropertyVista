@@ -4,6 +4,7 @@ import { IUser } from "./useProfile";
 export default async function getUser(): Promise<IUser | null> {
   const cookieStore = await cookies();
   const API_URL: string = String(process.env.NEXT_PUBLIC_API_URL);
+  console.log(cookieStore.toString());
   let response: Response;
 
   const fetchProfile = async (): Promise<IUser | null> => {
@@ -34,7 +35,7 @@ export default async function getUser(): Promise<IUser | null> {
         sameSite: "none",
         secure: true,
         path: "/",
-        domain: "localhost",
+        domain: "propertyvista.onrender.com",
       });
 
       cookieStore.set("refresh_token", refresh_token, {
@@ -43,7 +44,7 @@ export default async function getUser(): Promise<IUser | null> {
         sameSite: "none",
         secure: true,
         path: "/",
-        domain: "localhost",
+        domain: "propertyvista.onrender.com",
       });
       return true;
     } else return false;
