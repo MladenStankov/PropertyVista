@@ -19,6 +19,7 @@ const cookieOptions: CookieOptions = {
   sameSite: 'none',
   secure: true,
   path: '/',
+  domain: 'property-vista-ten.vercel.app',
 };
 
 @Injectable()
