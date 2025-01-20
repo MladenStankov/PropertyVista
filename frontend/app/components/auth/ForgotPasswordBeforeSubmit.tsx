@@ -40,7 +40,7 @@ export default function ForgotPasswordBeforeSubmit({
     }
 
     const response = await fetch(
-      "http://localhost:3000/email-sending/password-forgot",
+      `${process.env.NEXT_PUBLIC_API_URL}/email-sending/password-forgot`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

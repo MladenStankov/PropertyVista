@@ -69,7 +69,7 @@ export default function ResetPasswordBeforeSubmit({
     }
 
     const response = await fetch(
-      "http://localhost:3000/email-sending/password-reset",
+      `${process.env.NEXT_PUBLIC_API_URL}/email-sending/password-reset`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
