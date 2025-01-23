@@ -1,17 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import getUser from "./app/utils/getUser";
+import isAuth from "./app/utils/isAuth";
 
 export async function middleware(request: NextRequest) {
-  const user = await getUser();
-  const requestHeaders = new Headers(request.headers);
-
-  if (user) {
-    requestHeaders.set(
-      String(process.env.NEXT_PUBLIC_USER_HEADER),
-      JSON.stringify(user)
-    );
-  }
+  const res = await isAuth();
 
   const protectedRoutes = [
     "/profile",
@@ -27,23 +19,16 @@ export async function middleware(request: NextRequest) {
 
   let response: NextResponse;
 
-  if (user && authRoutes.includes(pathname)) {
+  if (res && authRoutes.includes(pathname)) {
     response = NextResponse.redirect(new URL("/", request.url));
   } else if (
-    !user &&
+    !res &&
     (protectedRoutes.includes(pathname) ||
       protectedRoutes.some((route) => pathname.startsWith(route)))
   ) {
     response = NextResponse.redirect(new URL("/login", request.url));
   } else {
     response = NextResponse.next();
-  }
-
-  if (user) {
-    response.headers.set(
-      String(process.env.NEXT_PUBLIC_USER_HEADER),
-      JSON.stringify(user)
-    );
   }
 
   return response;

@@ -1,20 +1,19 @@
 import { cookies } from "next/headers";
-import { IUser } from "./useProfile";
 
-export default async function getUser(): Promise<IUser | null> {
+export default async function isAuth(): Promise<boolean> {
   const cookieStore = await cookies();
   const API_URL: string = String(process.env.NEXT_PUBLIC_API_URL);
   let response: Response;
 
-  const fetchProfile = async (): Promise<IUser | null> => {
+  const fetchProfile = async (): Promise<boolean> => {
     response = await fetch(`${API_URL}/auth/profile`, {
       headers: {
         Cookie: cookieStore.toString(),
       },
     });
     if (response.status !== 401) {
-      return response.json();
-    } else return null;
+      return true;
+    } else return false;
   };
 
   const fetchRefresh = async () => {
@@ -52,7 +51,7 @@ export default async function getUser(): Promise<IUser | null> {
 
     if (!profile) {
       const refreshed = await fetchRefresh();
-      if (!refreshed) return null;
+      if (!refreshed) return false;
 
       profile = await fetchProfile();
       return profile;
@@ -60,6 +59,6 @@ export default async function getUser(): Promise<IUser | null> {
     return profile;
   } catch (error) {
     console.log("Middleware error:" + error);
-    return null;
+    return false;
   }
 }

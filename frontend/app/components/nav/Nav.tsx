@@ -1,20 +1,51 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { AiOutlineClose } from "react-icons/ai";
-import useProfile from "../../utils/useProfile";
 import ProfileMenu from "./ProfileMenu";
+import getProfileData, { IUser } from "@/app/utils/getProfileData";
+import Loading from "../Loading";
+import { PiBuildingApartmentBold } from "react-icons/pi";
+import { FaHeart } from "react-icons/fa";
+import { RxExit } from "react-icons/rx";
+import { ImProfile } from "react-icons/im";
 
 export default function Nav() {
   const [isProfileMenuVisible, setIsProfileMenuVisible] =
     useState<boolean>(false);
   const [isMobileMenuVisible, setIsMobileMenuVisible] =
     useState<boolean>(false);
+  const [profileData, setProfileData] = useState<IUser | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const profile = useProfile();
+  useEffect(() => {
+    async function fetchProfile() {
+      setProfileData(await getProfileData());
+      setIsLoading(false);
+    }
+
+    fetchProfile();
+  }, []);
+
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    const response = await fetch(
+      `${String(process.env.NEXT_PUBLIC_API_URL)}/auth/logout`,
+      {
+        method: "POST",
+        credentials: "include",
+      }
+    );
+    if (response.ok) {
+      window.location.reload();
+    } else {
+      console.error("Logout failed");
+    }
+  };
 
   return (
     <header className="p-4 sticky flex justify-between shadow-md border-gray-400 w-full top-0 bg-white z-10">
@@ -42,14 +73,18 @@ export default function Nav() {
           <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
             <Link href="/map">Map</Link>
           </li>
-          <div className="flex flex-row gap-3 relative">
-            {profile ? (
+          <div className="flex flex-row gap-3 items-center justify-center">
+            {isLoading ? (
+              <div className="relative flex items-center">
+                <Loading forNav={true} />
+              </div>
+            ) : profileData ? (
               <div
                 className="rounded-full overflow-hidden -my-2 cursor-pointer hover:scale-105 transition-all duration-300 w-12 h-12"
                 onClick={() => setIsProfileMenuVisible(!isProfileMenuVisible)}
               >
                 <Image
-                  src={profile.imageUrl}
+                  src={profileData.imageUrl}
                   alt="Profile Image"
                   width={170}
                   height={170}
@@ -87,7 +122,7 @@ export default function Nav() {
             className="text-3xl text-blue-500 hover:text-blue-600 hover:cursor-pointer self-end"
             onClick={() => setIsMobileMenuVisible(false)}
           />
-          <ul className="flex flex-col gap-6 w-full divide-y-[2px]">
+          <ul className="flex flex-col gap-6 w-full">
             <li className="text-lg pt-1 hover:underline hover:text-blue-500 font-light">
               <Link
                 href="/listings"
@@ -114,17 +149,50 @@ export default function Nav() {
                 Map
               </Link>
             </li>
-            {profile ? (
-              <Link
-                href="/profile"
-                className="flex gap-4 items-center"
-                onClick={() => {
-                  setIsProfileMenuVisible(false);
-                  setIsMobileMenuVisible(false);
-                }}
-              >
-                <span className="text-lg font-light">Profile</span>
-              </Link>
+            {profileData ? (
+              <>
+                <Link
+                  className="p-3 hover:bg-gray-100"
+                  href="/profile"
+                  onClick={() => setIsMobileMenuVisible(false)}
+                >
+                  <div className="flex items-center gap-2 hover:underline font-light text-lg">
+                    <ImProfile />
+                    <span>Profile</span>
+                  </div>
+                </Link>
+                <Link
+                  className="p-3 hover:bg-gray-100"
+                  href="/profile/listings"
+                  onClick={() => setIsMobileMenuVisible(false)}
+                >
+                  <div className="flex items-center gap-2 hover:underline font-light text-lg">
+                    <PiBuildingApartmentBold />
+                    <span>Listings</span>
+                  </div>
+                </Link>
+                <Link
+                  className="p-3 hover:bg-gray-100"
+                  href="/profile/favourite-listings"
+                  onClick={() => setIsMobileMenuVisible(false)}
+                >
+                  <div className="flex items-center gap-2 hover:underline font-light text-lg">
+                    <FaHeart />
+                    <span>Favourite Listings</span>
+                  </div>
+                </Link>
+                <div
+                  className="flex items-center gap-2 p-3 self-center hover:bg-gray-100 text-red-500
+       hover:text-red-600 cursor-pointer hover:underline font-light text-lg"
+                  onClick={(e) => {
+                    setIsMobileMenuVisible(false);
+                    handleLogout(e);
+                  }}
+                >
+                  <RxExit />
+                  <span>Logout</span>
+                </div>
+              </>
             ) : (
               <>
                 <li className="text-lg pt-1 hover:underline hover:text-blue-500">
