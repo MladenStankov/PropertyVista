@@ -2,14 +2,14 @@ import { cookies } from "next/headers";
 
 export default async function isAuth(): Promise<boolean> {
   const cookieStore = await cookies();
-  const API_URL: string = String(process.env.NEXT_PUBLIC_API_URL);
   let response: Response;
 
   const fetchProfile = async (): Promise<boolean> => {
-    response = await fetch(`${API_URL}/auth/profile`, {
+    response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/profile`, {
       headers: {
         Cookie: cookieStore.toString(),
       },
+      credentials: "include",
     });
     if (response.status !== 401) {
       return true;
@@ -17,13 +17,16 @@ export default async function isAuth(): Promise<boolean> {
   };
 
   const fetchRefresh = async () => {
-    const response = await fetch(`${API_URL}/auth/refresh-tokens`, {
-      method: "POST",
-      headers: {
-        Cookie: cookieStore.toString(),
-      },
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-tokens`,
+      {
+        method: "POST",
+        headers: {
+          Cookie: cookieStore.toString(),
+        },
+        credentials: "include",
+      }
+    );
     if (response.status !== 401) {
       const { access_token, refresh_token } = await response.json();
 
