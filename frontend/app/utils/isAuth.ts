@@ -29,6 +29,7 @@ export default async function isAuth(): Promise<boolean> {
     );
     if (response.status !== 401) {
       const { access_token, refresh_token } = await response.json();
+      console.log(access_token, refresh_token);
 
       cookieStore.set("access_token", access_token, {
         httpOnly: true,
