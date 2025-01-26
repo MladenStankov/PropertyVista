@@ -126,6 +126,7 @@ export default function ChatComponent({ uuid, socket }: IProps) {
     };
 
     socket.emit("sendMessage", messageData);
+    setNewMessage("");
   };
 
   return (
