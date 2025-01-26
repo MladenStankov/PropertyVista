@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import isAuth from "./app/utils/isAuth";
 
 export async function middleware(request: NextRequest) {
-  const res = await isAuth();
+  const res = await isAuth(/*request*/);
 
   const protectedRoutes = [
     "/profile",

@@ -46,6 +46,6 @@ import { ListingFavourite } from './entity/listing-favourite.entity';
     },
   ],
   controllers: [ListingsController],
-  exports: [ListingImagesService],
+  exports: [ListingImagesService, ListingsService],
 })
 export class ListingsModule {}

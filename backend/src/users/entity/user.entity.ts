@@ -5,6 +5,7 @@ import {
   IsStrongPassword,
 } from 'class-validator';
 import { Chat } from 'src/chats/entity/chat.entity';
+import { Message } from 'src/chats/entity/message.entity';
 import { ListingFavourite } from 'src/listings/entity/listing-favourite.entity';
 import { Listing } from 'src/listings/entity/listing.entity';
 import {
@@ -56,10 +57,20 @@ export class User extends BaseEntity {
   })
   favourites: ListingFavourite[];
 
-  @OneToMany(() => Chat, (chat) => chat.sender, {
+  @OneToMany(() => Chat, (chat) => chat.broker, {
     cascade: true,
   })
-  chats: Chat[];
+  brokerChats: Chat[];
+
+  @OneToMany(() => Chat, (chat) => chat.broker, {
+    cascade: true,
+  })
+  homeSeekerChats: Chat[];
+
+  @OneToMany(() => Message, (message) => message.sender, {
+    cascade: true,
+  })
+  messages: Message[];
 
   @CreateDateColumn({
     type: 'timestamp',

@@ -1,21 +1,20 @@
 import {
-  ConnectedSocket,
-  MessageBody,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-
 import { Server, Socket } from 'socket.io';
-import { ChatsService } from './chats.service';
-import { UseGuards } from '@nestjs/common';
-import { WebSocketGuard } from 'src/auth/guards/web-socket.guard';
-import { SendMessageDto } from './dto/send-message.dto';
-import { User } from 'src/users/entity/user.entity';
+import { ChatService } from './services/chat.service';
+import { MessageService } from './services/message.service';
+import { JwtWebsocketMiddleware } from 'src/auth/jwt-websocket.middleware';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { UsersService } from 'src/users/users.service';
+import { use } from 'passport';
 
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:5173',
+    origin: true,
     credentials: true,
   },
 })
@@ -23,32 +22,72 @@ export class ChatsGateway {
   @WebSocketServer()
   server: Server;
 
-  constructor(private chatService: ChatsService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
+    private readonly userService: UsersService,
+    private chatService: ChatService,
+    private messageService: MessageService,
+  ) {}
 
-  @UseGuards(WebSocketGuard)
   @SubscribeMessage('sendMessage')
   async sendMessage(
-    @MessageBody() body: SendMessageDto,
-    @ConnectedSocket() client: Socket,
-  ): Promise<void> {
-    const senderUser = (client as any).user;
-    const senderId = (senderUser as User).id;
+    client: Socket,
+    data: { chatUuid: string; message: string },
+  ) {
+    if (!client.rooms.has(data.chatUuid)) {
+      return client.emit('error');
+    }
 
-    const message = await this.chatService.sendMessage(
-      senderId,
-      body.receiverId,
-      body.message,
-    );
+    try {
+      const message = await this.messageService.createMessage(
+        data.chatUuid,
+        client.data.user.id,
+        data.message,
+      );
 
-    this.server.to(String(body.receiverId)).emit('receiveMessage', message);
-  }
+      const responseData = {
+        message: message.message,
+        createdAt: message.createdAt,
+        currentUser: message.sender.id === client.data.user.id,
+        userFullName: client.data.user.fullName,
+        userImage: client.data.user.imageUrl,
+        chatUuid: message.chat.uuid,
+      };
 
-  handleConnection(client: Socket): void {
-    const userId = client.handshake.query.userId;
-    if (userId) {
-      client.join(userId);
+      this.server.to(data.chatUuid).emit('receiveMessage', { ...responseData });
+      console.log('bravo');
+    } catch (error) {
+      client.emit('error', error.message);
     }
   }
 
-  handleDisconnect(client: Socket): void {}
+  async afterInit(): Promise<void> {
+    this.server.use((socket: Socket, next) => {
+      const middleware = new JwtWebsocketMiddleware(
+        this.jwtService,
+        this.configService,
+        this.userService,
+      );
+      middleware.use(socket, next);
+    });
+  }
+
+  async handleConnection(client: Socket): Promise<void> {
+    console.log('Client connected:', client.id);
+
+    const userChats = await this.chatService.getChats(client.data.user.id);
+
+    userChats.brokerChats.forEach((chat) => {
+      client.join(chat.uuid);
+    });
+
+    userChats.homeSeekingChats.forEach((chat) => {
+      client.join(chat.uuid);
+    });
+  }
+
+  handleDisconnect(client: Socket): void {
+    console.log('Client disconnected:', client.id);
+  }
 }

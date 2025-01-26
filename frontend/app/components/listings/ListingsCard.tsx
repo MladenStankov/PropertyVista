@@ -61,6 +61,25 @@ export default function ListingsCard({
     }
   };
 
+  const handleContactBroker = async () => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/chats/${uuid}`,
+      {
+        method: "POST",
+        credentials: "include",
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      window.location.href = `/profile/chats/${data.uuid}`;
+    }
+
+    if (response.status === 401) {
+      window.location.href = "/login";
+    }
+  };
+
   return (
     <>
       {errorMessage && (
@@ -127,11 +146,12 @@ export default function ListingsCard({
             </p>
           </div>
           <div className="flex flex-col items-center w-full mb-4 md:mr-2">
-            <Link href="/chats" passHref>
-              <button className="border-2 rounded-xl border-black px-6 md:px-8 py-2 md:py-4 hover:bg-slate-100 text-sm md:text-xl hover:scale-105 transition-transform ">
-                Contact agent
-              </button>
-            </Link>
+            <button
+              onClick={() => handleContactBroker()}
+              className="border-2 rounded-xl border-black px-6 md:px-8 py-2 md:py-4 hover:bg-slate-100 text-sm md:text-xl hover:scale-105 transition-transform "
+            >
+              Contact broker
+            </button>
           </div>
         </div>
       </div>

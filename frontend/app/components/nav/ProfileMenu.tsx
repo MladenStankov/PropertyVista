@@ -5,6 +5,7 @@ import { RxExit } from "react-icons/rx";
 import { ImProfile } from "react-icons/im";
 import { PiBuildingApartmentBold } from "react-icons/pi";
 import { FaHeart } from "react-icons/fa";
+import { TiMessages } from "react-icons/ti";
 
 interface IProfileMenu {
   setIsProfileMenuVisible: (value: boolean) => void;
@@ -63,6 +64,12 @@ export default function ProfileMenu({ setIsProfileMenuVisible }: IProfileMenu) {
         <div className="flex items-center gap-2 hover:underline">
           <ImProfile />
           <span>Profile</span>
+        </div>
+      </Link>
+      <Link className="p-3 hover:bg-gray-100" href="/profile/chats">
+        <div className="flex items-center gap-2 hover:underline">
+          <TiMessages />
+          <span>Chats</span>
         </div>
       </Link>
       <Link className="p-3 hover:bg-gray-100" href="/profile/listings">

@@ -51,7 +51,10 @@ export class ListingsService {
   }
 
   async findByUuid(uuid: string): Promise<Listing> {
-    return this.listingRepository.findOneBy({ uuid });
+    return this.listingRepository.findOne({
+      where: { uuid },
+      relations: ['user'],
+    });
   }
 
   async getByUser(user: User): Promise<Listing[]> {

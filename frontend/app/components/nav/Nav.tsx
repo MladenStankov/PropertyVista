@@ -12,6 +12,7 @@ import { PiBuildingApartmentBold } from "react-icons/pi";
 import { FaHeart } from "react-icons/fa";
 import { RxExit } from "react-icons/rx";
 import { ImProfile } from "react-icons/im";
+import { TiMessages } from "react-icons/ti";
 
 export default function Nav() {
   const [isProfileMenuVisible, setIsProfileMenuVisible] =
@@ -159,6 +160,16 @@ export default function Nav() {
                   <div className="flex items-center gap-2 hover:underline font-light text-lg">
                     <ImProfile />
                     <span>Profile</span>
+                  </div>
+                </Link>
+                <Link
+                  className="p-3 hover:bg-gray-100"
+                  href="/profile/chats"
+                  onClick={() => setIsMobileMenuVisible(false)}
+                >
+                  <div className="flex items-center gap-2 hover:underline font-light text-lg">
+                    <TiMessages />
+                    <span>Chats</span>
                   </div>
                 </Link>
                 <Link

@@ -9,8 +9,6 @@ import {
 import React, { useEffect, useState } from "react";
 import { IGeoLocation } from "../../utils/getGeoLocationByAddress";
 
-await google.maps;
-
 const containerStyle = {
   width: "100%",
   height: "100%",

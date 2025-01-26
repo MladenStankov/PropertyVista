@@ -1,29 +1,35 @@
+import { Listing } from 'src/listings/entity/listing.entity';
 import { User } from 'src/users/entity/user.entity';
 import {
   BaseEntity,
-  Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Message } from './message.entity';
 
 @Entity('Chat')
 export class Chat extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  uuid: string;
 
-  @Column()
-  message: string;
+  @ManyToOne(() => Listing, (Listing) => Listing.chats, { onDelete: 'CASCADE' })
+  listing: Listing;
 
-  @ManyToOne(() => User, (user) => user.chats, { onDelete: 'CASCADE' })
-  sender: User;
+  @ManyToOne(() => User, (user) => user.brokerChats, { onDelete: 'CASCADE' })
+  broker: User;
 
-  @ManyToOne(() => User, (user) => user.chats, { onDelete: 'CASCADE' })
-  receiver: User;
+  @ManyToOne(() => User, (user) => user.homeSeekerChats, {
+    onDelete: 'CASCADE',
+  })
+  homeSeeker: User;
 
-  @Column({ default: false })
-  isRead: boolean;
+  @OneToMany(() => Message, (message) => message.chat, {
+    cascade: true,
+  })
+  messages: Message[];
 
   @CreateDateColumn({
     type: 'timestamp',

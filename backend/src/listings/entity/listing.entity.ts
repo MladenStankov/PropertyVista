@@ -19,6 +19,7 @@ import { ListingPriceHistory } from './listing-price-history.entity';
 import { ConstructionType } from '../types/construction-type.dto';
 import { ListingView } from './listing-view.entity';
 import { ListingFavourite } from './listing-favourite.entity';
+import { Chat } from 'src/chats/entity/chat.entity';
 
 @Entity('Listing')
 export class Listing extends BaseEntity {
@@ -81,6 +82,11 @@ export class Listing extends BaseEntity {
     },
   )
   priceHistory: ListingPriceHistory[];
+
+  @OneToMany(() => Chat, (chat) => chat.broker, {
+    cascade: true,
+  })
+  chats: Chat[];
 
   @CreateDateColumn({
     type: 'timestamp',

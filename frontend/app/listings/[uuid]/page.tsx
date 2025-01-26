@@ -144,6 +144,25 @@ export default function Listing() {
     }
   };
 
+  const handleContactBroker = async () => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/chats/${uuid}`,
+      {
+        method: "POST",
+        credentials: "include",
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      window.location.href = `/profile/chats/${data.uuid}`;
+    }
+
+    if (response.status === 401) {
+      window.location.href = "/login";
+    }
+  };
+
   return (
     <div className="w-full h-full">
       {listing != null ? (
@@ -305,7 +324,10 @@ export default function Listing() {
                 </p>
               </div>
 
-              <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-full text-sm sm:text-base md:text-lg mt-4">
+              <button
+                onClick={() => handleContactBroker()}
+                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-full text-sm sm:text-base md:text-lg mt-4"
+              >
                 Contact Broker
               </button>
             </div>

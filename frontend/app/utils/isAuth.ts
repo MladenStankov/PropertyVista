@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
+// import { NextRequest } from "next/server";
 
-export default async function isAuth(): Promise<boolean> {
+export default async function isAuth(/*request: NextRequest*/): Promise<boolean> {
   const cookieStore = await cookies();
   let response: Response;
 
@@ -29,7 +30,6 @@ export default async function isAuth(): Promise<boolean> {
     );
     if (response.status !== 401) {
       const { access_token, refresh_token } = await response.json();
-      console.log(access_token, refresh_token);
 
       cookieStore.set("access_token", access_token, {
         httpOnly: true,
