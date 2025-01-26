@@ -118,6 +118,7 @@ export class ChatService {
             userFullName: current.sender.fullName,
             userImage: current.sender.imageUrl,
             currentUser: current.sender.id === currentUserId,
+            senderId: current.sender.id,
             messages: [
               {
                 message: current.message,

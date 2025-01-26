@@ -2,6 +2,7 @@ export interface ChatMessagesDto {
   userFullName: string;
   userImage: string;
   currentUser: boolean;
+  senderId: number;
   messages: Message[];
 }
 

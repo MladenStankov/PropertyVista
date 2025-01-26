@@ -1,3 +1,4 @@
+import getProfileData, { IUser } from "@/app/utils/getProfileData";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
@@ -6,6 +7,7 @@ export interface ChatMessagesDto {
   userFullName: string;
   userImage: string;
   currentUser: boolean;
+  senderId: number;
   messages: Message[];
 }
 
@@ -17,7 +19,7 @@ export interface Message {
 export interface MessageResponse {
   message: string;
   createdAt: Date;
-  currentUser: boolean;
+  senderId: number;
   userFullName: string;
   userImage: string;
   chatUuid: string;
@@ -34,6 +36,15 @@ export default function ChatComponent({ uuid, socket }: IProps) {
   );
   const [, /*isLoading*/ setIsLoading] = useState<boolean>(true);
   const [newMessage, setNewMessage] = useState<string>("");
+  const [profile, setProfileData] = useState<IUser | null>(null);
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      const data = await getProfileData();
+      setProfileData(data);
+    };
+    fetchProfileData();
+  }, []);
 
   useEffect(() => {
     const fetchChatMessages = async () => {
@@ -63,12 +74,21 @@ export default function ChatComponent({ uuid, socket }: IProps) {
   useEffect(() => {
     const handleReceiveMessage = (data: MessageResponse) => {
       setChatMessages((prevChatMessages) => {
-        if (!prevChatMessages) return null;
+        if (!prevChatMessages) {
+          return [
+            {
+              userFullName: data.userFullName,
+              userImage: data.userImage,
+              currentUser: data.senderId === profile?.id,
+              senderId: data.senderId,
+              messages: [{ message: data.message, createdAt: data.createdAt }],
+            },
+          ];
+        }
 
-        if (
-          prevChatMessages[prevChatMessages.length - 1]?.currentUser ===
-          data.currentUser
-        ) {
+        const lastChat = prevChatMessages[prevChatMessages.length - 1];
+
+        if (lastChat && lastChat.senderId === data.senderId) {
           const updatedChatMessages = [...prevChatMessages];
           updatedChatMessages[updatedChatMessages.length - 1].messages.push({
             message: data.message,
@@ -81,7 +101,8 @@ export default function ChatComponent({ uuid, socket }: IProps) {
             {
               userFullName: data.userFullName,
               userImage: data.userImage,
-              currentUser: data.currentUser,
+              currentUser: !lastChat.currentUser,
+              senderId: data.senderId,
               messages: [{ message: data.message, createdAt: data.createdAt }],
             },
           ];
@@ -94,7 +115,7 @@ export default function ChatComponent({ uuid, socket }: IProps) {
     return () => {
       socket.off("receiveMessage", handleReceiveMessage);
     };
-  }, [socket]);
+  }, [socket, profile]);
 
   const handleSendMessage = () => {
     if (newMessage.trim() === "") return;

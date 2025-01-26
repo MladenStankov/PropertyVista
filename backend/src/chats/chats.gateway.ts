@@ -10,7 +10,6 @@ import { JwtWebsocketMiddleware } from 'src/auth/jwt-websocket.middleware';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { UsersService } from 'src/users/users.service';
-import { use } from 'passport';
 
 @WebSocketGateway({
   cors: {
@@ -49,7 +48,7 @@ export class ChatsGateway {
       const responseData = {
         message: message.message,
         createdAt: message.createdAt,
-        currentUser: message.sender.id === client.data.user.id,
+        senderId: client.data.user.id,
         userFullName: client.data.user.fullName,
         userImage: client.data.user.imageUrl,
         chatUuid: message.chat.uuid,
