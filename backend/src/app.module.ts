@@ -27,12 +27,7 @@ import { ChatsModule } from './chats/chats.module';
       synchronize: true,
     }),
     AuthModule,
-    ThrottlerModule.forRoot([
-      {
-        ttl: 6000,
-        limit: 50,
-      },
-    ]),
+    ThrottlerModule.forRoot(),
     EmailSendingModule,
     AwsModule,
     ListingsModule,

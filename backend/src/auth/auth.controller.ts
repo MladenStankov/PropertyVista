@@ -48,7 +48,7 @@ export class AuthController {
     return this.authService.login(res, req);
   }
 
-  @Throttle({ default: { limit: 1000, ttl: 1000 } })
+  // @Throttle({ default: { limit: 1000, ttl: 1000 } })
   @UseGuards(JwtGuard)
   @Get('/profile')
   async profile(@Req() req: Request) {
@@ -56,7 +56,7 @@ export class AuthController {
     return { id, fullName, email, imageUrl };
   }
 
-  @Throttle({ default: { limit: 3, ttl: 500 } })
+  // @Throttle({ default: { limit: 3, ttl: 500 } })
   @UseGuards(JwtRefreshGuard)
   @Post('/refresh-tokens')
   async refreshTokens(
