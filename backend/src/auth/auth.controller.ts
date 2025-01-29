@@ -48,7 +48,7 @@ export class AuthController {
     return this.authService.login(res, req);
   }
 
-  @Throttle({ default: { limit: 100, ttl: 1000 } })
+  @Throttle({ default: { limit: 1000, ttl: 1000 } })
   @UseGuards(JwtGuard)
   @Get('/profile')
   async profile(@Req() req: Request) {
