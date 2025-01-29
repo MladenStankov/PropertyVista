@@ -4,7 +4,7 @@ import { fetchProfile, fetchRefresh } from "../api/auth";
 
 export default async function isAuth(/*request: NextRequest*/): Promise<boolean> {
   const cookieStore = await cookies();
-  let response: Response;
+  // let response: Response;
 
   // const fetchProfile = async (): Promise<boolean> => {
   //   response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/profile`, {
