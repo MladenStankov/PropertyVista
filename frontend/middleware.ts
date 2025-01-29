@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import isAuth from "./app/utils/isAuth";
+import isAuth from "./app/api/auth";
 
 export async function middleware(request: NextRequest) {
-  const res = await isAuth(/*request*/);
+  const res = await isAuth();
 
   const protectedRoutes = [
     "/profile",
@@ -14,6 +14,8 @@ export async function middleware(request: NextRequest) {
     "/profile/chats",
   ];
   const authRoutes = ["/login", "/register", "/register/verify"];
+
+  console.log("Authenticated:", res);
 
   const { pathname } = request.nextUrl;
 

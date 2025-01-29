@@ -1,30 +1,66 @@
-import { IUser } from "../utils/getProfileData";
+import { cookies } from "next/headers";
 
-export async function fetchProfile(): Promise<IUser | null> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/auth/profile`,
-    {
-      credentials: "include",
-    }
-  );
-  if (response.status !== 401) {
-    return null;
-  } else return (await response.json()) as IUser;
-}
+export default async function isAuth(): Promise<boolean> {
+  const cookieStore = await cookies();
+  let response: Response;
 
-export async function fetchRefresh(): Promise<{
-  access_token: string;
-  refresh_token: string;
-} | null> {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-tokens`,
-    {
-      method: "POST",
+  const fetchProfile = async (): Promise<boolean> => {
+    response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/profile`, {
+      headers: {
+        Cookie: cookieStore.toString(),
+      },
       credentials: "include",
+    });
+    if (response.status !== 401) {
+      return true;
+    } else return false;
+  };
+  const fetchRefresh = async () => {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-tokens`,
+      {
+        method: "POST",
+        headers: {
+          Cookie: cookieStore.toString(),
+        },
+        credentials: "include",
+      }
+    );
+    if (response.status !== 401) {
+      const { access_token, refresh_token } = await response.json();
+
+      cookieStore.set("access_token", access_token, {
+        httpOnly: true,
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        sameSite: "none",
+        secure: true,
+        path: "/",
+      });
+
+      cookieStore.set("refresh_token", refresh_token, {
+        httpOnly: true,
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        sameSite: "none",
+        secure: true,
+        path: "/",
+      });
+      return true;
+    } else return false;
+  };
+
+  try {
+    let profile = await fetchProfile();
+
+    if (!profile) {
+      const refreshed = await fetchRefresh();
+      if (!refreshed) return false;
+
+      profile = await fetchProfile();
+      return profile;
     }
-  );
-  if (response.status !== 401) {
-    const { access_token, refresh_token } = await response.json();
-    return { access_token: access_token, refresh_token: refresh_token };
-  } else return null;
+    return profile;
+  } catch (error) {
+    console.log("Middleware error:" + error);
+    return false;
+  }
 }
