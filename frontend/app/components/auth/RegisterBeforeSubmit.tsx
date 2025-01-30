@@ -77,19 +77,27 @@ export default function RegisterBeforeSubmit({
       return;
     }
 
-    const response = await fetch("http://localhost:3000/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ fullName, email, password }),
-      credentials: "include",
-    });
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fullName, email, password }),
+          credentials: "include",
+        }
+      );
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      setPasswordError(errorData.message || "Registration failed!");
+      if (!response.ok) {
+        const errorData = await response.json();
+        setPasswordError(errorData.message || "Registration failed!");
+        setLoading(false);
+      } else {
+        handleRegistration(email);
+      }
+    } catch (error) {
+      setPasswordError("An unexpected error occurred.");
       setLoading(false);
-    } else {
-      handleRegistration(email);
     }
   };
 
