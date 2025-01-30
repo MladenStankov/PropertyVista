@@ -96,6 +96,7 @@ export default function RegisterBeforeSubmit({
         handleRegistration(email);
       }
     } catch (error) {
+      console.log(error);
       setPasswordError("An unexpected error occurred.");
       setLoading(false);
     }
