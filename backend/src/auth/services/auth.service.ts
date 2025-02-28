@@ -3,7 +3,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../../users/users.service';
 import { compare } from 'bcrypt';
 import { AuthRefreshTokenService } from 'src/auth/services/auth-refresh-token.service';
 import { CookieOptions, Request, Response } from 'express';
