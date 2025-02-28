@@ -29,6 +29,7 @@ import { ChatsModule } from './chats/chats.module';
         process.env.NODE_ENV === 'production'
           ? { rejectUnauthorized: false }
           : false,
+      url: process.env.DATABASE_URL,
     }),
     AuthModule,
     ThrottlerModule.forRoot(),
