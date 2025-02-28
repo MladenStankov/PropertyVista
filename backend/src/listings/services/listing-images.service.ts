@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ListingImage } from '../entity/listing-image.entity';
-import { AwsService } from 'src/aws/aws.service';
+import { AwsService } from '../../aws/aws.service';
 import { ListingImageDto } from '../dto/listing-image.dto';
 import { Listing } from '../entity/listing.entity';
 

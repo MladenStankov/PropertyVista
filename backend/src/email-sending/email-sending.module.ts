@@ -3,10 +3,10 @@ import { EmailSendingService } from './email-sending.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserVerification } from './entity/user-verification-email.entity';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { UsersModule } from 'src/users/users.module';
+import { UsersModule } from '../users/users.module';
 import { ConfigService } from '@nestjs/config';
 import { EmailSendingController } from './email-sending.controller';
-import { AuthModule } from 'src/auth/auth.module';
+import { AuthModule } from '../auth/auth.module';
 import { PasswordReset } from './entity/password-reset-email.entity';
 
 @Module({

@@ -4,10 +4,10 @@ import {
   IsString,
   IsStrongPassword,
 } from 'class-validator';
-import { Chat } from 'src/chats/entity/chat.entity';
-import { Message } from 'src/chats/entity/message.entity';
-import { ListingFavourite } from 'src/listings/entity/listing-favourite.entity';
-import { Listing } from 'src/listings/entity/listing.entity';
+import { Chat } from '../../chats/entity/chat.entity';
+import { Message } from '../../chats/entity/message.entity';
+import { ListingFavourite } from '../../listings/entity/listing-favourite.entity';
+import { Listing } from '../../listings/entity/listing.entity';
 import {
   BaseEntity,
   Column,

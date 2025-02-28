@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { AwsService } from 'src/aws/aws.service';
-import { ListingImagesService } from 'src/listings/services/listing-images.service';
+import { AwsService } from '../aws/aws.service';
+import { ListingImagesService } from '../listings/services/listing-images.service';
 
 @Injectable()
 export class AwsCleanupService {

@@ -6,9 +6,9 @@ import { hash } from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { ProfileInfo } from 'src/auth/dto/profile-info.dto';
-import { ProfileListings } from 'src/auth/dto/profile-listings.dto';
-import { AwsService } from 'src/aws/aws.service';
+import { ProfileInfo } from '../auth/dto/profile-info.dto';
+import { ProfileListings } from '../auth/dto/profile-listings.dto';
+import { AwsService } from '../aws/aws.service';
 
 @Injectable()
 export class UsersService {

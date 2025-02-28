@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { ListingsService } from './services/listings.service';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
-import { JwtGuard } from 'src/auth/guards/jwt.guard';
+import { JwtGuard } from '../auth/guards/jwt.guard';
 import { PublishListingDto } from './dto/publish-listing.dto';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { IListing } from './dto/get-all-listing.dto';
@@ -26,8 +26,8 @@ import { MostViewedListingsDto } from './dto/most-viewed-listings.dto';
 import { Request } from 'express';
 import { UpdateListingDto } from './dto/update-listing.dto';
 import { IForEditing } from './dto/get-for-editing.dto';
-import { JwtOptionalGuard } from 'src/auth/guards/jwt-optional.guard';
-import { User } from 'src/users/entity/user.entity';
+import { JwtOptionalGuard } from '../auth/guards/jwt-optional.guard';
+import { User } from '../users/entity/user.entity';
 import { IMapListing } from './dto/map-listings.dto';
 
 const MAX_IMAGES = 50;

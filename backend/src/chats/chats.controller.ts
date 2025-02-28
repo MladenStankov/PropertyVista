@@ -2,7 +2,7 @@ import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ChatService } from './services/chat.service';
 import { MessageService } from './services/message.service';
-import { JwtGuard } from 'src/auth/guards/jwt.guard';
+import { JwtGuard } from '../auth/guards/jwt.guard';
 import { Throttle } from '@nestjs/throttler';
 
 @Controller('chats')

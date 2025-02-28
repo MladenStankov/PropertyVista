@@ -6,10 +6,10 @@ import {
 import { Server, Socket } from 'socket.io';
 import { ChatService } from './services/chat.service';
 import { MessageService } from './services/message.service';
-import { JwtWebsocketMiddleware } from 'src/auth/jwt-websocket.middleware';
+import { JwtWebsocketMiddleware } from '../auth/jwt-websocket.middleware';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 
 @WebSocketGateway({
   cors: {

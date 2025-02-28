@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entity/user.entity';
-import { AwsModule } from 'src/aws/aws.module';
+import { AwsModule } from '../aws/aws.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User]), AwsModule],

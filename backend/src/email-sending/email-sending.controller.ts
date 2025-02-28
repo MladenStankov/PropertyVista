@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { EmailSendingService } from './email-sending.service';
 import { Response } from 'express';
-import { AuthService } from 'src/auth/services/auth.service';
+import { AuthService } from '../auth/services/auth.service';
 import { ApiTags } from '@nestjs/swagger';
 import { ValidatePasswordReset } from './dto/validate-password-reset.dto';
 import { SendPasswordResetDto } from './dto/send-password-reset.dto';

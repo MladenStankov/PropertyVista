@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Listing } from '../entity/listing.entity';
 import { ListingDto } from '../dto/listing.dto';
-import { User } from 'src/users/entity/user.entity';
+import { User } from '../../users/entity/user.entity';
 import { PublishListingDto } from '../dto/publish-listing.dto';
 import { ListingLocationsService } from './listing-locations.service';
 import { ListingImagesService } from './listing-images.service';

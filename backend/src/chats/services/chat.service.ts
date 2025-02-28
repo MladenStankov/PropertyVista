@@ -3,9 +3,9 @@ import { Repository } from 'typeorm';
 import { Chat } from '../entity/chat.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ChatMessagesDto } from '../dto/chat-messages.dto';
-import { ListingsService } from 'src/listings/services/listings.service';
-import { UsersService } from 'src/users/users.service';
-import { User } from 'src/users/entity/user.entity';
+import { ListingsService } from '../../listings/services/listings.service';
+import { UsersService } from '../../users/users.service';
+import { User } from '../../users/entity/user.entity';
 import { ChatDto } from '../dto/chat.dto';
 
 @Injectable()

@@ -8,7 +8,7 @@ import { LessThan, LessThanOrEqual, Repository } from 'typeorm';
 import { UserVerification } from './entity/user-verification-email.entity';
 import * as crypto from 'crypto';
 import { MailerService } from '@nestjs-modules/mailer';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PasswordReset } from './entity/password-reset-email.entity';
 import { ConfigService } from '@nestjs/config';
