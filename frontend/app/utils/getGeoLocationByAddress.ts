@@ -25,6 +25,15 @@ export default async function getGeoLocationByAddress({
     if (!API_KEY) {
       throw new Error("API key is missing.");
     }
+    if(
+      streetNumber === '' ||
+      streetName === '' ||
+      postalCode === '' ||
+      city === '' ||
+      country === ''
+    ) {
+      return null;
+    }
 
     const address = `${streetNumber} ${streetName}, ${postalCode} ${city}, ${state}, ${country}`;
     const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(

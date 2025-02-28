@@ -17,7 +17,7 @@ export default function ImageForm({
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
     const allFiles = [...formData.images, ...files];
-    handleImageChange(allFiles.filter((_, index) => index < 10));
+    handleImageChange(allFiles.filter((_, index) => index <= 50));
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {

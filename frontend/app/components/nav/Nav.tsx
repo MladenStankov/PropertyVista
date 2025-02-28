@@ -50,13 +50,13 @@ export default function Nav() {
 
   return (
     <header className="p-4 sticky flex justify-between shadow-md border-gray-400 w-full top-0 bg-white z-10">
-      <Link href="/">
+      <Link href="/" className="w-22 h-9">
         <Image
-          className="min-w-[150px] min-h-[20px] hover:scale-105 transition-all duration-300"
+          className="w-full h-full hover:scale-105 transition-all duration-300 object-cover"
           src="/logo.svg"
           alt="Logo"
           width={150}
-          height={20}
+          height={200}
         />
       </Link>
 
