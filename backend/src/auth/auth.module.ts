@@ -1,7 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './services/auth.service';
-import { UsersModule } from 'src/users/users.module';
+import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -12,9 +12,9 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 import { JwtGuard } from './guards/jwt.guard';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { GoogleOAuthGuard } from './guards/google-oauth.guard';
-import { EmailSendingModule } from 'src/email-sending/email-sending.module';
+import { EmailSendingModule } from '../email-sending/email-sending.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthRefreshToken } from 'src/auth/entity/auth-refresh-token.entity';
+import { AuthRefreshToken } from './entity/auth-refresh-token.entity';
 import { AuthRefreshTokenService } from './services/auth-refresh-token.service';
 import { JwtOptionalGuard } from './guards/jwt-optional.guard';
 

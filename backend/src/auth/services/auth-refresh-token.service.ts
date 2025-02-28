@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AuthRefreshToken } from '../entity/auth-refresh-token.entity';
 import { LessThanOrEqual, Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
-import { User } from 'src/users/entity/user.entity';
+import { User } from '../../users/entity/user.entity';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { IJwtTokenPayload } from 'src/auth/dto/jwt-token.dto';
+import { IJwtTokenPayload } from '../dto/jwt-token.dto';
 
 @Injectable()
 export class AuthRefreshTokenService {

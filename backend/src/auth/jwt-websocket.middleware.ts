@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Socket } from 'socket.io';
 import * as cookie from 'cookie';
 import { ConfigService } from '@nestjs/config';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class JwtWebsocketMiddleware {

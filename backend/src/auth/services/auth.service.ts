@@ -5,10 +5,10 @@ import {
 } from '@nestjs/common';
 import { UsersService } from '../../users/users.service';
 import { compare } from 'bcrypt';
-import { AuthRefreshTokenService } from 'src/auth/services/auth-refresh-token.service';
+import { AuthRefreshTokenService } from '../services/auth-refresh-token.service';
 import { CookieOptions, Request, Response } from 'express';
-import { User } from 'src/users/entity/user.entity';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { User } from '../../users/entity/user.entity';
+import { CreateUserDto } from '../../users/dto/create-user.dto';
 import { LoginDto } from '../dto/login.dto';
 import { ProfileInfo } from '../dto/profile-info.dto';
 import { ProfileListings } from '../dto/profile-listings.dto';
