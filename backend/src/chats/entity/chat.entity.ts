@@ -1,5 +1,5 @@
-import { Listing } from 'src/listings/entity/listing.entity';
-import { User } from 'src/users/entity/user.entity';
+import { Listing } from '../../listings/entity/listing.entity';
+import { User } from '../../users/entity/user.entity';
 import {
   BaseEntity,
   CreateDateColumn,

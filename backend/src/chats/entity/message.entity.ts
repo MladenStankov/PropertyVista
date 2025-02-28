@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Chat } from './chat.entity';
-import { User } from 'src/users/entity/user.entity';
+import { User } from '../../users/entity/user.entity';
 
 @Entity('Message')
 export class Message extends BaseEntity {

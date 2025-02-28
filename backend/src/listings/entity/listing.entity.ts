@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from 'src/users/entity/user.entity';
+import { User } from '../../users/entity/user.entity';
 import { ListingImage } from './listing-image.entity';
 import { ListingType } from '../types/listing-type.dto';
 import { ListingLocation } from './listing-location.entity';
@@ -19,7 +19,7 @@ import { ListingPriceHistory } from './listing-price-history.entity';
 import { ConstructionType } from '../types/construction-type.dto';
 import { ListingView } from './listing-view.entity';
 import { ListingFavourite } from './listing-favourite.entity';
-import { Chat } from 'src/chats/entity/chat.entity';
+import { Chat } from '../../chats/entity/chat.entity';
 
 @Entity('Listing')
 export class Listing extends BaseEntity {
