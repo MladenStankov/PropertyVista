@@ -19,6 +19,7 @@ const cookieOptions: CookieOptions = {
   sameSite: 'none',
   secure: true,
   path: '/',
+  domain: process.env.COOKIE_DOMAIN || undefined,
 };
 
 @Injectable()

@@ -53,7 +53,11 @@ export async function middleware(request: NextRequest) {
   ) {
     response = NextResponse.redirect(new URL("/login", request.url));
   } else {
-    response = NextResponse.next();
+    response = NextResponse.next({
+      request: {
+        headers: new Headers(request.headers),
+      },
+    });
   }
 
   // Add CORS headers to all responses

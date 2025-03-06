@@ -12,26 +12,14 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   app.enableCors({
-    origin: configService.get<string>('CORS_ORIGIN'),
+    origin: process.env.FRONTEND_URL,
     credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders:
-      'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   });
 
-  app.use(
-    helmet({
-      contentSecurityPolicy: {
-        directives: {
-          defaultSrc: ["'self'"],
-          scriptSrc: ["'self'", 'accounts.google.com'],
-          connectSrc: ["'self'", 'https://accounts.google.com'],
-          frameSrc: ["'self'", 'https://accounts.google.com'],
-        },
-      },
-    }),
-  );
   app.use(cookieParser());
+  app.use(helmet());
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -47,7 +35,7 @@ async function bootstrap() {
   const swaggerDocument = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, swaggerDocument);
 
-  await app.listen(configService.get<number>('PORT', 3000));
+  await app.listen(process.env.PORT || 3000);
   console.log(`Server is listening on: ${await app.getUrl()}`);
   console.log(`Swagger API is on: ${await app.getUrl()}/api`);
 }
