@@ -13,14 +13,6 @@ export class JwtRefreshStrategy extends PassportStrategy(
     super({
       secretOrKey: `${process.env.JWT_REFRESH_SECRET}`,
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (req) => {
-          const authHeader = req.headers.authorization;
-          if (authHeader && authHeader.startsWith('Bearer ')) {
-            const token = authHeader.split(' ')[1];
-            if (token) return token;
-          }
-          return null;
-        },
         JwtRefreshStrategy.extractJwt,
       ]),
       ignoreExpiration: false,

@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import CalculatorBeforeSubmit from "../components/calculator/CalculatorBeforeSubmit";
 import CalculatorAfterSubmit from "../components/calculator/CalculatorAfterSubmit";
-import { fetchWithAuth } from "../utils/authUtils";
 
 export interface ICalculator {
   monthlyIncome: number | string;
@@ -68,7 +67,7 @@ export default function Calculator() {
         availableFunds: Number(form.availableFunds),
       };
 
-      const response = await fetchWithAuth(
+      const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/calculator/affordability`,
         {
           method: "POST",

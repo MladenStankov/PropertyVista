@@ -48,8 +48,6 @@ export class AuthService {
 
     res.cookie('access_token', access_token, cookieOptions);
     res.cookie('refresh_token', refresh_token, cookieOptions);
-
-    return { access_token, refresh_token };
   }
 
   async validateUser(loginPayload: LoginDto) {
@@ -78,32 +76,25 @@ export class AuthService {
     const { access_token, refresh_token } =
       await this.authRefreshTokenService.generateTokenPair(
         (req.user as any).attributes as User,
-        (req.cookies.refresh_token as string) || req.body.refresh_token,
+        req.cookies.refresh_token as string,
         (req.user as any).refreshTokenExpiresAt as Date,
       );
 
     res.cookie('access_token', access_token, cookieOptions);
     res.cookie('refresh_token', refresh_token, cookieOptions);
 
-    return { access_token, refresh_token };
+    return { access_token: access_token, refresh_token: refresh_token };
   }
 
   async logout(req: Request, res: Response) {
-    const refreshToken =
-      (req.cookies.refresh_token as string) || req.body.refresh_token;
-
-    if (refreshToken) {
-      await this.authRefreshTokenService.blacklistRefreshToken(
-        refreshToken,
-        (req.user as any).refreshTokenExpiresAt as Date,
-        ((req.user as any).attributes as User).id,
-      );
-    }
+    await this.authRefreshTokenService.blacklistRefreshToken(
+      req.cookies.refresh_token as string,
+      (req.user as any).refreshTokenExpiresAt as Date,
+      ((req.user as any).attributes as User).id,
+    );
 
     res.clearCookie('access_token', cookieOptions);
     res.clearCookie('refresh_token', cookieOptions);
-
-    return { message: 'Logged out successfully' };
   }
 
   async googleLogin(req: Request, res: Response) {
