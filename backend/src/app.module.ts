@@ -25,10 +25,6 @@ import { ChatsModule } from './chats/chats.module';
       database: process.env.DATABASE,
       autoLoadEntities: true,
       synchronize: true,
-      ssl:
-        process.env.NODE_ENV === 'production'
-          ? { rejectUnauthorized: false }
-          : false,
     }),
     AuthModule,
     ThrottlerModule.forRoot(),
