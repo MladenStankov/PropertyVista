@@ -83,7 +83,11 @@ export default function RegisterBeforeSubmit({
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ fullName, email, password }),
+          body: JSON.stringify({
+            fullName,
+            email,
+            password,
+          }),
           credentials: "include",
         }
       );
@@ -93,6 +97,12 @@ export default function RegisterBeforeSubmit({
         setPasswordError(errorData.message || "Registration failed!");
         setLoading(false);
       } else {
+        const data = await response.json();
+        if (data.access_token && data.refresh_token) {
+          localStorage.setItem("access_token", data.access_token);
+          localStorage.setItem("refresh_token", data.refresh_token);
+        }
+
         handleRegistration(email);
       }
     } catch (error) {

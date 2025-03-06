@@ -2,19 +2,20 @@ import { cookies } from "next/headers";
 
 export default async function isAuth(): Promise<boolean> {
   const cookieStore = await cookies();
-  let response: Response;
 
   const fetchProfile = async (): Promise<boolean> => {
-    response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/profile`, {
-      headers: {
-        Cookie: cookieStore.toString(),
-      },
-      credentials: "include",
-    });
-    if (response.status !== 401) {
-      return true;
-    } else return false;
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/profile`,
+      {
+        headers: {
+          Cookie: cookieStore.toString(),
+        },
+        credentials: "include",
+      }
+    );
+    return response.status !== 401;
   };
+
   const fetchRefresh = async () => {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh-tokens`,
@@ -26,26 +27,11 @@ export default async function isAuth(): Promise<boolean> {
         credentials: "include",
       }
     );
+
     if (response.status !== 401) {
-      const { access_token, refresh_token } = await response.json();
-
-      cookieStore.set("access_token", access_token, {
-        httpOnly: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        sameSite: "none",
-        secure: true,
-        path: "/",
-      });
-
-      cookieStore.set("refresh_token", refresh_token, {
-        httpOnly: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        sameSite: "none",
-        secure: true,
-        path: "/",
-      });
       return true;
-    } else return false;
+    }
+    return false;
   };
 
   try {

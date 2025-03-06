@@ -15,16 +15,20 @@ export class JwtWebsocketMiddleware {
 
   async use(socket: Socket, next: (err?: Error) => void) {
     try {
-      const cookieHeader = socket.handshake.headers.cookie;
-      const cookies = cookie.parse(cookieHeader);
+      // Try to get token from handshake auth
+      let token = socket.handshake.auth?.token;
 
-      const acceessToken = cookies['access_token'];
-
-      if (!acceessToken) {
-        throw new UnauthorizedException();
+      // If not found, try to get from cookies
+      if (!token && socket.handshake.headers.cookie) {
+        const cookies = cookie.parse(socket.handshake.headers.cookie);
+        token = cookies['access_token'];
       }
 
-      const payload = await this.jwtService.verifyAsync(acceessToken, {
+      if (!token) {
+        throw new UnauthorizedException('No token provided');
+      }
+
+      const payload = await this.jwtService.verifyAsync(token, {
         secret: this.configService.getOrThrow('JWT_SECRET'),
       });
 

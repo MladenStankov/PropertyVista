@@ -2,6 +2,7 @@ import getProfileData, { IUser } from "@/app/utils/getProfileData";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { Socket } from "socket.io-client";
+import { getCookie } from "@/app/utils/authUtils";
 
 export interface ChatMessagesDto {
   userFullName: string;
@@ -72,6 +73,13 @@ export default function ChatComponent({ uuid, socket }: IProps) {
   }, [uuid]);
 
   useEffect(() => {
+    // Connect to WebSocket with auth token from cookie
+    const token = getCookie("access_token");
+    if (token) {
+      socket.auth = { token };
+    }
+    socket.connect();
+
     const handleReceiveMessage = (data: MessageResponse) => {
       setChatMessages((prevChatMessages) => {
         if (!prevChatMessages) {
