@@ -60,7 +60,7 @@ export default async function isAuth(): Promise<boolean> {
     }
     return profile;
   } catch (error) {
-    console.log("Middleware error:" + error);
+    console.log(error);
     return false;
   }
 }
