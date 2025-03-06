@@ -2,7 +2,30 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import isAuth from "./app/api/auth";
 
+const allowedOrigins = [process.env.NEXT_PUBLIC_API_URL];
+
+const corsOptions = {
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
 export async function middleware(request: NextRequest) {
+  // Handle preflight requests
+  if (request.method === "OPTIONS") {
+    const response = NextResponse.next();
+    response.headers.set(
+      "Access-Control-Allow-Origin",
+      allowedOrigins.join(", ")
+    );
+
+    // Add CORS headers from corsOptions
+    Object.entries(corsOptions).forEach(([key, value]) => {
+      response.headers.set(key, value);
+    });
+
+    return response;
+  }
+
   const res = await isAuth();
 
   const protectedRoutes = [
@@ -32,6 +55,12 @@ export async function middleware(request: NextRequest) {
   } else {
     response = NextResponse.next();
   }
+
+  // Add CORS headers to all responses
+  response.headers.set(
+    "Access-Control-Allow-Origin",
+    allowedOrigins.join(", ")
+  );
 
   return response;
 }
