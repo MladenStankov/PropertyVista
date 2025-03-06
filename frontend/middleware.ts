@@ -10,7 +10,6 @@ const corsOptions = {
 };
 
 export async function middleware(request: NextRequest) {
-  // Handle preflight requests
   if (request.method === "OPTIONS") {
     const response = NextResponse.next();
     response.headers.set(
@@ -18,7 +17,6 @@ export async function middleware(request: NextRequest) {
       allowedOrigins.join(", ")
     );
 
-    // Add CORS headers from corsOptions
     Object.entries(corsOptions).forEach(([key, value]) => {
       response.headers.set(key, value);
     });
@@ -58,7 +56,6 @@ export async function middleware(request: NextRequest) {
     });
   }
 
-  // Add CORS headers to all responses
   response.headers.set(
     "Access-Control-Allow-Origin",
     allowedOrigins.join(", ")
