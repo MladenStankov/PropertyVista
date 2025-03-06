@@ -38,8 +38,6 @@ export async function middleware(request: NextRequest) {
   ];
   const authRoutes = ["/login", "/register", "/register/verify"];
 
-  console.log("Authenticated:", res);
-
   const { pathname } = request.nextUrl;
 
   let response: NextResponse;
