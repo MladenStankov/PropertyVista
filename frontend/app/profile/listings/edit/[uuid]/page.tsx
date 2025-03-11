@@ -1,5 +1,6 @@
 "use client";
 
+import ProtectedRoute from "@/app/components/auth/ProtectedRoute";
 import Loading from "@/app/components/Loading";
 import WizardForm from "@/app/components/profile/WizardForm";
 import {
@@ -60,24 +61,26 @@ export default function EditListing() {
     fetchListing();
   }, [uuid]);
   return (
-    <div>
-      {isLoading ? (
-        <Loading />
-      ) : uuid &&
-        listing.address &&
-        listing.location &&
-        listing.general &&
-        listing.rooms &&
-        listing.amenities ? (
-        <WizardForm
-          uuid={uuid}
-          listing={listing}
-          updatedListing={updatedListing}
-          setUpdatedListing={setUpdatedListing}
-        />
-      ) : (
-        <h1 className="text-4xl font-bold text-center m-10">Unauthorized</h1>
-      )}
-    </div>
+    <ProtectedRoute>
+      <div>
+        {isLoading ? (
+          <Loading />
+        ) : uuid &&
+          listing.address &&
+          listing.location &&
+          listing.general &&
+          listing.rooms &&
+          listing.amenities ? (
+          <WizardForm
+            uuid={uuid}
+            listing={listing}
+            updatedListing={updatedListing}
+            setUpdatedListing={setUpdatedListing}
+          />
+        ) : (
+          <h1 className="text-4xl font-bold text-center m-10">Unauthorized</h1>
+        )}
+      </div>
+    </ProtectedRoute>
   );
 }

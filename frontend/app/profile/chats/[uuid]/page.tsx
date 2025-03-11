@@ -1,5 +1,6 @@
 "use client";
 
+import ProtectedRoute from "@/app/components/auth/ProtectedRoute";
 import ChatComponent from "@/app/components/chats/ChatComponent";
 import SidebarChatMenu from "@/app/components/chats/SidebarChatMenu";
 import { usePathname } from "next/navigation";
@@ -21,9 +22,11 @@ export default function Chat() {
   }, [socket]);
 
   return (
-    <div className="flex h-[90%]">
-      <SidebarChatMenu activeChatUuid={chatUuid} />
-      <ChatComponent uuid={chatUuid} socket={socket} />
-    </div>
+    <ProtectedRoute>
+      <div className="flex h-[90%]">
+        <SidebarChatMenu activeChatUuid={chatUuid} />
+        <ChatComponent uuid={chatUuid} socket={socket} />
+      </div>
+    </ProtectedRoute>
   );
 }

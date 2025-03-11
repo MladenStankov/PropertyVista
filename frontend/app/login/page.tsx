@@ -1,15 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FormInput from "../components/auth/FormInput";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useAuth } from "../context/AuthContext";
 
 import { FaArrowLeft, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
 import Link from "next/link";
 import GoogleButton from "../components/auth/GoogleButton";
 
-export default function LoginPage() {
+export default function Login() {
+  const { isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
+
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [passwordHidden, setPasswordHidden] = useState<boolean>(true);
@@ -19,7 +23,13 @@ export default function LoginPage() {
   } | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleSumbit = async (event: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.push("/");
+    }
+  }, [isAuthenticated, isLoading, router]);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
     setLoading(true);
@@ -62,14 +72,14 @@ export default function LoginPage() {
       setError({ email: errorData.message || "Login failed!" });
       setLoading(false);
     } else {
-      redirect("/");
+      router.push("/");
     }
   };
 
   return (
     <div className="flex h-screen flex-col bg-gradient-to-r from-cyan-500 to-blue-500">
       <form
-        onSubmit={handleSumbit}
+        onSubmit={handleSubmit}
         className="m-auto p-10 rounded-md border border-gray-300 shadow-xl bg-white"
         autoComplete="on"
       >

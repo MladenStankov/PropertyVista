@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import WizardForm from "../components/sell/WizardForm";
-
+import ProtectedRoute from "../components/auth/ProtectedRoute";
 export default function Sell() {
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -17,5 +17,9 @@ export default function Sell() {
     };
   }, []);
 
-  return <WizardForm />;
+  return (
+    <ProtectedRoute>
+      <WizardForm />
+    </ProtectedRoute>
+  );
 }

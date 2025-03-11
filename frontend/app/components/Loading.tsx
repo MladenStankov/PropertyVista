@@ -5,12 +5,21 @@ interface LoadingProps {
   forNav?: boolean;
 }
 
-export default function Loading({ color, forNav = false }: LoadingProps) {
+export default function Loading({
+  color = "blue",
+  forNav = false,
+}: LoadingProps) {
   return (
-    <span
-      className={`loading loading-lg loading-spinner text-blue-500 ${
-        (color && "text-" + color) || ""
-      }  ${!forNav && "absolute right-1/2 bottom-1/2"}`}
-    ></span>
+    <div
+      className={`flex justify-center items-center ${
+        forNav ? "h-6 w-6" : "h-full w-full"
+      }`}
+    >
+      <div
+        className={`animate-spin rounded-full h-${forNav ? "6" : "12"} w-${
+          forNav ? "6" : "12"
+        } border-t-2 border-b-2 border-${color}-500`}
+      ></div>
+    </div>
   );
 }
