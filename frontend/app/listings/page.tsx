@@ -57,12 +57,6 @@ export interface IFilter {
   sort?: SortType | null;
 }
 
-export interface IListingsResponse extends IListingsCard {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export default function ListingsPage() {
   const [listingsCards, setListingsCards] = useState<IListingsCard[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -161,10 +155,8 @@ export default function ListingsPage() {
           throw new Error("Failed to fetch listings");
         }
 
-        const data: IListingsResponse[] = await response.json();
-        setListingsCards(
-          data.map(({ id, createdAt, updatedAt, ...rest }) => rest)
-        );
+        const data: IListingsCard[] = await response.json();
+        setListingsCards(data.map(({ ...rest }) => rest));
       } catch (error) {
         console.error("Error fetching listings:", error);
       } finally {
@@ -247,15 +239,19 @@ export default function ListingsPage() {
     window.location.href = `listings?${queriesString}`;
   };
 
-  const formatFilterValue = (key: string, value: any): string => {
+  const formatFilterValue = (
+    key: string,
+    value: string | number | PropertyType | ConstructionType | AmenityType
+  ): string => {
     if (key === "minPrice" || key === "maxPrice") {
-      return `€${new Intl.NumberFormat().format(value)}`;
+      return `€${new Intl.NumberFormat().format(Number(value))}`;
     }
     if (key === "minSurfaceArea" || key === "maxSurfaceArea") {
       return `${value}m²`;
     }
     if (key === "amenities") {
       return value
+        .toString()
         .replace(/_/g, " ")
         .toLowerCase()
         .replace(/\b\w/g, (c: string) => c.toUpperCase());
