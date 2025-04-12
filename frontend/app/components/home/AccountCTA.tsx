@@ -4,28 +4,25 @@ import React from "react";
 
 export default function AccountCTA() {
   return (
-    <section className="bg-gray-200 h-auto flex flex-col md:flex-row justify-around px-6 py-10 w-full overflow-hidden gap-10 md:gap-20">
+    <section className="bg-gradient-to-br from-gray-50 to-gray-100 h-auto flex flex-col md:flex-row justify-around px-6 py-16 w-full overflow-hidden gap-10 md:gap-20">
       <div className="flex justify-center md:w-1/2 max-w-[500px] w-full">
         <Image
           src="/home/account-cta.png"
           alt="Accounts"
           width={500}
           height={500}
-          className="h-auto w-full max-w-[350px] md:max-w-[500px] object-contain"
+          className="h-auto w-full max-w-[350px] md:max-w-[500px] object-contain transform hover:scale-105 transition-transform duration-300"
         />
       </div>
-      <div className="flex flex-col gap-5 w-full md:w-1/2 self-center max-w-full">
-        <h3 className="font-bold text-3xl sm:text-4xl md:text-5xl text-center text-slate-600">
+      <div className="flex flex-col gap-7 w-full md:w-1/2 self-center max-w-full">
+        <h3 className="font-bold text-3xl sm:text-4xl md:text-5xl text-center bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
           Experience the benefits of having a profile
         </h3>
-        <p className="font-light text-xl sm:text-2xl md:text-3xl text-center">
+        <p className="font-normal text-xl sm:text-2xl md:text-3xl text-center text-gray-600">
           Publish and save your listings and be able to communicate with others.
         </p>
         <Link href="/register" className="self-center">
-          <button
-            className="border-blue-500 bg-white px-6 py-3 md:px-8 md:py-3 border rounded-2xl transition-colors
-           text-blue-500 text-xl sm:text-3xl font-semibold hover:bg-slate-100"
-          >
+          <button className="px-8 py-3 md:px-10 md:py-4 rounded-xl font-medium text-white bg-blue-500 hover:bg-blue-600 text-xl sm:text-2xl transition-all duration-200 shadow-md hover:shadow-lg">
             Sign up
           </button>
         </Link>

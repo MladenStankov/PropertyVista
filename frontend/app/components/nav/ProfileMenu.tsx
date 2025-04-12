@@ -57,43 +57,46 @@ export default function ProfileMenu({ setIsProfileMenuVisible }: IProfileMenu) {
   return (
     <div
       ref={menuRef}
-      className="absolute bg-white divide-y-[1px] top-[68px] right-0 z-10 w-60 text-base shadow-2xl p-2
-     grid grid-rows-4 rounded-sm text-gray-700"
+      className="absolute bg-white top-[68px] right-0 z-20 w-60 rounded-xl shadow-lg divide-y divide-gray-100 overflow-hidden"
     >
-      <Link className="p-3 hover:bg-gray-100" href="/profile">
-        <div className="flex items-center gap-2 hover:underline">
-          <ImProfile />
+      <div className="p-2 space-y-1">
+        <Link
+          href="/profile"
+          className="flex items-center gap-2 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+        >
+          <ImProfile className="text-gray-500" />
           <span>Profile</span>
-        </div>
-      </Link>
-      <Link className="p-3 hover:bg-gray-100" href="/profile/chats">
-        <div className="flex items-center gap-2 hover:underline">
-          <TiMessages />
+        </Link>
+        <Link
+          href="/profile/chats"
+          className="flex items-center gap-2 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+        >
+          <TiMessages className="text-gray-500" />
           <span>Chats</span>
-        </div>
-      </Link>
-      <Link className="p-3 hover:bg-gray-100" href="/profile/listings">
-        <div className="flex items-center gap-2 hover:underline">
-          <PiBuildingApartmentBold />
+        </Link>
+        <Link
+          href="/profile/listings"
+          className="flex items-center gap-2 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+        >
+          <PiBuildingApartmentBold className="text-gray-500" />
           <span>Listings</span>
-        </div>
-      </Link>
-      <Link
-        className="p-3 hover:bg-gray-100"
-        href="/profile/favourite-listings"
-      >
-        <div className="flex items-center gap-2 hover:underline">
-          <FaHeart />
+        </Link>
+        <Link
+          href="/profile/favourite-listings"
+          className="flex items-center gap-2 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+        >
+          <FaHeart className="text-gray-500" />
           <span>Favourite Listings</span>
-        </div>
-      </Link>
-      <div
-        className="flex items-center gap-2 p-3 self-center hover:bg-gray-100 text-red-500
-       hover:text-red-600 cursor-pointer hover:underline"
-        onClick={(e) => handleLogout(e)}
-      >
-        <RxExit />
-        <span>Logout</span>
+        </Link>
+      </div>
+      <div className="p-2">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-2 p-2 w-full text-left text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+        >
+          <RxExit />
+          <span>Logout</span>
+        </button>
       </div>
     </div>
   );

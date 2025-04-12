@@ -87,8 +87,8 @@ export default function ChatComponent({ uuid, socket }: IProps) {
       }
     };
 
-    fetchChatMessages();
     setIsLoading(true);
+    fetchChatMessages();
   }, [uuid]);
 
   useEffect(() => {
@@ -158,10 +158,29 @@ export default function ChatComponent({ uuid, socket }: IProps) {
 
   if (!uuid) {
     return (
-      <div className="flex h-full items-center justify-center bg-gray-50">
-        <div className="text-center text-gray-500">
-          <h3 className="text-xl font-semibold mb-2">Select a chat</h3>
-          <p className="text-sm">Choose a conversation to start messaging</p>
+      <div className="flex h-full items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="text-center p-8 rounded-xl bg-white shadow-lg border border-gray-100">
+          <div className="mb-4">
+            <svg
+              className="w-16 h-16 mx-auto text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold mb-2 text-gray-800">
+            Select a chat
+          </h3>
+          <p className="text-sm text-gray-600">
+            Choose a conversation to start messaging
+          </p>
         </div>
       </div>
     );
@@ -169,21 +188,39 @@ export default function ChatComponent({ uuid, socket }: IProps) {
 
   if (error) {
     return (
-      <div className="flex h-full items-center justify-center bg-gray-50">
-        <div className="text-center text-gray-500">
-          <h3 className="text-xl font-semibold mb-2 text-red-500">Error</h3>
-          <p className="text-sm">{error}</p>
+      <div className="flex h-full items-center justify-center bg-gradient-to-br from-red-50 to-gray-50">
+        <div className="text-center p-8 rounded-xl bg-white shadow-lg border border-red-100">
+          <div className="mb-4">
+            <svg
+              className="w-16 h-16 mx-auto text-red-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold mb-2 text-red-600">Error</h3>
+          <p className="text-sm text-gray-600">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-gradient-to-br from-gray-50 to-blue-50">
       <div className="flex-1 overflow-y-auto px-2 sm:px-4 py-4">
         {isLoading ? (
           <div className="flex justify-center items-center h-full">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            <div className="relative">
+              <div className="w-12 h-12 rounded-full border-4 border-blue-200 animate-spin border-t-blue-500"></div>
+              <div className="w-12 h-12 rounded-full border-4 border-transparent border-t-gray-200 animate-pulse absolute top-0"></div>
+            </div>
           </div>
         ) : (
           <div className="space-y-4 max-w-4xl mx-auto">
@@ -195,7 +232,7 @@ export default function ChatComponent({ uuid, socket }: IProps) {
                 }`}
               >
                 <div className="flex items-center mb-1 space-x-2">
-                  <div className="w-8 h-8 rounded-full overflow-hidden">
+                  <div className="w-8 h-8 rounded-full overflow-hidden ring-2 ring-offset-2 ring-blue-100">
                     <Image
                       src={chat.userImage}
                       alt={chat.userFullName}
@@ -208,19 +245,19 @@ export default function ChatComponent({ uuid, socket }: IProps) {
                     {chat.userFullName}
                   </span>
                 </div>
-                <div className="space-y-1 w-full">
+                <div className="space-y-1 w-full max-w-[85%] sm:max-w-[75%] md:max-w-[65%]">
                   {chat.messages.map((message, idx) => (
                     <div
                       key={idx}
-                      className={`max-w-[85%] sm:max-w-[75%] md:max-w-[65%] break-words ${
+                      className={`break-words ${
                         chat.currentUser ? "ml-auto" : "mr-auto"
                       }`}
                     >
                       <div
-                        className={`rounded-2xl px-4 py-2 ${
+                        className={`rounded-2xl px-4 py-2 shadow-sm ${
                           chat.currentUser
-                            ? "bg-blue-600 text-white rounded-tr-none"
-                            : "bg-white text-gray-800 border border-gray-200 rounded-tl-none"
+                            ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-tr-none"
+                            : "bg-white text-gray-800 border border-gray-100 rounded-tl-none"
                         }`}
                       >
                         <p className="whitespace-pre-wrap text-[15px] leading-relaxed">
@@ -228,7 +265,7 @@ export default function ChatComponent({ uuid, socket }: IProps) {
                         </p>
                         <span
                           className={`text-[11px] ${
-                            chat.currentUser ? "text-blue-100" : "text-gray-500"
+                            chat.currentUser ? "text-blue-100" : "text-gray-400"
                           } block mt-1`}
                         >
                           {new Date(message.createdAt).toLocaleTimeString([], {
@@ -247,7 +284,7 @@ export default function ChatComponent({ uuid, socket }: IProps) {
         )}
       </div>
 
-      <div className="sticky bottom-0 bg-white border-t py-3 px-2 sm:p-4">
+      <div className="sticky bottom-0 bg-white border-t py-3 px-2 sm:p-4 backdrop-blur-lg bg-opacity-90">
         <div className="flex items-center space-x-2 max-w-4xl mx-auto">
           <input
             type="text"
@@ -255,12 +292,12 @@ export default function ChatComponent({ uuid, socket }: IProps) {
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Type a message..."
-            className="flex-1 px-4 py-3 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
+            className="flex-1 px-4 py-3 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base bg-white shadow-sm transition-shadow duration-200 ease-in-out hover:shadow-md"
           />
           <button
             onClick={handleSendMessage}
             disabled={!newMessage.trim()}
-            className="p-3 rounded-full bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="p-3 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
           >
             <IoSend className="w-5 h-5" />
           </button>

@@ -8,6 +8,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import Link from "next/link";
 import GoogleButton from "./GoogleButton";
 import FormInput from "./FormInput";
+import { motion } from "framer-motion";
 
 interface RegisterBeforeSubmitProps {
   handleRegistration: (email: string) => void;
@@ -30,7 +31,7 @@ export default function RegisterBeforeSubmit({
     undefined
   );
 
-  const handleSumbit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
 
@@ -40,18 +41,16 @@ export default function RegisterBeforeSubmit({
     setEmailError(undefined);
     setPasswordError(undefined);
 
-    document.getElementById("name")?.classList.remove("border-red-500");
-    document.getElementById("email")?.classList.remove("border-red-500");
-    document.getElementById("password")?.classList.remove("border-red-500");
+    setFullNameError(undefined);
+    setEmailError(undefined);
+    setPasswordError(undefined);
 
     if (fullName === "") {
       setFullNameError("Full name is required");
-      document.getElementById("name")?.classList.add("border-red-500");
       hasError = true;
     }
     if (email === "") {
       setEmailError("Email is required");
-      document.getElementById("email")?.classList.add("border-red-500");
       hasError = true;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setEmailError("Invalid email");
@@ -60,7 +59,6 @@ export default function RegisterBeforeSubmit({
     }
     if (password === "") {
       setPasswordError("Password is required");
-      document.getElementById("password")?.classList.add("border-red-500");
       hasError = true;
     } else if (
       !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
@@ -103,91 +101,116 @@ export default function RegisterBeforeSubmit({
   };
 
   return (
-    <div className="flex h-screen flex-col bg-gradient-to-l from-cyan-500 to-blue-500">
-      <form
-        onSubmit={handleSumbit}
-        className="m-auto p-10 rounded-md border border-gray-300 shadow-xl bg-white max-w-md"
-        autoComplete="on"
-      >
-        <Link
-          href="/"
-          className="flex flex-row gap-1 w-fit mb-2 hover:underline hover:text-gray-700"
-        >
-          <FaArrowLeft className="mt-1 text-gray-500" />
-          <p className="text-gray-500 hover:text-gray-800">Back to Home</p>
-        </Link>
-        <h1 className="text-center text-3xl mb-4 hover:text-gray-800">
-          Create your Account
-        </h1>
-
-        <div className="relative">
-          <FormInput
-            id="name"
-            label="Full name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            error={fullNameError}
-            Icon={CiUser}
-          />
-        </div>
-
-        <div className="relative">
-          <FormInput
-            id="email"
-            label="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            error={emailError}
-            Icon={MdOutlineEmail}
-          />
-        </div>
-
-        <div className="relative">
-          <FormInput
-            id="password"
-            label="Password"
-            value={password}
-            type={passwordHidden ? "password" : "text"}
-            onChange={(e) => setPassword(e.target.value)}
-            error={passwordError}
-            Icon={passwordHidden ? FaRegEyeSlash : FaRegEye}
-            iconHandler={() => setPasswordHidden(!passwordHidden)}
-          />
-        </div>
-
-        <button
-          type="submit"
-          className={`w-full my-4 border border-gray-400 p-2 rounded-md font-semibold text-lg transition-colors ${
-            loading
-              ? "bg-gray-400"
-              : "bg-blue-500 hover:bg-blue-600 transition-colors"
-          } text-white`}
-          disabled={loading}
-        >
-          {loading ? "Signing up..." : "Sign up"}
-        </button>
-
-        <p className="text-gray-500 text-center">
-          Already have an account?{" "}
-          <span>
-            {" "}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tl from-blue-600 via-blue-500 to-cyan-400 p-4">
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+          <div className="px-8 pt-8 pb-6">
             <Link
-              href="/login"
-              className="text-blue-400 underline hover:cursor-pointer hover:text-blue-500"
+              href="/"
+              className="group inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mb-6"
             >
-              Sign in
+              <FaArrowLeft className="text-sm transition-transform group-hover:-translate-x-1" />
+              <span>Back to Home</span>
             </Link>
-          </span>
-        </p>
 
-        <div className="flex items-center my-6">
-          <hr className="flex-grow border-t border-gray-300" />
-          <span className="mx-3 text-gray-500">Or</span>
-          <hr className="flex-grow border-t border-gray-300" />
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent mb-2">
+              Create your Account
+            </h1>
+            <p className="text-gray-500 mb-8">
+              Join PropertyVista today to find your dream home
+            </p>
+
+            <form className="space-y-6" onSubmit={handleSubmit}>
+              <div className="relative">
+                <FormInput
+                  id="name"
+                  label="Full name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  error={fullNameError}
+                  Icon={CiUser}
+                  className={fullNameError ? "border-red-500" : ""}
+                />
+              </div>
+
+              <div className="relative">
+                <FormInput
+                  id="email"
+                  label="Email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  error={emailError}
+                  Icon={MdOutlineEmail}
+                  className={emailError ? "border-red-500" : ""}
+                />
+              </div>
+
+              <div className="relative">
+                <FormInput
+                  id="password"
+                  label="Password"
+                  value={password}
+                  type={passwordHidden ? "password" : "text"}
+                  onChange={(e) => setPassword(e.target.value)}
+                  error={passwordError}
+                  Icon={passwordHidden ? FaRegEyeSlash : FaRegEye}
+                  iconHandler={() => setPasswordHidden(!passwordHidden)}
+                  className={passwordError ? "border-red-500" : ""}
+                />
+                {!passwordError && (
+                  <p className="mt-2 text-xs text-gray-500">
+                    Password must contain at least 8 characters, including
+                    uppercase, lowercase, numbers, and special characters
+                  </p>
+                )}
+              </div>
+
+              <motion.button
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                type="submit"
+                className={`w-full p-3 rounded-xl font-semibold text-lg shadow-lg transition-all ${
+                  loading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white"
+                }`}
+                disabled={loading}
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <div className="w-5 h-5 border-t-2 border-white rounded-full animate-spin mr-2"></div>
+                    Signing up...
+                  </div>
+                ) : (
+                  "Sign up"
+                )}
+              </motion.button>
+            </form>
+          </div>
+
+          <div className="px-8 py-6 bg-gray-50 border-t border-gray-100">
+            <p className="text-gray-600 text-center mb-6">
+              Already have an account?{" "}
+              <Link
+                href="/login"
+                className="text-blue-500 hover:text-blue-600 font-medium hover:underline"
+              >
+                Sign in
+              </Link>
+            </p>
+
+            <div className="flex items-center mb-6">
+              <hr className="flex-grow border-t border-gray-200" />
+              <span className="mx-4 text-sm text-gray-500 font-medium">
+                Or continue with
+              </span>
+              <hr className="flex-grow border-t border-gray-200" />
+            </div>
+
+            <GoogleButton text="Continue with Google" />
+          </div>
         </div>
-
-        <GoogleButton text="Continue with Google" />
-      </form>
+      </div>
     </div>
   );
 }

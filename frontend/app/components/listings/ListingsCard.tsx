@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import { ConstructionType, PropertyType } from "../sell/WizardForm";
-import { FaRegHeart } from "react-icons/fa6";
-import { FaHeart } from "react-icons/fa";
+import { FaRegHeart, FaStairs } from "react-icons/fa6";
+import { FaBath, FaBed, FaHeart } from "react-icons/fa";
+import { BsChatLeftText } from "react-icons/bs";
 import Link from "next/link";
 import Image from "next/image";
 import { capitalizeFirstLetter } from "@/app/utils/capitalizeFirstLetter";
@@ -83,79 +84,95 @@ export default function ListingsCard({
 
   return (
     <>
-      {errorMessage && (
-        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center text-red-500">
-            <p className="text-lg font-semibold mb-4">{errorMessage}</p>
-            <button
-              onClick={() => setErrorMessage(null)}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-            >
-              Dismiss
-            </button>
-          </div>
-        </div>
-      )}
-      <div className="border-2 shadow-lg hover:shadow-2xl rounded-xl grid grid-rows-2 transition-shadow">
+      <div className="group border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:scale-[1.02] bg-white">
         <Link href={`listings/${uuid}`} className="relative">
-          <div className="relative w-full h-72">
+          <div className="relative w-full h-72 overflow-hidden">
             <Image
               src={imageUrl}
               alt="Listing Image"
               layout="fill"
               objectFit="cover"
               objectPosition="center"
-              className="rounded-t-xl"
+              className="rounded-t-xl group-hover:scale-105 transition-transform duration-300"
               priority={true}
             />
           </div>
           <button
             onClick={(e) => handleFavourite(e)}
-            className={`absolute bottom-0 right-0 flex items-center gap-2 text-sm md:text-xl 
-            bg-white rounded-full p-2 mb-2 mr-2 
-            hover:bg-gray-100 hover:font-semibold text-blue-500 font-medium
-              bg-opacity-70 hover:scale-105 transition-transform ${
-                isFavourited ? "text-red-500 " : ""
-              }`}
+            className={`absolute bottom-3 right-3 flex items-center justify-center w-10 h-10
+            bg-white rounded-full backdrop-blur-sm bg-opacity-90 
+            hover:bg-gray-100 text-blue-500 shadow-md
+            transform hover:scale-110 transition-all duration-200 ${
+              isFavourited ? "text-red-500" : ""
+            }`}
           >
-            {isFavourited ? <FaHeart size={30} /> : <FaRegHeart size={30} />}
+            {isFavourited ? <FaHeart size={20} /> : <FaRegHeart size={20} />}
           </button>
         </Link>
-        <div className="flex flex-wrap sm:flex-col md:flex-row">
-          <div className="p-4 flex flex-col gap-3 w-full md:w-1/2">
-            <p className="font-light text-sm md:text-lg">
-              {capitalizeFirstLetter(constructionType)} for{" "}
-              {type === "buy" ? "sale" : type}
-            </p>
-            <p className="text-lg md:text-3xl font-bold">
-              {new Intl.NumberFormat("en-IE", {
-                style: "currency",
-                currency: "EUR",
-              }).format(price)}
-              {type === "rent" && (
-                <span className="font-light text-lg">/month</span>
+        <div className="flex flex-col p-4 gap-4">
+          <div className="space-y-3">
+            <div className="flex justify-between items-start">
+              <p className="text-2xl md:text-3xl font-bold text-gray-800">
+                {new Intl.NumberFormat("en-IE", {
+                  style: "currency",
+                  currency: "EUR",
+                }).format(price)}
+                {type === "rent" && (
+                  <span className="text-base text-gray-500 font-normal">
+                    /month
+                  </span>
+                )}
+              </p>
+              <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm font-medium">
+                {capitalizeFirstLetter(constructionType)}
+              </span>
+            </div>
+            <p className="text-gray-600 font-medium">
+              {capitalizeFirstLetter(
+                type === "buy" ? "For sale" : `For ${type}`
               )}
             </p>
-            <div className="flex gap-1 text-xs md:text-base">
-              <span className="font-bold">{numberOfBedrooms}</span> bed
-              <span className="font-bold">{numberOfBathrooms}</span> bath
-              <span className="font-bold">{numberOfFloors}</span> floor
-              <span className="font-bold">{surfaceArea}</span> m&sup2;
+            <div className="flex gap-4 text-gray-600">
+              <span className="flex items-center gap-1.5">
+                <FaBed className="text-blue-500" /> {numberOfBedrooms}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <FaBath className="text-blue-500" /> {numberOfBathrooms}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <FaStairs className="text-blue-500" /> {numberOfFloors}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="text-blue-500 font-medium">{surfaceArea}</span>{" "}
+                m²
+              </span>
             </div>
-            <p className="max-w-full break-words font-light line-clamp-2 text-sm md:text-base">
-              {address}
-            </p>
+            <p className="text-gray-500 line-clamp-2 text-sm">{address}</p>
           </div>
-          <div className="flex flex-col items-center w-full mb-4 md:mr-2">
+          <button
+            onClick={() => handleContactBroker()}
+            className="w-full py-3 px-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 
+            text-white font-medium rounded-lg shadow-sm hover:shadow-md 
+            transition-all duration-200 flex items-center justify-center gap-2"
+          >
+            <BsChatLeftText />
+            Contact broker
+          </button>
+        </div>
+      </div>
+      {errorMessage && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-xl p-6 max-w-sm w-full shadow-xl">
+            <p className="text-red-500 text-center mb-4">{errorMessage}</p>
             <button
-              onClick={() => handleContactBroker()}
-              className="border-2 rounded-xl border-black px-6 md:px-8 py-2 md:py-4 hover:bg-slate-100 text-sm md:text-xl hover:scale-105 transition-transform "
+              onClick={() => setErrorMessage(null)}
+              className="w-full py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200"
             >
-              Contact broker
+              Dismiss
             </button>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

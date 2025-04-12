@@ -64,38 +64,48 @@ export default function MostViewedCarousel() {
   };
 
   return (
-    <section className="px-5 sm:px-10 py-10 space-y-10 flex flex-col">
-      <h2 className="text-center font-bold text-2xl sm:text-4xl md:text-5xl text-slate-600">
+    <section className="px-5 sm:px-10 py-16 space-y-10 flex flex-col bg-gradient-to-br from-white to-gray-50">
+      <h2 className="text-center font-bold text-3xl sm:text-4xl md:text-5xl bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
         Most viewed listings
       </h2>
       {Array.isArray(carouselItems) && carouselItems.length > 0 ? (
         <>
-          <div className="flex flex-row justify-center items-center">
-            <FaArrowLeft
+          <div className="flex flex-row justify-center items-center gap-4">
+            <button
               onClick={decrementItem}
-              className="hover:cursor-pointer hover:scale-125 transition-transform size-10 max-md:size-7 border-2 rounded-full p-2"
-            />
+              className="p-2 rounded-xl hover:bg-gray-100 transition-all duration-200 group"
+              aria-label="Previous item"
+            >
+              <FaArrowLeft className="size-6 max-md:size-5 text-gray-600 group-hover:text-gray-900 transition-colors" />
+            </button>
             {carouselItems.length > 1 && <CarouselItem item={getPrevItem()} />}
             <CarouselItem item={carouselItems[itemIndex]} isCurrent={true} />
             {carouselItems.length > 1 && <CarouselItem item={getNextItem()} />}
-            <FaArrowRight
+            <button
               onClick={incrementItem}
-              className="hover:cursor-pointer hover:scale-125 transition-transform size-10 max-md:size-7 border-2 rounded-full p-2"
-            />
+              className="p-2 rounded-xl hover:bg-gray-100 transition-all duration-200 group"
+              aria-label="Next item"
+            >
+              <FaArrowRight className="size-6 max-md:size-5 text-gray-600 group-hover:text-gray-900 transition-colors" />
+            </button>
           </div>
-          <div className="flex justify-center gap-2 mt-4">
-            {carouselItems.map((item, i) => (
-              <div
+          <div className="flex justify-center gap-3 mt-6">
+            {carouselItems.map((_, i) => (
+              <button
                 key={i}
-                className={`w-[10px] h-[10px] rounded-full ${
-                  i === itemIndex ? "bg-slate-500" : "bg-slate-200"
+                onClick={() => setItemIndex(i)}
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-200 ${
+                  i === itemIndex
+                    ? "bg-blue-500 w-4"
+                    : "bg-gray-300 hover:bg-gray-400"
                 }`}
-              ></div>
+                aria-label={`Go to slide ${i + 1}`}
+              />
             ))}
           </div>
         </>
       ) : (
-        <h3 className="text-center text-2xl text-slate-600">
+        <h3 className="text-center text-2xl text-gray-600">
           No listings found
         </h3>
       )}

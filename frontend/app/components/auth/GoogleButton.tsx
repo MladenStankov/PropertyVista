@@ -1,5 +1,5 @@
-import Image from "next/image";
-import Link from "next/link";
+import { FcGoogle } from "react-icons/fc";
+import { motion } from "framer-motion";
 import React from "react";
 
 interface GoogleButtonProps {
@@ -7,21 +7,20 @@ interface GoogleButtonProps {
 }
 
 export default function GoogleButton({ text }: GoogleButtonProps) {
+  const handleGoogleSignIn = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
+  };
+
   return (
-    <Link href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`} passHref>
-      <button
-        type="button"
-        className="w-full border border-gray-400 p-2 rounded-md flex items-center justify-center hover:bg-gray-100"
-      >
-        <Image
-          src="https://img.icons8.com/color/24/000000/google-logo.png"
-          alt="Google logo"
-          width={24}
-          height={24}
-          className="mr-2"
-        />
-        {text}
-      </button>
-    </Link>
+    <motion.button
+      whileHover={{ scale: 1.01 }}
+      whileTap={{ scale: 0.99 }}
+      onClick={handleGoogleSignIn}
+      className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl border-2 border-gray-200 
+        bg-white hover:bg-gray-50 transition-all duration-200 text-gray-600 font-medium shadow-sm hover:shadow-md"
+    >
+      <FcGoogle className="text-2xl" />
+      <span>{text}</span>
+    </motion.button>
   );
 }

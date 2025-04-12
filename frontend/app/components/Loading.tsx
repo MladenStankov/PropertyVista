@@ -1,4 +1,5 @@
 import React from "react";
+import { AiOutlineLoading3Quarters } from "react-icons/ai";
 
 interface LoadingProps {
   color?: string;
@@ -15,11 +16,17 @@ export default function Loading({
         forNav ? "h-6 w-6" : "h-full w-full"
       }`}
     >
-      <div
-        className={`animate-spin rounded-full h-${forNav ? "6" : "12"} w-${
-          forNav ? "6" : "12"
-        } border-t-2 border-b-2 border-${color}-500`}
-      ></div>
+      <AiOutlineLoading3Quarters
+        size={24}
+        className={`animate-spin ${
+          {
+            blue: "text-blue-500",
+            red: "text-red-500",
+            green: "text-green-500",
+            yellow: "text-yellow-500",
+          }[color] || "text-blue-500"
+        }`}
+      />
     </div>
   );
 }
