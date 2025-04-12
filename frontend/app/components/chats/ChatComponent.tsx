@@ -38,7 +38,8 @@ export default function ChatComponent({ uuid, socket }: IProps) {
   );
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [newMessage, setNewMessage] = useState<string>("");
-  const [profile, setProfileData] = useState<IUser | null>(null);
+  const [profile, setProfile] = useState<IUser | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -52,7 +53,7 @@ export default function ChatComponent({ uuid, socket }: IProps) {
   useEffect(() => {
     const fetchProfileData = async () => {
       const data = await getProfileData();
-      setProfileData(data);
+      setProfile(data);
     };
     fetchProfileData();
   }, []);
@@ -60,6 +61,7 @@ export default function ChatComponent({ uuid, socket }: IProps) {
   useEffect(() => {
     const fetchChatMessages = async () => {
       if (!uuid) return;
+      setError(null);
 
       try {
         const response = await fetch(
@@ -74,10 +76,14 @@ export default function ChatComponent({ uuid, socket }: IProps) {
           setChatMessages(data);
           setIsLoading(false);
         } else {
-          console.error("Failed to fetch chat messages");
+          const errorData = await response.json();
+          setError(errorData.message || "Failed to load chat messages");
+          setIsLoading(false);
         }
       } catch (error) {
-        console.error("Error fetching chat messages:", error);
+        setError("An error occurred while loading the chat");
+        console.log(error);
+        setIsLoading(false);
       }
     };
 
@@ -161,6 +167,17 @@ export default function ChatComponent({ uuid, socket }: IProps) {
     );
   }
 
+  if (error) {
+    return (
+      <div className="flex h-full items-center justify-center bg-gray-50">
+        <div className="text-center text-gray-500">
+          <h3 className="text-xl font-semibold mb-2 text-red-500">Error</h3>
+          <p className="text-sm">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-y-auto px-2 sm:px-4 py-4">
@@ -191,7 +208,7 @@ export default function ChatComponent({ uuid, socket }: IProps) {
                     {chat.userFullName}
                   </span>
                 </div>
-                <div className="space-y-1 w-full sm:w-auto">
+                <div className="space-y-1 w-full">
                   {chat.messages.map((message, idx) => (
                     <div
                       key={idx}

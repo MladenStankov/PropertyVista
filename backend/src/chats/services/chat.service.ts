@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Chat } from '../entity/chat.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -97,6 +101,10 @@ export class ChatService {
       where: { uuid: chatUuid },
       relations: ['messages', 'messages.sender'],
     });
+
+    if (!chat) {
+      throw new NotFoundException();
+    }
 
     const groupedMessages: ChatMessagesDto[] = [];
 
