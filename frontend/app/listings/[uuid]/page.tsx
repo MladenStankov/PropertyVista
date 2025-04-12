@@ -6,7 +6,8 @@ import {
   PropertyType,
 } from "@/app/components/sell/WizardForm";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { capitalizeFirstLetter } from "@/app/utils/capitalizeFirstLetter";
 
 import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
@@ -70,6 +71,7 @@ const amenityIcons: { [key: string]: IconType } = {
 };
 
 export default function Listing() {
+  const router = useRouter();
   const [listing, setListing] = useState<IListingExtended | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -259,9 +261,8 @@ export default function Listing() {
           <div className="flex flex-col md:flex-row justify-between mt-4 gap-4">
             <div>
               <h2 className="text-xl sm:text-2xl md:text-3xl">
-                {listing.constructionType[0].toUpperCase() +
-                  listing.constructionType.slice(1)}{" "}
-                for {listing.type === "buy" ? "sale" : "rent"}
+                {capitalizeFirstLetter(listing.constructionType)} for{" "}
+                {listing.type === "buy" ? "sale" : "rent"}
               </h2>
 
               <p className="text-lg md:text-2xl font-bold mt-2">
@@ -383,8 +384,7 @@ export default function Listing() {
               <div className="border-b-4 border-blue-500 flex justify-between text-base sm:text-xl items-center p-2">
                 <h3 className="font-light">Type</h3>
                 <p className="text-2xl font-semibold text-gray-500">
-                  {listing.constructionType[0].toUpperCase() +
-                    listing.constructionType.slice(1)}
+                  {capitalizeFirstLetter(listing.constructionType)}
                 </p>
               </div>
               <div className="border-b-4 border-blue-500 flex justify-between text-base sm:text-xl items-center p-2">
@@ -399,10 +399,20 @@ export default function Listing() {
       ) : isLoading ? (
         <Loading />
       ) : (
-        <div className="w-full h-full flex justify-center items-center py-20">
-          <h2 className="text-2xl sm:text-4xl font-semibold ">
+        <div className="w-full h-full flex flex-col justify-center items-center py-20 gap-6">
+          <h2 className="text-2xl sm:text-4xl font-semibold text-center">
             Listing not found
           </h2>
+          <p className="text-gray-600 text-lg text-center max-w-md">
+            The listing you&apos;re looking for might have been removed or is no
+            longer available.
+          </p>
+          <button
+            onClick={() => router.push("/listings")}
+            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-full text-lg transition-colors"
+          >
+            Browse other listings
+          </button>
         </div>
       )}
     </div>

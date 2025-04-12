@@ -6,7 +6,7 @@ import { MdOutlineOtherHouses } from "react-icons/md";
 import { FaStairs } from "react-icons/fa6";
 
 interface IRoomForm extends IForm {
-  errors: { [key: string]: string };
+  errors: Record<string, string>;
 }
 
 export default function RoomForm({
@@ -18,7 +18,7 @@ export default function RoomForm({
     <>
       <div className="flex flex-col gap-5">
         <h2 className="font-medium text-lg md:text-xl">Room Info</h2>
-        <div className="grid grid-cols-1 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="relative flex flex-col">
             <label
               htmlFor="numberOfBedrooms"
@@ -114,7 +114,7 @@ export default function RoomForm({
         </div>
 
         <h2 className="font-medium text-lg md:text-xl">Area Info</h2>
-        <div className="grid grid-cols-1 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="relative flex flex-col">
             <label
               htmlFor="numberOfFloors"

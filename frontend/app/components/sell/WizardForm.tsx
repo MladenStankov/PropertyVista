@@ -150,9 +150,123 @@ export default function WizardForm() {
     }));
   };
 
+  const validateAddressStep = (): {
+    isValid: boolean;
+    errors: Record<string, string>;
+  } => {
+    const errors: Record<string, string> = {};
+    const { address } = formData;
+
+    if (!address.streetNumber)
+      errors["address.streetNumber"] = "Street number is required.";
+    if (!address.streetName)
+      errors["address.streetName"] = "Street name is required.";
+    if (!address.postalCode)
+      errors["address.postalCode"] = "Postal code is required.";
+    if (!address.city) errors["address.city"] = "City is required.";
+    if (!address.country) errors["address.country"] = "Country is required.";
+
+    return {
+      isValid: Object.keys(errors).length === 0,
+      errors,
+    };
+  };
+
+  const validateGeneralStep = (): {
+    isValid: boolean;
+    errors: Record<string, string>;
+  } => {
+    const errors: Record<string, string> = {};
+    const { general } = formData;
+
+    if (!general.price) errors["general.price"] = "Price is required.";
+    if (!general.surfaceArea)
+      errors["general.surfaceArea"] = "Surface area is required.";
+    if (!general.constructionYear) {
+      errors["general.constructionYear"] = "Construction year is required.";
+    } else if (
+      isNaN(Number(general.constructionYear)) ||
+      Number(general.constructionYear) < 0 ||
+      Number(general.constructionYear) > 2024
+    ) {
+      errors["general.constructionYear"] =
+        "Construction year must be between 0 and 2024.";
+    }
+    if (!general.description)
+      errors["general.description"] = "Description is required.";
+
+    return {
+      isValid: Object.keys(errors).length === 0,
+      errors,
+    };
+  };
+
+  const validateImagesStep = (): {
+    isValid: boolean;
+    errors: Record<string, string>;
+  } => {
+    const errors: Record<string, string> = {};
+    const { images } = formData;
+
+    if (images.length <= 0)
+      errors["images"] = "At least one image is required.";
+
+    return {
+      isValid: Object.keys(errors).length === 0,
+      errors,
+    };
+  };
+
+  const validateRoomsStep = (): {
+    isValid: boolean;
+    errors: Record<string, string>;
+  } => {
+    const errors: Record<string, string> = {};
+    const { rooms } = formData;
+
+    if (!rooms.numberOfBedrooms)
+      errors["rooms.numberOfBedrooms"] = "Number of bedrooms is required.";
+    if (!rooms.numberOfBathrooms)
+      errors["rooms.numberOfBathrooms"] = "Number of bathrooms is required.";
+    if (!rooms.numberOfOtherRooms)
+      errors["rooms.numberOfOtherRooms"] = "Number of other rooms is required.";
+    if (!rooms.numberOfFloors)
+      errors["rooms.numberOfFloors"] = "Number of floors is required.";
+
+    return {
+      isValid: Object.keys(errors).length === 0,
+      errors,
+    };
+  };
+
+  const validateCurrentStep = (): {
+    isValid: boolean;
+    errors: Record<string, string>;
+  } => {
+    switch (step) {
+      case 1:
+        return validateAddressStep();
+      case 2:
+        return validateGeneralStep();
+      case 3:
+        return validateImagesStep();
+      case 4:
+        return validateRoomsStep();
+      case 5:
+        return { isValid: true, errors: {} }; // Amenities are optional
+      default:
+        return { isValid: false, errors: {} };
+    }
+  };
+
   const handleNextStep = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setStep((prev) => Math.min(prev + 1, 5));
+    const { isValid, errors } = validateCurrentStep();
+    setErrors(errors);
+
+    if (isValid) {
+      setStep((prev) => Math.min(prev + 1, 5));
+    }
   };
 
   const handlePreviousStep = () => {

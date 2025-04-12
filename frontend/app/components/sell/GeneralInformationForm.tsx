@@ -4,7 +4,7 @@ import { FaEuroSign } from "react-icons/fa";
 import { TbMeterSquare } from "react-icons/tb";
 
 interface IGeneralInformationForm extends IForm {
-  errors: { [key: string]: string };
+  errors: Record<string, string>;
 }
 
 export default function GeneralInformationForm({

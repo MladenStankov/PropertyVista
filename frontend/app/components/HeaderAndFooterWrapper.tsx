@@ -17,13 +17,19 @@ export default function HeaderAndFooterWrapper({
     "/login/forgot-password",
     "/login/reset-password",
   ];
+
+  const isChatRoute = pathName.includes("/chats/");
   const showHeaderAndFooter = !noLayoutRoutes.includes(pathName);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div
+      className={`flex flex-col ${isChatRoute ? "h-screen" : "min-h-screen"}`}
+    >
       {showHeaderAndFooter && <Nav />}
-      <main className="flex-grow">{children}</main>
-      {showHeaderAndFooter && <Footer />}
+      <main className={`flex-1 ${isChatRoute ? "overflow-hidden" : ""}`}>
+        {children}
+      </main>
+      {showHeaderAndFooter && !isChatRoute && <Footer />}
     </div>
   );
 }

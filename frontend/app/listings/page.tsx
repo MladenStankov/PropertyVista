@@ -248,7 +248,7 @@ export default function ListingsPage() {
             <ListingsCard
               key={index}
               {...listing}
-              handleFavouriteChange={handleFavouriteChange}
+              handleFavouriteChangeAction={handleFavouriteChange}
             />
           ))}
         </div>

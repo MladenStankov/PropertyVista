@@ -68,34 +68,45 @@ export default function SidebarChatMenu({ activeChatUuid }: IProps) {
   }, []);
 
   return (
-    <div className="border-r-2 h-screen w-full sm:w-80 lg:w-96">
-      <div className="flex text-sm sm:text-base lg:text-lg justify-around border-b-2 font-medium">
+    <div className="h-full flex flex-col bg-white">
+      <div className="flex text-sm sm:text-base lg:text-lg border-b border-gray-200 bg-white sticky top-0 z-10">
         <button
           onClick={() => setCurrentChatType(CurrentChatType.HomeSeeking)}
-          className={`p-1 hover:cursor-pointer hover:bg-gray-200 w-full ${
-            currentChatType === CurrentChatType.HomeSeeking ? "bg-gray-100" : ""
+          className={`flex-1 px-4 py-3 font-medium transition-colors ${
+            currentChatType === CurrentChatType.HomeSeeking
+              ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+              : "text-gray-600 hover:bg-gray-50"
           }`}
         >
-          Property Seeking Chats
+          Property Chats
         </button>
         <button
           onClick={() => setCurrentChatType(CurrentChatType.Broker)}
-          className={`p-2 hover:cursor-pointer hover:bg-gray-200 w-full ${
-            currentChatType === CurrentChatType.Broker ? "bg-gray-100" : ""
+          className={`flex-1 px-4 py-3 font-medium transition-colors ${
+            currentChatType === CurrentChatType.Broker
+              ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+              : "text-gray-600 hover:bg-gray-50"
           }`}
         >
           Broker Chats
         </button>
       </div>
 
-      <div className="grid grid-cols-1 gap-2 divide-y-2 p-2 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto px-2 py-3 space-y-2">
         {isLoading ? (
-          <Loading forNav={true} />
+          <div className="flex items-center justify-center h-full">
+            <Loading forNav={true} />
+          </div>
         ) : (
           <>
             {currentChatType === CurrentChatType.Broker ? (
               chats?.brokerChats?.length === 0 ? (
-                <p className="text-center text-sm p-2">No broker chats yet</p>
+                <div className="flex flex-col items-center justify-center h-full text-gray-500 px-4">
+                  <p className="text-center">No broker chats yet</p>
+                  <p className="text-sm text-center mt-2">
+                    Start browsing listings to connect with brokers
+                  </p>
+                </div>
               ) : (
                 chats?.brokerChats?.map((chat) => (
                   <BrokerChatCard
@@ -107,9 +118,12 @@ export default function SidebarChatMenu({ activeChatUuid }: IProps) {
               )
             ) : currentChatType === CurrentChatType.HomeSeeking ? (
               chats?.homeSeekingChats?.length === 0 ? (
-                <p className="text-center text-sm p-2">
-                  No property seeking chats yet
-                </p>
+                <div className="flex flex-col items-center justify-center h-full text-gray-500 px-4">
+                  <p className="text-center">No property chats yet</p>
+                  <p className="text-sm text-center mt-2">
+                    Your property related chats will appear here
+                  </p>
+                </div>
               ) : (
                 chats?.homeSeekingChats?.map((chat) => (
                   <HomeSeekingCard

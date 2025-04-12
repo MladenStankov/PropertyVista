@@ -167,15 +167,18 @@ export default function RegisterBeforeSubmit({
           {loading ? "Signing up..." : "Sign up"}
         </button>
 
-        <p className="text-gray-500 text-center">Already have an account?</p>
-        <div className="text-center">
-          <Link
-            href="/login"
-            className="text-blue-400 underline hover:cursor-pointer hover:text-blue-500"
-          >
-            Sign in to your account
-          </Link>
-        </div>
+        <p className="text-gray-500 text-center">
+          Already have an account?{" "}
+          <span>
+            {" "}
+            <Link
+              href="/login"
+              className="text-blue-400 underline hover:cursor-pointer hover:text-blue-500"
+            >
+              Sign in
+            </Link>
+          </span>
+        </p>
 
         <div className="flex items-center my-6">
           <hr className="flex-grow border-t border-gray-300" />
@@ -183,7 +186,7 @@ export default function RegisterBeforeSubmit({
           <hr className="flex-grow border-t border-gray-300" />
         </div>
 
-        <GoogleButton text="Sign up with Google" />
+        <GoogleButton text="Continue with Google" />
       </form>
     </div>
   );

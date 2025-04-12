@@ -6,6 +6,7 @@ import { FaRegHeart } from "react-icons/fa6";
 import { FaHeart } from "react-icons/fa";
 import Link from "next/link";
 import Image from "next/image";
+import { capitalizeFirstLetter } from "@/app/utils/capitalizeFirstLetter";
 
 export interface IListingsCard {
   uuid: string;
@@ -19,7 +20,7 @@ export interface IListingsCard {
   surfaceArea: number;
   price: number;
   isFavourited: boolean;
-  handleFavouriteChange: (uuid: string) => void;
+  handleFavouriteChangeAction: (uuid: string) => void;
 }
 
 export default function ListingsCard({
@@ -34,7 +35,7 @@ export default function ListingsCard({
   surfaceArea,
   price,
   isFavourited,
-  handleFavouriteChange,
+  handleFavouriteChangeAction,
 }: IListingsCard) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -52,7 +53,7 @@ export default function ListingsCard({
     );
 
     if (response.ok) {
-      handleFavouriteChange(uuid);
+      handleFavouriteChangeAction(uuid);
     } else if (response.status === 401) {
       window.location.href = "/login";
     } else {
@@ -123,8 +124,8 @@ export default function ListingsCard({
         <div className="flex flex-wrap sm:flex-col md:flex-row">
           <div className="p-4 flex flex-col gap-3 w-full md:w-1/2">
             <p className="font-light text-sm md:text-lg">
-              {constructionType[0].toUpperCase() + constructionType.slice(1)}{" "}
-              for {type === "buy" ? "sell" : type}
+              {capitalizeFirstLetter(constructionType)} for{" "}
+              {type === "buy" ? "sale" : type}
             </p>
             <p className="text-lg md:text-3xl font-bold">
               {new Intl.NumberFormat("en-IE", {

@@ -136,16 +136,17 @@ export default function Login() {
 
         <div>
           <p className="text-gray-500 text-center">
-            Don&apos;t have an account?
+            Don&apos;t have an account?{" "}
+            <span>
+              {" "}
+              <Link
+                href="/register"
+                className="text-blue-400 underline hover:cursor-pointer hover:text-blue-500"
+              >
+                Sign up
+              </Link>
+            </span>
           </p>
-          <div className="text-center">
-            <Link
-              href="/register"
-              className="text-blue-400 underline hover:cursor-pointer hover:text-blue-500"
-            >
-              Create an account
-            </Link>
-          </div>
         </div>
 
         <div className="flex items-center my-6">
@@ -154,7 +155,7 @@ export default function Login() {
           <hr className="flex-grow border-t border-gray-300" />
         </div>
 
-        <GoogleButton text="Sign in with Google" />
+        <GoogleButton text="Continue with Google" />
       </form>
     </div>
   );

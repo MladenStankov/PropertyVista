@@ -20,6 +20,8 @@ export default function Nav() {
     useState<boolean>(false);
   const [isMobileMenuVisible, setIsMobileMenuVisible] =
     useState<boolean>(false);
+  const [isMobileProfileExpanded, setIsMobileProfileExpanded] =
+    useState<boolean>(false);
 
   return (
     <header className="p-4 sticky flex justify-between shadow-md border-gray-400 w-full top-0 bg-white z-10">
@@ -124,59 +126,93 @@ export default function Nav() {
               </Link>
             </li>
             {isAuthenticated ? (
-              <>
-                <Link
-                  className="p-3 hover:bg-gray-100"
-                  href="/profile"
-                  onClick={() => setIsMobileMenuVisible(false)}
-                >
-                  <div className="flex items-center gap-2 hover:underline font-light text-lg">
-                    <ImProfile />
-                    <span>Profile</span>
-                  </div>
-                </Link>
-                <Link
-                  className="p-3 hover:bg-gray-100"
-                  href="/profile/chats"
-                  onClick={() => setIsMobileMenuVisible(false)}
-                >
-                  <div className="flex items-center gap-2 hover:underline font-light text-lg">
-                    <TiMessages />
-                    <span>Chats</span>
-                  </div>
-                </Link>
-                <Link
-                  className="p-3 hover:bg-gray-100"
-                  href="/profile/listings"
-                  onClick={() => setIsMobileMenuVisible(false)}
-                >
-                  <div className="flex items-center gap-2 hover:underline font-light text-lg">
-                    <PiBuildingApartmentBold />
-                    <span>Listings</span>
-                  </div>
-                </Link>
-                <Link
-                  className="p-3 hover:bg-gray-100"
-                  href="/profile/favourite-listings"
-                  onClick={() => setIsMobileMenuVisible(false)}
-                >
-                  <div className="flex items-center gap-2 hover:underline font-light text-lg">
-                    <FaHeart />
-                    <span>Favourite Listings</span>
-                  </div>
-                </Link>
+              <div className="border-t border-gray-200 pt-4">
                 <div
-                  className="flex items-center gap-2 p-3 self-center hover:bg-gray-100 text-red-500
-       hover:text-red-600 cursor-pointer hover:underline font-light text-lg"
-                  onClick={() => {
-                    setIsMobileMenuVisible(false);
-                    logout();
-                  }}
+                  onClick={() =>
+                    setIsMobileProfileExpanded(!isMobileProfileExpanded)
+                  }
+                  className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-50 rounded-md"
                 >
-                  <RxExit />
-                  <span>Logout</span>
+                  <div className="flex items-center gap-2">
+                    <div className="rounded-full overflow-hidden w-8 h-8">
+                      <Image
+                        src={user?.imageUrl || ""}
+                        alt="Profile"
+                        width={32}
+                        height={32}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                    <span className="font-medium">My Account</span>
+                  </div>
+                  <svg
+                    className={`w-5 h-5 transition-transform duration-200 ${
+                      isMobileProfileExpanded ? "rotate-180" : ""
+                    }`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
                 </div>
-              </>
+
+                <div
+                  className={`overflow-hidden transition-all duration-200 ${
+                    isMobileProfileExpanded ? "max-h-96" : "max-h-0"
+                  }`}
+                >
+                  <div className="space-y-2 pl-4 py-2">
+                    <Link
+                      href="/profile"
+                      onClick={() => setIsMobileMenuVisible(false)}
+                      className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-md"
+                    >
+                      <ImProfile className="text-gray-600" />
+                      <span>Profile</span>
+                    </Link>
+                    <Link
+                      href="/profile/chats"
+                      onClick={() => setIsMobileMenuVisible(false)}
+                      className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-md"
+                    >
+                      <TiMessages className="text-gray-600" />
+                      <span>Chats</span>
+                    </Link>
+                    <Link
+                      href="/profile/listings"
+                      onClick={() => setIsMobileMenuVisible(false)}
+                      className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-md"
+                    >
+                      <PiBuildingApartmentBold className="text-gray-600" />
+                      <span>Listings</span>
+                    </Link>
+                    <Link
+                      href="/profile/favourite-listings"
+                      onClick={() => setIsMobileMenuVisible(false)}
+                      className="flex items-center gap-2 p-2 hover:bg-gray-50 rounded-md"
+                    >
+                      <FaHeart className="text-gray-600" />
+                      <span>Favourite Listings</span>
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuVisible(false);
+                        logout();
+                      }}
+                      className="flex items-center gap-2 p-2 w-full text-left text-red-500 hover:bg-gray-50 rounded-md"
+                    >
+                      <RxExit />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             ) : (
               <>
                 <li className="text-lg pt-1 hover:underline hover:text-blue-500">
