@@ -30,9 +30,6 @@ export default function EditListing() {
   const [listing, setListing] = useState<IListingEditing>(
     {} as IListingEditing
   );
-  const [updatedListing, setUpdatedListing] = useState<IUpdatedListing>(
-    {} as IUpdatedListing
-  );
   const uuid = usePathname().split("/").pop();
 
   useEffect(() => {
@@ -64,11 +61,6 @@ export default function EditListing() {
 
       const data = await response.json();
       setListing(data);
-      setUpdatedListing(data);
-      setUpdatedListing((prevUpdatedListing) => ({
-        ...prevUpdatedListing,
-        files: [],
-      }));
       setIsLoading(false);
     }
     fetchListing();

@@ -4,7 +4,6 @@ import ProtectedRoute from "@/app/components/auth/ProtectedRoute";
 import Loading from "@/app/components/Loading";
 import ProfileListing from "@/app/components/profile/ProfileListing";
 import { PropertyType } from "@/app/components/sell/WizardForm";
-import { IoInformationCircleOutline } from "react-icons/io5";
 import { BsHouses } from "react-icons/bs";
 import { motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
@@ -78,7 +77,7 @@ export default function ProfileListings() {
 
               <div className="space-y-6">
                 {listings.length > 0 ? (
-                  listings.map((listing, index) => (
+                  listings.map((listing) => (
                     <div key={listing.uuid}>
                       <ProfileListing
                         listing={listing}

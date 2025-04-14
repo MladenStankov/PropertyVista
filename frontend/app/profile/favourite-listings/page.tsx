@@ -83,7 +83,7 @@ export default function FavouriteListings() {
 
               <div className="space-y-6">
                 {listings.length > 0 ? (
-                  listings.map((listing, index) => (
+                  listings.map((listing) => (
                     <div key={listing.uuid}>
                       <ProfileFavouriteListing
                         listing={listing}

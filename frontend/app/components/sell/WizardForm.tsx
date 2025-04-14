@@ -1,7 +1,7 @@
 "use client";
 
 import { IAddress, IGeoLocation } from "@/app/utils/getGeoLocationByAddress";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Step from "./Step";
 import AddressForm from "./AddressForm";
 import GeneralInformationForm from "./GeneralInformationForm";
@@ -126,6 +126,7 @@ export default function WizardForm({
     setFormData((prevFormData) => {
       const keys = name.split(".");
       const updatedFormData = { ...prevFormData };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let currentLevel: any = updatedFormData;
 
       for (let i = 0; i < keys.length - 1; i++) {
