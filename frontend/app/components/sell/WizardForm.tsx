@@ -1,7 +1,7 @@
 "use client";
 
 import { IAddress, IGeoLocation } from "@/app/utils/getGeoLocationByAddress";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Step from "./Step";
 import AddressForm from "./AddressForm";
 import GeneralInformationForm from "./GeneralInformationForm";
@@ -9,6 +9,7 @@ import ImageForm from "./ImageForm";
 import RoomForm from "./RoomForm";
 import AmenitiesForm from "./AmenitiesForm";
 import Link from "next/link";
+import { IListingEditing } from "@/app/profile/listings/edit/[uuid]/page";
 
 export type PropertyType = "buy" | "rent";
 
@@ -67,41 +68,53 @@ export interface IForm {
   ) => void;
 }
 
-export default function WizardForm() {
+interface IProps {
+  isEditing?: boolean;
+  uuid?: string;
+  initialListing?: IListingEditing;
+}
+
+export default function WizardForm({
+  isEditing,
+  uuid,
+  initialListing,
+}: IProps) {
   const [step, setStep] = useState<number>(1);
   const [formData, setFormData] = useState<IWizardForm>({
     address: {
-      streetNumber: "",
-      streetName: "",
-      postalCode: "",
-      city: "",
-      state: "",
-      country: "",
+      streetNumber: initialListing?.address.streetNumber || "",
+      streetName: initialListing?.address.streetName || "",
+      postalCode: initialListing?.address.postalCode || "",
+      city: initialListing?.address.city || "",
+      state: initialListing?.address.state || "",
+      country: initialListing?.address.country || "",
     },
     location: {
-      latitude: 0,
-      longitude: 0,
+      latitude: initialListing?.location.latitude || 0,
+      longitude: initialListing?.location.longitude || 0,
     },
     general: {
-      type: "buy",
-      price: "",
-      constructionType: ConstructionType.HOUSE,
-      surfaceArea: "",
-      constructionYear: "",
-      description: "",
+      type: initialListing?.general.type || "buy",
+      price: initialListing?.general.price || "",
+      constructionType:
+        initialListing?.general.constructionType || ConstructionType.HOUSE,
+      surfaceArea: initialListing?.general.surfaceArea || "",
+      constructionYear: initialListing?.general.constructionYear || "",
+      description: initialListing?.general.description || "",
     },
     images: [],
     rooms: {
-      numberOfBedrooms: "",
-      numberOfBathrooms: "",
-      numberOfOtherRooms: "",
-      numberOfFloors: "",
+      numberOfBedrooms: initialListing?.rooms.numberOfBedrooms || "",
+      numberOfBathrooms: initialListing?.rooms.numberOfBathrooms || "",
+      numberOfOtherRooms: initialListing?.rooms.numberOfOtherRooms || "",
+      numberOfFloors: initialListing?.rooms.numberOfFloors || "",
     },
-    amenities: [],
+    amenities: initialListing?.amenities || [],
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [newListingUUID, setNewListingUUID] = useState<string | null>(null);
+  const [deletedImages, setDeletedImages] = useState<string[]>([]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -113,7 +126,6 @@ export default function WizardForm() {
     setFormData((prevFormData) => {
       const keys = name.split(".");
       const updatedFormData = { ...prevFormData };
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let currentLevel: any = updatedFormData;
 
       for (let i = 0; i < keys.length - 1; i++) {
@@ -141,6 +153,10 @@ export default function WizardForm() {
       ...prevFormData,
       images: [...images],
     }));
+  };
+
+  const handleDeleteImage = (imageUrl: string) => {
+    setDeletedImages((prev) => [...prev, imageUrl]);
   };
 
   const handleAmenityChange = (amenities: AmenityType[]) => {
@@ -207,8 +223,11 @@ export default function WizardForm() {
   } => {
     const errors: Record<string, string> = {};
     const { images } = formData;
+    const remainingImages =
+      initialListing?.images?.filter((img) => !deletedImages.includes(img)) ||
+      [];
 
-    if (images.length <= 0)
+    if (images.length <= 0 && remainingImages.length <= 0)
       errors["images"] = "At least one image is required.";
 
     return {
@@ -295,8 +314,7 @@ export default function WizardForm() {
     errors: Record<string, string>;
   } => {
     const errors: Record<string, string> = {};
-
-    const { address, general, rooms, images } = formData;
+    const { address, general, rooms } = formData;
     if (!address.streetNumber)
       errors["address.streetNumber"] = "Street number is required.";
     if (!address.streetName)
@@ -322,7 +340,10 @@ export default function WizardForm() {
     if (!general.description)
       errors["general.description"] = "Description is required.";
 
-    if (images.length <= 0)
+    const remainingImages =
+      initialListing?.images?.filter((img) => !deletedImages.includes(img)) ||
+      [];
+    if (formData.images.length <= 0 && remainingImages.length <= 0)
       errors["images"] = "At least one image is required.";
 
     if (!rooms.numberOfBedrooms)
@@ -359,8 +380,6 @@ export default function WizardForm() {
         }
       });
 
-      console.log(firstErrorStep);
-
       setStep(Number(firstErrorStep));
       return;
     }
@@ -369,6 +388,8 @@ export default function WizardForm() {
 
     try {
       const requestBody = new FormData();
+
+      // Common data for both create and edit
       requestBody.append(
         "listing",
         JSON.stringify({
@@ -399,14 +420,40 @@ export default function WizardForm() {
         requestBody.append("images", imageFile);
       });
 
-      requestBody.append(
-        "amenities",
-        JSON.stringify(
-          formData.amenities.map((amenity) => {
-            return { type: amenity };
-          })
-        )
-      );
+      if (isEditing && initialListing) {
+        // Handle deleted images for edit mode
+        const deletedImagesData = deletedImages.map((imageUrl) => ({
+          imageUrl,
+        }));
+        requestBody.append("deletedImages", JSON.stringify(deletedImagesData));
+
+        // Handle amenities for edit mode
+        const newAmenities = formData.amenities.filter(
+          (amenity) => !initialListing.amenities.includes(amenity)
+        );
+        requestBody.append(
+          "amenities",
+          JSON.stringify(newAmenities.map((amenity) => ({ type: amenity })))
+        );
+
+        const deletedAmenities = initialListing.amenities.filter(
+          (amenity) => !formData.amenities.includes(amenity)
+        );
+        requestBody.append(
+          "deletedAmenities",
+          JSON.stringify(deletedAmenities.map((amenity) => ({ type: amenity })))
+        );
+      } else {
+        // Handle amenities for create mode
+        requestBody.append(
+          "amenities",
+          JSON.stringify(
+            formData.amenities.map((amenity) => {
+              return { type: amenity };
+            })
+          )
+        );
+      }
 
       requestBody.append(
         "rooms",
@@ -418,14 +465,15 @@ export default function WizardForm() {
         ])
       );
 
-      const response = await fetch(
-        `${String(process.env.NEXT_PUBLIC_API_URL)}/listings`,
-        {
-          method: "POST",
-          credentials: "include",
-          body: requestBody,
-        }
-      );
+      const endpoint = isEditing
+        ? `${String(process.env.NEXT_PUBLIC_API_URL)}/listings/${uuid}`
+        : `${String(process.env.NEXT_PUBLIC_API_URL)}/listings`;
+
+      const response = await fetch(endpoint, {
+        method: isEditing ? "PATCH" : "POST",
+        credentials: "include",
+        body: requestBody,
+      });
 
       const responseBody = await response.json();
       setNewListingUUID(responseBody.uuid);
@@ -437,108 +485,132 @@ export default function WizardForm() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="flex flex-col justify-center items-center m-4 p-4 md:m-10 md:p-10 mx-auto min-w-[calc(80%)] max-h-full rounded-lg shadow-2xl ring-2 bg-white relative">
-        {newListingUUID && (
-          <div className="inset-0 w-full h-full bg-white absolute z-[1] flex flex-col items-center justify-center gap-10 p-10  ">
-            <h1 className="text-center text-5xl font-medium drop-shadow-2xl text-slate-600 ">
-              Your have successfully published your listing!
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
+      <div className="max-w-7xl mx-auto ">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+          {newListingUUID && (
+            <div className="absolute inset-0 w-full h-full bg-white/95 backdrop-blur-sm z-[1] flex flex-col items-center justify-center gap-10 p-10">
+              <div className="text-center space-y-6">
+                <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  {isEditing
+                    ? "Your listing has been updated!"
+                    : "Your listing has been published!"}
+                </h1>
+                <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                  Congratulations! Your property listing is now live and ready
+                  to be discovered by potential buyers.
+                </p>
+              </div>
+              <Link href={`/listings/${newListingUUID}`}>
+                <button className="px-8 py-4 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white text-xl font-semibold rounded-xl shadow-lg transition-all duration-200 hover:-translate-y-0.5">
+                  View Your Listing
+                </button>
+              </Link>
+            </div>
+          )}
+
+          <div className="p-6 md:p-10 border-2">
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-8">
+              {isEditing ? "Update Your Listing" : "Create a New Listing"}
             </h1>
-            <Link href={`/listings/${newListingUUID}`}>
-              <button className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-4 text-2xl font-semibold shadow-md rounded-md">
-                Check out your listing
-              </button>
-            </Link>
-          </div>
-        )}
 
-        <h1 className="text-left self-start text-2xl md:text-4xl">
-          <span className="underline">Create a Listing</span>
-        </h1>
+            <div className="flex flex-col lg:flex-row gap-10">
+              {/* Sidebar */}
+              <div className="w-full lg:w-72 shrink-0">
+                <div className="bg-gray-50 rounded-xl p-6">
+                  <ul className="space-y-8">
+                    {Array.from({ length: 5 }).map((_, index) => (
+                      <li key={index} className="py-2">
+                        <Step
+                          step={index + 1}
+                          title={handleStepTitle(index)}
+                          current={index + 1 === step}
+                          completed={index + 1 < step}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
 
-        <div className="flex flex-wrap md:flex-nowrap justify-between w-full mt-10 divide-y-2 md:divide-y-0 md:divide-x-2">
-          <div className="flex flex-col md:flex-row md:pr-10 w-full md:w-1/3 mb-6 md:mb-0">
-            <ul className="flex md:flex-col gap-10 max-md:gap-1 w-full justify-around">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <li
-                  key={index}
-                  className="flex flex-col md:flex-row items-center md:items-start text-center gap-10
-                   hover:bg-slate-100 hover:cursor-pointer p-2 rounded-full"
-                  onClick={() => setStep(index + 1)}
-                >
-                  <Step
-                    step={index + 1}
-                    title={handleStepTitle(index)}
-                    current={index + 1 === step}
-                  />
-                </li>
-              ))}
-            </ul>
-          </div>
+              {/* Main Content */}
+              <div className="flex-1">
+                <div className="bg-gray-50/50 rounded-xl p-6 md:p-8">
+                  {step === 1 && (
+                    <AddressForm
+                      formData={formData}
+                      handleChange={handleChange}
+                      handleLocationChange={handleLocationChange}
+                      errors={errors}
+                    />
+                  )}
+                  {step === 2 && (
+                    <GeneralInformationForm
+                      formData={formData}
+                      handleChange={handleChange}
+                      errors={errors}
+                    />
+                  )}
+                  {step === 3 && (
+                    <ImageForm
+                      formData={formData}
+                      handleImageChange={handleImageChange}
+                      errors={errors}
+                      existingImages={initialListing?.images}
+                      deletedImages={deletedImages}
+                      onDeleteImage={handleDeleteImage}
+                    />
+                  )}
+                  {step === 4 && (
+                    <RoomForm
+                      formData={formData}
+                      handleChange={handleChange}
+                      errors={errors}
+                    />
+                  )}
+                  {step === 5 && (
+                    <AmenitiesForm
+                      formData={formData}
+                      handleAmenityChange={handleAmenityChange}
+                    />
+                  )}
 
-          <div className="w-full md:w-2/3 flex flex-col gap-6 md:gap-10 px-4 md:px-10 relative">
-            {step === 1 && (
-              <AddressForm
-                formData={formData}
-                handleChange={handleChange}
-                handleLocationChange={handleLocationChange}
-                errors={errors}
-              />
-            )}
-            {step === 2 && (
-              <GeneralInformationForm
-                formData={formData}
-                handleChange={handleChange}
-                errors={errors}
-              />
-            )}
-            {step === 3 && (
-              <ImageForm
-                formData={formData}
-                handleImageChange={handleImageChange}
-                errors={errors}
-              />
-            )}
-            {step === 4 && (
-              <RoomForm
-                formData={formData}
-                handleChange={handleChange}
-                errors={errors}
-              />
-            )}
-            {step === 5 && (
-              <AmenitiesForm
-                formData={formData}
-                handleAmenityChange={handleAmenityChange}
-              />
-            )}
+                  <div className="flex gap-4 mt-8">
+                    <button
+                      disabled={step === 1}
+                      onClick={handlePreviousStep}
+                      className={`px-6 py-3 rounded-xl font-medium text-white transition-all duration-200 flex-1 ${
+                        step === 1
+                          ? "bg-gray-300 cursor-not-allowed"
+                          : "bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800"
+                      }`}
+                    >
+                      Back
+                    </button>
 
-            <div className="text-white flex  gap-4 justify-center text-sm md:text-xl mt-auto">
-              <button
-                disabled={step === 1}
-                onClick={handlePreviousStep}
-                className={`px-8 md:px-16 py-4 md:py-6 w-full md:w-1/2 ${
-                  step === 1
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : "bg-blue-500 hover:bg-blue-600"
-                }`}
-              >
-                Back
-              </button>
-
-              <button
-                onClick={(e) =>
-                  step === 5 ? handleSubmit(e) : handleNextStep(e)
-                }
-                disabled={isSubmitting}
-                className={`px-8 md:px-16 py-4 md:py-6 w-full md:w-1/2 bg-blue-500 hover:bg-blue-600 `}
-              >
-                {step === 5
-                  ? isSubmitting
-                    ? "Submitting..."
-                    : "Submit"
-                  : "Next"}
-              </button>
+                    <button
+                      onClick={(e) =>
+                        step === 5 ? handleSubmit(e) : handleNextStep(e)
+                      }
+                      disabled={isSubmitting}
+                      className="px-6 py-3 rounded-xl font-medium text-white bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 transition-all duration-200 flex-1 disabled:from-blue-300 disabled:to-indigo-300 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      {step === 5 ? (
+                        isSubmitting ? (
+                          <>
+                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            <span>Submitting...</span>
+                          </>
+                        ) : (
+                          "Submit"
+                        )
+                      ) : (
+                        "Next"
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

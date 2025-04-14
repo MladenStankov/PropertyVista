@@ -1,28 +1,43 @@
 import React from "react";
+import { FaCheck } from "react-icons/fa";
 
 interface IStep {
   step: number;
   title: string;
   current?: boolean;
+  completed?: boolean;
 }
 
-export default function Step({ step, title, current = false }: IStep) {
+export default function Step({
+  step,
+  title,
+  current = false,
+  completed = false,
+}: IStep) {
   return (
-    <div className="flex flex-col md:flex-row items-center md:items-start gap-2 text-center md:text-left">
+    <div className="flex items-center gap-3 group">
       <div
-        className={`border rounded-full p-3 px-5 text-2xl max-md:text-base max-md:p-1 max-md:px-3 ${
-          current ? "bg-blue-500 text-white" : "border-black"
+        className={`w-10 h-10 rounded-lg flex items-center justify-center text-base font-medium transition-all duration-300 ${
+          current
+            ? "bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-md shadow-blue-500/20 scale-110"
+            : completed
+            ? "bg-gradient-to-r from-emerald-400 to-green-500 text-white shadow-md shadow-green-500/20"
+            : "bg-white text-gray-400 border-2 border-gray-200"
         }`}
       >
-        {step}
+        {completed ? <FaCheck className="w-4 h-4" /> : step}
       </div>
-      <p
-        className={`text-xl max-md:text-sm max-sm:text-[10px] self-center ${
-          current ? "text-blue-500 font-medium" : ""
+      <span
+        className={`text-sm font-medium transition-all duration-300 ${
+          current
+            ? "text-blue-600"
+            : completed
+            ? "text-green-600"
+            : "text-gray-400"
         }`}
       >
         {title}
-      </p>
+      </span>
     </div>
   );
 }

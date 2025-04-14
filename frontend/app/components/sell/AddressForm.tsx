@@ -16,13 +16,15 @@ export default function AddressForm({
 }: IAddressForm) {
   return (
     <>
-      <div className="flex flex-col gap-5">
-        <h2 className="font-medium text-lg md:text-xl">Address</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div className="flex flex-col">
+      <div className="flex flex-col gap-8">
+        <h2 className="text-2xl font-medium bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          Address
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="flex flex-col gap-2">
             <label
               htmlFor="streetName"
-              className="mb-1 text-gray-700 font-medium"
+              className="text-gray-600 font-medium text-sm"
             >
               Street Name
             </label>
@@ -32,8 +34,10 @@ export default function AddressForm({
               value={formData.address.streetName}
               name="address.streetName"
               placeholder="e.g., Main Street"
-              className={`border-2 rounded-xl px-4 py-2 ${
-                errors["address.streetName"] ? "border-red-500" : ""
+              className={`w-full px-4 py-3 rounded-xl border-2 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ${
+                errors["address.streetName"]
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-200"
               }`}
               onChange={handleChange}
             />
@@ -44,10 +48,10 @@ export default function AddressForm({
             )}
           </div>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             <label
               htmlFor="streetNumber"
-              className="mb-1 text-gray-700 font-medium"
+              className="text-gray-600 font-medium text-sm"
             >
               Street Number
             </label>
@@ -57,8 +61,10 @@ export default function AddressForm({
               value={formData.address.streetNumber}
               name="address.streetNumber"
               placeholder="e.g., 123"
-              className={`border-2 rounded-xl px-4 py-2 ${
-                errors["address.streetNumber"] ? "border-red-500" : ""
+              className={`w-full px-4 py-3 rounded-xl border-2 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ${
+                errors["address.streetNumber"]
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-200"
               }`}
               onChange={handleChange}
             />
@@ -69,10 +75,10 @@ export default function AddressForm({
             )}
           </div>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-2">
             <label
               htmlFor="postalCode"
-              className="mb-1 text-gray-700 font-medium"
+              className="text-gray-600 font-medium text-sm"
             >
               Postal Code
             </label>
@@ -82,8 +88,10 @@ export default function AddressForm({
               value={formData.address.postalCode}
               name="address.postalCode"
               placeholder="e.g., 90210"
-              className={`border-2 rounded-xl px-4 py-2 ${
-                errors["address.postalCode"] ? "border-red-500" : ""
+              className={`w-full px-4 py-3 rounded-xl border-2 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ${
+                errors["address.postalCode"]
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-200"
               }`}
               onChange={handleChange}
             />
@@ -95,9 +103,9 @@ export default function AddressForm({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="flex flex-col">
-            <label htmlFor="city" className="mb-1 text-gray-700 font-medium">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="flex flex-col gap-2">
+            <label htmlFor="city" className="text-gray-600 font-medium text-sm">
               City
             </label>
             <input
@@ -106,8 +114,10 @@ export default function AddressForm({
               value={formData.address.city}
               name="address.city"
               placeholder="e.g., Los Angeles"
-              className={`border-2 rounded-xl px-4 py-2 ${
-                errors["address.city"] ? "border-red-500" : ""
+              className={`w-full px-4 py-3 rounded-xl border-2 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ${
+                errors["address.city"]
+                  ? "border-red-500 focus:ring-red-500"
+                  : "border-gray-200"
               }`}
               onChange={handleChange}
             />
@@ -118,8 +128,11 @@ export default function AddressForm({
             )}
           </div>
 
-          <div className="flex flex-col">
-            <label htmlFor="state" className="mb-1 text-gray-700 font-medium">
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="state"
+              className="text-gray-600 font-medium text-sm"
+            >
               State
             </label>
             <input
@@ -128,14 +141,17 @@ export default function AddressForm({
               value={formData.address.state}
               name="address.state"
               placeholder="e.g., California"
-              className="border-2 rounded-xl px-4 py-2"
+              className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
               onChange={handleChange}
             />
           </div>
         </div>
 
-        <div className="flex flex-col">
-          <label htmlFor="country" className="mb-1 text-gray-700 font-medium">
+        <div className="flex flex-col gap-2">
+          <label
+            htmlFor="country"
+            className="text-gray-600 font-medium text-sm"
+          >
             Country
           </label>
           <select
@@ -143,8 +159,10 @@ export default function AddressForm({
             value={formData.address.country}
             name="address.country"
             onChange={handleChange}
-            className={`border-2 rounded-xl px-4 py-2 ${
-              errors["address.country"] ? "border-red-500" : ""
+            className={`w-full px-4 py-3 rounded-xl border-2 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 ${
+              errors["address.country"]
+                ? "border-red-500 focus:ring-red-500"
+                : "border-gray-200"
             }`}
           >
             <option value="" disabled>
@@ -164,17 +182,21 @@ export default function AddressForm({
         </div>
       </div>
 
-      <div className="flex flex-col gap-5">
-        <h2 className="font-medium text-lg md:text-xl">Location</h2>
-        <Map
-          handleLocationChange={handleLocationChange}
-          streetNumber={formData.address.streetNumber}
-          streetName={formData.address.streetName}
-          postalCode={formData.address.postalCode}
-          city={formData.address.city}
-          state={formData.address.state}
-          country={formData.address.country}
-        />
+      <div className="flex flex-col gap-8">
+        <h2 className="text-2xl font-medium bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+          Location
+        </h2>
+        <div className="rounded-xl overflow-hidden shadow-lg">
+          <Map
+            handleLocationChange={handleLocationChange}
+            streetNumber={formData.address.streetNumber}
+            streetName={formData.address.streetName}
+            postalCode={formData.address.postalCode}
+            city={formData.address.city}
+            state={formData.address.state}
+            country={formData.address.country}
+          />
+        </div>
       </div>
     </>
   );

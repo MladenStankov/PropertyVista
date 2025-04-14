@@ -70,7 +70,7 @@ export default function SidebarChatMenu({ activeChatUuid }: IProps) {
   }, []);
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full min-h-svh flex flex-col bg-white">
       <div className="flex text-sm sm:text-base lg:text-lg border-b border-gray-200 bg-white sticky top-0 z-10 shadow-sm">
         <button
           onClick={() => setCurrentChatType(CurrentChatType.HomeSeeking)}

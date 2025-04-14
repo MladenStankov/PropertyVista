@@ -122,161 +122,191 @@ export default function Profile() {
 
   return (
     <ProtectedRoute>
-      <div className="w-full h-full flex justify-center items-center py-10">
+      <div className="w-full min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex justify-center items-start py-10 px-4">
         {profileInfo ? (
           <div
-            className="bg-white w-11/12 sm:w-5/6 lg:w-2/3 h-full rounded-2xl
-           border-blue-200 shadow-[0_0_2px_#fff,inset_0_0_2px_#fff,0_0_5px_#08f,0_0_15px_#08f,0_0_30px_#08f] flex flex-col p-5 sm:p-10"
+            className="backdrop-blur-md bg-white/80 w-11/12 sm:w-5/6 lg:w-3/4 rounded-3xl 
+            shadow-[0_8px_30px_rgb(0,0,0,0.12)] flex flex-col p-6 sm:p-12 transition-all duration-300 hover:shadow-[0_8px_40px_rgb(0,0,0,0.16)]"
           >
-            <div className="px-5 sm:px-10 lg:pl-32">
-              <div className="flex flex-col sm:flex-row items-center gap-5">
-                <div className="w-24 sm:w-36 h-24 sm:h-36 rounded-full relative">
-                  <Image
-                    src={profileInfo.imageUrl}
-                    alt="Profile Image"
-                    width={170}
-                    height={170}
-                    className="object-cover rounded-full w-full h-full"
-                  />
-                  <CiEdit
+            <div className="px-4 sm:px-8 lg:px-16">
+              <div className="flex flex-col sm:flex-row items-center gap-8">
+                <div className="relative group">
+                  <div className="w-32 sm:w-40 h-32 sm:h-40 rounded-2xl overflow-hidden transition-transform duration-300 group-hover:scale-105">
+                    <Image
+                      src={profileInfo.imageUrl}
+                      alt="Profile Image"
+                      width={170}
+                      height={170}
+                      className="object-cover w-full h-full"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
+                  </div>
+                  <button
                     onClick={() => handleImageEdit()}
-                    size={30}
-                    className="absolute rounded-full p-1 border-2 w-10 h-10 sm:w-12 sm:h-12 bg-white bottom-0 right-0
-                     hover:cursor-pointer hover:scale-110 transition-transform"
-                  />
+                    className="absolute bottom-2 right-2 rounded-xl p-2 bg-white/90 backdrop-blur-sm
+                    shadow-lg hover:scale-110 transition-all duration-300 group-hover:translate-y-0 translate-y-10"
+                  >
+                    <CiEdit size={24} className="text-gray-700" />
+                  </button>
                 </div>
-                <div className="text-gray-600 text-center sm:text-left">
-                  <div className="flex gap-2 items-center">
+                <div className="text-gray-700 text-center sm:text-left flex-1">
+                  <div className="flex items-center gap-3 justify-center sm:justify-start">
                     {isEditingName ? (
                       <input
                         type="text"
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
-                        className="text-2xl sm:text-4xl font-semibold bg-transparent border-b-2 border-gray-500 focus:outline-none"
+                        className="text-3xl sm:text-4xl font-bold bg-transparent border-b-2 border-blue-500 focus:outline-none px-2"
                       />
                     ) : (
-                      <h1 className="text-2xl sm:text-4xl font-semibold">
+                      <h1 className="text-3xl sm:text-4xl font-bold">
                         {profileInfo.fullName}
                       </h1>
                     )}
-                    <CiEdit
+                    <button
                       onClick={() => handleNameEdit()}
-                      size={30}
-                      className="rounded-full p-1 border-2 w-8 h-8 sm:w-10 sm:h-10 bg-white
-                     hover:cursor-pointer hover:scale-110 transition-transform"
-                    />
+                      className="rounded-xl p-2 hover:bg-gray-100 transition-colors duration-200"
+                    >
+                      <CiEdit
+                        size={24}
+                        className="text-gray-500 hover:text-gray-700"
+                      />
+                    </button>
                   </div>
-                  <p className="font-light text-sm sm:text-lg">
+                  <p className="text-gray-500 text-lg mt-1">
                     {profileInfo.email}
                   </p>
                 </div>
               </div>
-              <div className="ml-2 mt-10 sm:mt-20">
-                <div className="flex items-center text-gray-600 mb-4">
-                  <IoInformationCircleOutline size={20} className="mt-1" />
-                  <h2 className="text-xl sm:text-2xl">About you</h2>
+
+              <div className="mt-16">
+                <div className="flex items-center text-gray-700 mb-8">
+                  <IoInformationCircleOutline size={24} className="mr-3" />
+                  <h2 className="text-2xl font-semibold">Profile Statistics</h2>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-600">
-                  <div className="border-b-2 border-blue-500 flex items-center gap-2 p-2">
-                    <BsHouses size={40} />
-                    <p className="text-base sm:text-2xl font-light">
-                      Total published listings:{" "}
-                      <span className="font-medium">
-                        {profileInfo.totalListings}
-                      </span>
-                    </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-blue-100 rounded-xl">
+                        <BsHouses size={28} className="text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-gray-500 text-sm">
+                          Published Listings
+                        </p>
+                        <p className="text-2xl font-semibold text-gray-700">
+                          {profileInfo.totalListings}
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="border-b-2 border-blue-500 flex items-center gap-2 p-2">
-                    <TiMessages size={40} />
-                    <p className="text-base sm:text-2xl font-light">
-                      Total chats with other people:{" "}
-                      <span className="font-medium">
-                        {profileInfo.totalChats}
-                      </span>
-                    </p>
+                  <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-purple-100 rounded-xl">
+                        <TiMessages size={28} className="text-purple-600" />
+                      </div>
+                      <div>
+                        <p className="text-gray-500 text-sm">Active Chats</p>
+                        <p className="text-2xl font-semibold text-gray-700">
+                          {profileInfo.totalChats}
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="border-b-2 border-blue-500 flex items-center gap-2 p-2">
-                    <FaRegHeart size={40} />
-                    <p className="text-base sm:text-2xl font-light">
-                      Total favourited listings:{" "}
-                      <span className="font-medium">
-                        {profileInfo.totalFavouritedListings}
-                      </span>
-                    </p>
+                  <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-pink-100 rounded-xl">
+                        <FaRegHeart size={28} className="text-pink-600" />
+                      </div>
+                      <div>
+                        <p className="text-gray-500 text-sm">Saved Listings</p>
+                        <p className="text-2xl font-semibold text-gray-700">
+                          {profileInfo.totalFavouritedListings}
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="border-b-2 border-blue-500 flex items-center gap-2 p-2">
-                    <FaHandHoldingHeart size={40} />
-                    <p className="text-base sm:text-2xl font-light">
-                      Total received favourites:{" "}
-                      <span className="font-medium">
-                        {profileInfo.totalReceivedFavourites}
-                      </span>
-                    </p>
+                  <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-red-100 rounded-xl">
+                        <FaHandHoldingHeart
+                          size={28}
+                          className="text-red-600"
+                        />
+                      </div>
+                      <div>
+                        <p className="text-gray-500 text-sm">Received Saves</p>
+                        <p className="text-2xl font-semibold text-gray-700">
+                          {profileInfo.totalReceivedFavourites}
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="border-b-2 border-blue-500 flex items-center gap-2 p-2">
-                    <FaEye size={40} />
-                    <p className="text-base sm:text-2xl font-light">
-                      Total views on your listings:{" "}
-                      <span className="font-medium">
-                        {profileInfo.totalViewsOnProfile}
-                      </span>
-                    </p>
+                  <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-green-100 rounded-xl">
+                        <FaEye size={28} className="text-green-600" />
+                      </div>
+                      <div>
+                        <p className="text-gray-500 text-sm">Profile Views</p>
+                        <p className="text-2xl font-semibold text-gray-700">
+                          {profileInfo.totalViewsOnProfile}
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="border-b-2 border-blue-500 flex items-center gap-2 p-2">
-                    <MdOutlineChat size={40} />
-                    <p className="text-base sm:text-2xl font-light">
-                      Total sent messages:{" "}
-                      <span className="font-medium">0</span>
-                    </p>
+                  <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-orange-100 rounded-xl">
+                        <MdOutlineChat size={28} className="text-orange-600" />
+                      </div>
+                      <div>
+                        <p className="text-gray-500 text-sm">Messages Sent</p>
+                        <p className="text-2xl font-semibold text-gray-700">
+                          0
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div
-              className="flex flex-wrap justify-center gap-2 sm:gap-5 font-light items-center border-t
-             border-gray-400 w-full mt-20 sm:mt-32 py-3 sm:py-5 text-gray-700"
-            >
+            <div className="flex flex-wrap justify-center gap-4 mt-16 pb-4">
               <Link
-                className="flex-grow sm:flex-grow-0 p-2 sm:p-3 text-lg sm:text-2xl bg-blue-500
-                 text-white font-normal rounded-xl hover:scale-105 transition-transform "
                 href="/profile/listings"
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white 
+                rounded-xl font-medium text-lg hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
               >
-                <div className="flex items-center gap-2">
-                  <PiBuildingApartmentBold />
-                  <span>Listings</span>
-                </div>
+                <PiBuildingApartmentBold size={20} />
+                <span>My Listings</span>
               </Link>
               <Link
-                className="flex-grow sm:flex-grow-0 p-2 sm:p-3 text-lg sm:text-2xl bg-blue-500
-                 text-white font-normal rounded-xl hover:scale-105 transition-transform "
                 href="/profile/chats"
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white 
+                rounded-xl font-medium text-lg hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
               >
-                <div className="flex items-center gap-2">
-                  <TiMessages />
-                  <span>Chats</span>
-                </div>
+                <TiMessages size={20} />
+                <span>My Chats</span>
               </Link>
               <Link
-                className="flex-grow sm:flex-grow-0 p-2 sm:p-3 text-lg sm:text-2xl bg-blue-500
-                 text-white font-normal rounded-xl hover:scale-105 transition-transform "
                 href="/profile/favourite-listings"
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white 
+                rounded-xl font-medium text-lg hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
               >
-                <div className="flex items-center gap-2">
-                  <FaRegHeart />
-                  <span>Favourite Listings</span>
-                </div>
+                <FaRegHeart size={20} />
+                <span>Saved Listings</span>
               </Link>
             </div>
           </div>
         ) : (
-          <Loading color="white" />
+          <Loading color="indigo" />
         )}
       </div>
     </ProtectedRoute>

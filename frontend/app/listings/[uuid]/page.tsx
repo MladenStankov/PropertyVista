@@ -20,7 +20,6 @@ import {
   FaRegHeart,
   FaHeart,
 } from "react-icons/fa";
-import { BsChatLeftText } from "react-icons/bs";
 import { MdBalcony, MdIosShare, MdOutlinePool } from "react-icons/md";
 import { TbAirConditioning, TbSmartHome } from "react-icons/tb";
 import { CgSmartHomeHeat, CgSmartHomeWashMachine } from "react-icons/cg";
@@ -75,6 +74,9 @@ export default function Listing() {
   const [listing, setListing] = useState<IListingExtended | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(
+    null
+  );
 
   const uuid = usePathname().split("/").pop();
 
@@ -166,232 +168,326 @@ export default function Listing() {
   };
 
   return (
-    <div className="w-full h-full">
+    <div className="min-h-screen bg-gray-50">
       {listing != null ? (
-        <div className="flex flex-col mx-auto my-10 max-w-7xl px-4 md:px-6">
+        <div className="max-w-6xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
           <Toaster position="top-center" reverseOrder={false} />
-          <h2 className="font-extralight mb-2 text-sm md:text-base">
-            Listed by{" "}
-            <span className="font-semibold">{listing?.userFullName}</span>
-          </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 sm:grid-rows-2 gap-2">
-            <div className="col-span-1 sm:col-span-2 sm:row-span-2 relative">
+          {/* Broker info */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 overflow-hidden rounded-full ring-2 ring-gray-100">
               <Image
-                src={listing.images[currentImageIndex]}
-                alt="Main image"
-                className="w-full h-full object-cover aspect-video"
-                width={800}
-                height={600}
-                priority
-              />
-              <div
-                onClick={() => handlePreviousImage()}
-                className="bg-white rounded-full absolute left-1 top-1/2 p-4 opacity-80 hover:cursor-pointer hover:opacity-100"
-              >
-                <FaArrowLeft />
-              </div>
-              <div
-                onClick={() => handleNextImage()}
-                className="bg-white rounded-full absolute right-1 top-1/2 p-4 opacity-80 hover:cursor-pointer hover:opacity-100"
-              >
-                <FaArrowRight />
-              </div>
-              <div className="bg-white rounded-md absolute bottom-1 right-1/2 p-2 opacity-80 hover:cursor-pointer hover:opacity-100 font-semibold">
-                {currentImageIndex + 1}/{listing.images.length}
-              </div>
-            </div>
-
-            <div className="row-span-1">
-              <Image
-                src={
-                  listing.images[
-                    listing.images.length <= currentImageIndex + 1
-                      ? 0
-                      : currentImageIndex + 1
-                  ]
-                }
-                alt="Next image"
-                className="w-full aspect-video h-full object-cover max-sm:hidden"
-                width={400}
-                height={300}
+                src={listing.userImage}
+                alt={listing.userFullName}
+                width={48}
+                height={48}
+                className="object-cover w-full h-full"
               />
             </div>
-
-            <div className="row-span-1">
-              <Image
-                src={
-                  listing.images[
-                    listing.images.length <= currentImageIndex + 2
-                      ? listing.images.length > 1
-                        ? 1
-                        : 0
-                      : currentImageIndex + 2
-                  ]
-                }
-                alt="Next next image"
-                className="w-full aspect-video h-full object-cover max-sm:hidden"
-                width={400}
-                height={300}
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-row gap-2 place-self-end mt-2 mr-2">
-            <div
-              onClick={() => handleFavourite()}
-              className="bg-white rounded-full p-3 w-fit border-black border hover:cursor-pointer hover:bg-gray-200"
-            >
-              {listing.isFavourited && <FaHeart size={40} color="red" />}
-              {!listing.isFavourited && (
-                <FaRegHeart
-                  size={40}
-                  color={listing.isFavourited ? "red" : ""}
-                />
-              )}
-            </div>
-            <div
-              onClick={() => handleShareButton()}
-              className="bg-white rounded-full p-3 border w-fit border-black hover:cursor-pointer hover:bg-gray-200"
-            >
-              <MdIosShare size={40} />
-            </div>
-          </div>
-
-          <div className="flex flex-col md:flex-row justify-between mt-4 gap-4">
             <div>
-              <h2 className="text-xl sm:text-2xl md:text-3xl">
-                {capitalizeFirstLetter(listing.constructionType)} for{" "}
-                {listing.type === "buy" ? "sale" : "rent"}
-              </h2>
+              <p className="text-gray-600 text-sm">Listed by</p>
+              <h3 className="font-medium text-gray-900">
+                {listing.userFullName}
+              </h3>
+            </div>
+          </div>
 
-              <p className="text-lg md:text-2xl font-bold mt-2">
-                {new Intl.NumberFormat("en-IE", {
-                  style: "currency",
-                  currency: "EUR",
-                }).format(listing.price)}
-                {listing.type === "rent" && (
-                  <span className="font-light">/month</span>
-                )}
-              </p>
+          {/* Image Gallery */}
+          <div className="mb-6">
+            {/* Main image container */}
+            <div className="relative h-[300px] md:h-[400px]">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-2 h-full">
+                {/* Main image */}
+                <div className="col-span-1 md:col-span-3 relative rounded-lg md:rounded-l-lg overflow-hidden">
+                  <Image
+                    src={listing.images[currentImageIndex]}
+                    alt="Main property image"
+                    className="object-cover"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 75vw"
+                    priority
+                  />
 
-              <div className="flex flex-col">
-                <div className="flex flex-wrap gap-2 text-sm sm:text-base md:text-lg mt-4">
-                  <span className="font-bold">{listing.numberOfBedrooms}</span>{" "}
-                  bed
-                  <span className="font-bold">
-                    {listing.numberOfBathrooms}
-                  </span>{" "}
-                  bath
-                  <span className="font-bold">
-                    {listing.numberOfOtherRooms}
-                  </span>{" "}
-                  other rooms
-                  <span className="font-bold">
-                    {listing.numberOfFloors}
-                  </span>{" "}
-                  floor
-                  <span className="font-bold">{listing.surfaceArea}</span>{" "}
-                  m&sup2;
+                  {/* Navigation arrows - hidden on mobile, shown on touch */}
+                  <button
+                    onClick={handlePreviousImage}
+                    className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all duration-200 items-center justify-center"
+                  >
+                    <FaArrowLeft className="text-gray-700 w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={handleNextImage}
+                    className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-lg transition-all duration-200 items-center justify-center"
+                  >
+                    <FaArrowRight className="text-gray-700 w-4 h-4" />
+                  </button>
+
+                  {/* Mobile touch indicators */}
+                  <div className="flex md:hidden items-center justify-between absolute inset-x-0 top-1/2 -translate-y-1/2 px-4 pointer-events-none">
+                    <div className="w-8 h-8 rounded-full bg-black/20 flex items-center justify-center">
+                      <FaArrowLeft className="text-white w-4 h-4" />
+                    </div>
+                    <div className="w-8 h-8 rounded-full bg-black/20 flex items-center justify-center">
+                      <FaArrowRight className="text-white w-4 h-4" />
+                    </div>
+                  </div>
+
+                  {/* Image counter */}
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/70 text-white px-3 py-1.5 rounded-full text-xs">
+                    {currentImageIndex + 1}/{listing.images.length}
+                  </div>
                 </div>
 
-                <p className="max-w-full break-words font-light line-clamp-2 text-sm sm:text-lg mt-4">
-                  {listing.address}
-                </p>
+                {/* Desktop thumbnails */}
+                <div className="hidden md:flex flex-col gap-2">
+                  {[1, 2, 3].map((offset) => (
+                    <div
+                      key={offset}
+                      className="relative h-[130px] rounded-lg overflow-hidden cursor-pointer transition-opacity hover:opacity-90"
+                      onClick={() =>
+                        setCurrentImageIndex(
+                          (currentImageIndex + offset) % listing.images.length
+                        )
+                      }
+                    >
+                      <Image
+                        src={
+                          listing.images[
+                            (currentImageIndex + offset) % listing.images.length
+                          ]
+                        }
+                        alt={`Property view ${offset}`}
+                        className="object-cover"
+                        fill
+                        sizes="25vw"
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
-            <div className="flex flex-col border-2 rounded-xl p-4 shadow-md">
-              <div className="flex items-center gap-2">
-                <div className="w-12 h-12 overflow-hidden rounded-full">
+            {/* Mobile thumbnails */}
+            <div className="flex md:hidden gap-2 mt-2 overflow-x-auto pb-2 snap-x snap-mandatory">
+              {listing.images.map((image, index) => (
+                <div
+                  key={index}
+                  className={`relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden cursor-pointer snap-center ${
+                    index === currentImageIndex ? "ring-2 ring-blue-500" : ""
+                  }`}
+                  onClick={() => setCurrentImageIndex(index)}
+                >
                   <Image
-                    src={listing.userImage}
-                    alt="Broker Image"
-                    width={170}
-                    height={170}
-                    className="object-cover w-full h-full"
+                    src={image}
+                    alt={`Property thumbnail ${index + 1}`}
+                    className="object-cover"
+                    fill
+                    sizes="80px"
                   />
                 </div>
-                <p className="text-sm sm:text-lg">{listing?.userFullName}</p>
+              ))}
+            </div>
+
+            {/* Touch gesture handler */}
+            <div
+              className="absolute inset-0 md:hidden"
+              onTouchStart={(e) => {
+                const touch = e.touches[0];
+                setTouchStart({ x: touch.clientX, y: touch.clientY });
+              }}
+              onTouchEnd={(e) => {
+                const touch = e.changedTouches[0];
+                const deltaX = touch.clientX - (touchStart?.x ?? 0);
+                const deltaY = touch.clientY - (touchStart?.y ?? 0);
+
+                // Only handle horizontal swipes
+                if (
+                  Math.abs(deltaX) > Math.abs(deltaY) &&
+                  Math.abs(deltaX) > 50
+                ) {
+                  if (deltaX > 0) {
+                    handlePreviousImage();
+                  } else {
+                    handleNextImage();
+                  }
+                }
+              }}
+            />
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-3 justify-end mb-8">
+            <button
+              onClick={handleFavourite}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 border-gray-200 hover:border-gray-300 transition-colors"
+            >
+              {listing.isFavourited ? (
+                <FaHeart className="text-red-500 text-xl" />
+              ) : (
+                <FaRegHeart className="text-gray-600 text-xl" />
+              )}
+              <span className="text-gray-700">
+                {listing.isFavourited ? "Saved" : "Save"}
+              </span>
+            </button>
+            <button
+              onClick={handleShareButton}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border-2 border-gray-200 hover:border-gray-300 transition-colors"
+            >
+              <MdIosShare className="text-gray-600 text-xl" />
+              <span className="text-gray-700">Share</span>
+            </button>
+          </div>
+
+          {/* Main content */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2">
+              {/* Property header */}
+              <div className="mb-8">
+                <h1 className="text-3xl font-semibold mb-4">
+                  {capitalizeFirstLetter(listing.constructionType)} for{" "}
+                  {listing.type === "buy" ? "sale" : "rent"}
+                </h1>
+                <p className="text-3xl font-bold text-blue-600 mb-4">
+                  {new Intl.NumberFormat("en-IE", {
+                    style: "currency",
+                    currency: "EUR",
+                  }).format(listing.price)}
+                  {listing.type === "rent" && (
+                    <span className="text-gray-500 font-normal">/month</span>
+                  )}
+                </p>
+                <p className="text-gray-600 text-lg">{listing.address}</p>
               </div>
 
-              <div className="flex gap-4 mt-4">
-                <BsChatLeftText size={30} className="self-center" />
-                <p className="text-sm sm:text-lg leading-6">
-                  For all other questions, contact <br />
-                  <span className="font-semibold underline">
-                    {listing.userFullName}
-                  </span>
+              {/* Property specs */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-6 bg-white rounded-xl shadow-sm mb-8">
+                <div className="text-center">
+                  <p className="text-2xl font-semibold text-gray-900">
+                    {listing.numberOfBedrooms}
+                  </p>
+                  <p className="text-gray-500">Bedrooms</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-semibold text-gray-900">
+                    {listing.numberOfBathrooms}
+                  </p>
+                  <p className="text-gray-500">Bathrooms</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-semibold text-gray-900">
+                    {listing.surfaceArea}
+                  </p>
+                  <p className="text-gray-500">m²</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-semibold text-gray-900">
+                    {listing.numberOfFloors}
+                  </p>
+                  <p className="text-gray-500">Floors</p>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="mb-12">
+                <h2 className="text-2xl font-semibold mb-4">Description</h2>
+                <p className="text-gray-600 leading-relaxed whitespace-pre-line">
+                  {listing.description}
                 </p>
               </div>
 
-              <button
-                onClick={() => handleContactBroker()}
-                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded-full text-sm sm:text-base md:text-lg mt-4"
-              >
-                Contact Broker
-              </button>
-            </div>
-          </div>
+              {/* Amenities */}
+              <div className="mb-12">
+                <h2 className="text-2xl font-semibold mb-6">Amenities</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {listing.amenities.map((amenity, index) => {
+                    const Icon =
+                      amenityIcons[amenity.toLowerCase().replace(/ /g, "_")];
+                    return (
+                      <div
+                        key={index}
+                        className="flex items-center gap-3 p-4 bg-white rounded-lg shadow-sm"
+                      >
+                        {Icon && (
+                          <Icon className="text-blue-500 text-2xl flex-shrink-0" />
+                        )}
+                        <span className="text-gray-700">
+                          {amenity[0].toUpperCase() + amenity.slice(1)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
 
-          <div className="mt-10 flex flex-col gap-4">
-            <h2 className="text-2xl sm:text-4xl font-semibold ">Description</h2>
-            <p className="text-sm sm:text-lg md:text-xl max-w-full break-words leading-6">
-              {listing.description}
-            </p>
-          </div>
+              {/* Location */}
+              <div className="mb-12">
+                <h2 className="text-2xl font-semibold mb-6">Location</h2>
+                <div className="h-[400px] rounded-xl overflow-hidden shadow-sm">
+                  <Map
+                    coordinates={{
+                      latitude: listing.latitude,
+                      longitude: listing.longitude,
+                    }}
+                  />
+                </div>
+              </div>
 
-          <div className="mt-10 flex flex-col gap-4">
-            <h2 className="text-2xl sm:text-4xl font-semibold">Amenities</h2>
-            <div className="flex flex-wrap gap-2">
-              {listing.amenities.map((amenity, index) => {
-                const Icon =
-                  amenityIcons[amenity.toLowerCase().replace(/ /g, "_")];
-                return (
-                  <div
-                    key={index}
-                    className="flex items-center gap-4 rounded-md p-4 w-full sm:w-auto"
-                  >
-                    {Icon ? (
-                      <Icon size={70} className="text-blue-500" />
-                    ) : (
-                      <div className="text-gray-600">No Icon</div>
-                    )}
-                    <span className="text-base sm:text-lg font-medium">
-                      {amenity[0].toUpperCase() + amenity.slice(1)}
-                    </span>
+              {/* Construction Details */}
+              <div>
+                <h2 className="text-2xl font-semibold mb-6">
+                  Construction Details
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="bg-white p-6 rounded-xl shadow-sm">
+                    <p className="text-gray-500 mb-2">Property Type</p>
+                    <p className="text-xl font-semibold">
+                      {capitalizeFirstLetter(listing.constructionType)}
+                    </p>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="mt-10 flex flex-col gap-4">
-            <h2 className="text-2xl sm:text-4xl font-semibold">Location</h2>
-            <div className="border-2 border-blue-500 h-64 sm:h-96">
-              <Map
-                coordinates={{
-                  latitude: listing.latitude,
-                  longitude: listing.longitude,
-                }}
-              />
-            </div>
-          </div>
-
-          <div className="mt-10 flex flex-col gap-4">
-            <h2 className="text-2xl sm:text-4xl font-semibold">Construction</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="border-b-4 border-blue-500 flex justify-between text-base sm:text-xl items-center p-2">
-                <h3 className="font-light">Type</h3>
-                <p className="text-2xl font-semibold text-gray-500">
-                  {capitalizeFirstLetter(listing.constructionType)}
-                </p>
+                  <div className="bg-white p-6 rounded-xl shadow-sm">
+                    <p className="text-gray-500 mb-2">Year Built</p>
+                    <p className="text-xl font-semibold">
+                      {listing.constructionYear}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="border-b-4 border-blue-500 flex justify-between text-base sm:text-xl items-center p-2">
-                <h3 className="font-light">Construction year</h3>
-                <p className="text-2xl font-semibold text-gray-500">
-                  {listing.constructionYear}
-                </p>
+            </div>
+
+            {/* Contact sidebar */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-20 bg-white p-6 rounded-xl shadow-lg">
+                <div className="flex items-center gap-4 pb-6 border-b border-gray-100">
+                  <div className="w-14 h-14 overflow-hidden rounded-full">
+                    <Image
+                      src={listing.userImage}
+                      alt={listing.userFullName}
+                      width={56}
+                      height={56}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg">
+                      {listing.userFullName}
+                    </h3>
+                    <p className="text-gray-500">Property Agent</p>
+                  </div>
+                </div>
+
+                <div className="py-6">
+                  <p className="text-gray-600 mb-6">
+                    Interested in this property? Contact {listing.userFullName}{" "}
+                    for more information.
+                  </p>
+                  <button
+                    onClick={handleContactBroker}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
+                  >
+                    Contact Agent
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -399,17 +495,15 @@ export default function Listing() {
       ) : isLoading ? (
         <Loading />
       ) : (
-        <div className="w-full h-full flex flex-col justify-center items-center py-20 gap-6">
-          <h2 className="text-2xl sm:text-4xl font-semibold text-center">
-            Listing not found
-          </h2>
-          <p className="text-gray-600 text-lg text-center max-w-md">
+        <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center">
+          <h2 className="text-3xl font-semibold mb-4">Listing not found</h2>
+          <p className="text-gray-600 mb-8 max-w-md">
             The listing you&apos;re looking for might have been removed or is no
             longer available.
           </p>
           <button
             onClick={() => router.push("/listings")}
-            className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-full text-lg transition-colors"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors"
           >
             Browse other listings
           </button>

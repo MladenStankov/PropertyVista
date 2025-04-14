@@ -231,7 +231,7 @@ export default function Nav() {
                       className="flex items-center gap-2 p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors duration-200"
                     >
                       <FaHeart className="text-gray-500" />
-                      <span>Favourite Listings</span>
+                      <span>Saved Listings</span>
                     </Link>
                     <button
                       onClick={() => {

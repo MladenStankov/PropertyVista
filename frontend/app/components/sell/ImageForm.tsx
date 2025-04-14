@@ -8,20 +8,27 @@ interface IImageForm {
   formData: IWizardForm;
   handleImageChange: (images: File[]) => void;
   errors: Record<string, string>;
+  existingImages?: string[];
+  deletedImages?: string[];
+  onDeleteImage?: (imageUrl: string) => void;
 }
 
 interface ImageContainerProps {
-  image: File;
+  image: File | string;
   index: number;
   handleRemoveImage: (index: number) => void;
+  isExistingImage?: boolean;
 }
 
 function ImageContainer({
   image,
   index,
   handleRemoveImage,
+  isExistingImage,
 }: ImageContainerProps) {
-  const imageUrl = URL.createObjectURL(image);
+  const imageUrl = isExistingImage
+    ? (image as string)
+    : URL.createObjectURL(image as File);
 
   return (
     <div className="relative w-full h-32 bg-gray-100 rounded-md overflow-hidden group">
@@ -39,7 +46,7 @@ function ImageContainer({
         <FaTrashAlt size={16} />
       </button>
       <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-sm">
-        {image.name}
+        {isExistingImage ? "Existing Image" : (image as File).name}
       </div>
     </div>
   );
@@ -49,10 +56,13 @@ export default function ImageForm({
   formData,
   handleImageChange,
   errors,
+  existingImages = [],
+  deletedImages = [],
+  onDeleteImage,
 }: IImageForm) {
   const onDrop = (acceptedFiles: File[]) => {
     const allFiles = [...formData.images, ...acceptedFiles];
-    handleImageChange(allFiles.filter((_, index) => index <= 50));
+    handleImageChange(allFiles.filter((_, index) => index < 50));
   };
 
   const { getRootProps, getInputProps } = useDropzone({
@@ -63,9 +73,19 @@ export default function ImageForm({
     maxFiles: 50,
   });
 
-  const handleRemoveImage = (index: number) => {
+  const handleRemoveNewImage = (index: number) => {
     handleImageChange(formData.images.filter((_, i) => i !== index));
   };
+
+  const handleRemoveExistingImage = (index: number) => {
+    if (onDeleteImage && existingImages[index]) {
+      onDeleteImage(existingImages[index]);
+    }
+  };
+
+  const remainingExistingImages = existingImages.filter(
+    (img) => !deletedImages.includes(img)
+  );
 
   return (
     <>
@@ -92,14 +112,24 @@ export default function ImageForm({
           <span className="text-red-500 text-sm mt-1">{errors["images"]}</span>
         )}
 
-        {formData.images.length > 0 && (
+        {(formData.images.length > 0 || remainingExistingImages.length > 0) && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-            {formData.images.map((image, index) => (
+            {remainingExistingImages.map((image, index) => (
               <ImageContainer
-                key={index}
+                key={`existing-${index}`}
                 image={image}
                 index={index}
-                handleRemoveImage={handleRemoveImage}
+                handleRemoveImage={handleRemoveExistingImage}
+                isExistingImage={true}
+              />
+            ))}
+            {formData.images.map((image, index) => (
+              <ImageContainer
+                key={`new-${index}`}
+                image={image}
+                index={index}
+                handleRemoveImage={handleRemoveNewImage}
+                isExistingImage={false}
               />
             ))}
           </div>

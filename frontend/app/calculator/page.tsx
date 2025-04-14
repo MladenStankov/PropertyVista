@@ -19,7 +19,6 @@ export interface IResults {
 }
 
 export default function Calculator() {
-  const [submitted, setSubmitted] = useState<boolean>(false);
   const [form, setForm] = useState<ICalculator>({
     monthlyIncome: "",
     monthlyDebt: "",
@@ -88,24 +87,25 @@ export default function Calculator() {
       }
       const data = await response.json();
       setResults(data);
-      setSubmitted(true);
     } catch (error) {
       console.error("Error with calculator:", error);
     }
   };
 
   return (
-    <div>
-      {!submitted ? (
-        <CalculatorBeforeSubmit
-          form={form}
-          errors={errors}
-          handleChange={handleFormChange}
-          handleSubmit={handleSubmit}
-        />
-      ) : (
-        <CalculatorAfterSubmit results={results} location={form.location} />
-      )}
+    <div className="flex flex-col min-h-screen">
+      <div className="flex-grow">
+        {!results ? (
+          <CalculatorBeforeSubmit
+            form={form}
+            errors={errors}
+            handleChange={handleFormChange}
+            handleSubmit={handleSubmit}
+          />
+        ) : (
+          <CalculatorAfterSubmit results={results} location={form.location} />
+        )}
+      </div>
     </div>
   );
 }
