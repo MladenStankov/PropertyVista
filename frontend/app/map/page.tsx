@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState, useMemo, useCallback } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
-import { PropertyType } from "../components/sell/WizardForm";
+import useSupercluster from "use-supercluster";
+import type { BBox } from "geojson";
 import CustomInfoWindow from "../components/CustomInfoWindow";
 import styles from "./Map.module.css";
 
@@ -12,7 +13,18 @@ export interface IMapListing {
   lng: number;
   price: number;
   imageUrl: string;
-  type: PropertyType;
+  type: string;
+}
+
+interface ClusterProperties {
+  cluster: boolean;
+  listingId: string;
+  price: number;
+  imageUrl: string;
+  propertyType: string;
+  listing: IMapListing;
+  cluster_id?: number;
+  point_count?: number;
 }
 
 export default function ListingMap() {
@@ -20,6 +32,8 @@ export default function ListingMap() {
   const [selectedListing, setSelectedListing] = useState<IMapListing | null>(
     null
   );
+  const [bounds, setBounds] = useState<BBox>([0, 0, 0, 0]);
+  const [zoom, setZoom] = useState(4);
   const [center, setCenter] = useState({ lat: 40, lng: 40 });
 
   useEffect(() => {
@@ -44,49 +58,113 @@ export default function ListingMap() {
     fetchListings();
   }, []);
 
-  const markers = useMemo(() => {
+  const points = useMemo(() => {
     if (!listings) return [];
     return listings.map((listing) => ({
-      position: { lat: listing.lat, lng: listing.lng },
-      listing,
+      type: "Feature" as const,
+      properties: {
+        cluster: false,
+        listingId: listing.uuid,
+        price: listing.price,
+        imageUrl: listing.imageUrl,
+        propertyType: listing.type,
+        listing,
+      },
+      geometry: {
+        type: "Point" as const,
+        coordinates: [listing.lng, listing.lat],
+      },
     }));
   }, [listings]);
 
-  const handleMarkerClick = useCallback((listing: IMapListing) => {
-    setSelectedListing(listing);
-    setCenter({ lat: listing.lat, lng: listing.lng });
-  }, []);
+  const { clusters, supercluster } = useSupercluster<ClusterProperties>({
+    points,
+    bounds,
+    zoom,
+    options: {
+      radius: 75,
+      maxZoom: 20,
+    },
+  });
 
   return (
     <APIProvider apiKey={String(process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY)}>
       <Map
         className={styles.mapContainer}
-        zoom={4}
-        center={center}
+        defaultZoom={zoom}
+        defaultCenter={center}
         gestureHandling="greedy"
         mapId="property-map"
         disableDefaultUI
+        onCameraChanged={(ev) => {
+          const viewBounds = ev.map?.getBounds();
+          const zoom = ev.map?.getZoom() || 4;
+
+          if (viewBounds) {
+            const ne = viewBounds.getNorthEast();
+            const sw = viewBounds.getSouthWest();
+            setBounds([sw.lng(), sw.lat(), ne.lng(), ne.lat()]);
+            setZoom(zoom);
+          }
+        }}
       >
-        {markers.map((marker) => (
-          <AdvancedMarker
-            key={marker.listing.uuid}
-            position={marker.position}
-            onClick={() => handleMarkerClick(marker.listing)}
-          >
-            <div className={styles.markerContainer}>
-              <div className={styles.price}>
-                ${marker.listing.price.toLocaleString()}
+        {clusters.map((cluster) => {
+          const [longitude, latitude] = cluster.geometry.coordinates;
+          const {
+            cluster: isCluster,
+            point_count: pointCount = 0,
+            cluster_id: clusterId,
+            listing,
+          } = cluster.properties;
+
+          if (isCluster && supercluster && clusterId !== undefined) {
+            return (
+              <AdvancedMarker
+                key={`cluster-${clusterId}`}
+                position={{ lat: latitude, lng: longitude }}
+                onClick={() => {
+                  const expansionZoom = Math.min(
+                    supercluster.getClusterExpansionZoom(clusterId),
+                    20
+                  );
+                  setZoom(expansionZoom);
+                  setCenter({ lat: latitude, lng: longitude });
+                }}
+              >
+                <div className={styles.clusterMarker}>{pointCount}</div>
+              </AdvancedMarker>
+            );
+          }
+
+          if (!listing) return null;
+
+          return (
+            <AdvancedMarker
+              key={cluster.properties.listingId}
+              position={{ lat: latitude, lng: longitude }}
+              onClick={() => {
+                setSelectedListing(listing);
+                setCenter({ lat: latitude, lng: longitude });
+              }}
+            >
+              <div className={styles.markerContainer}>
+                {selectedListing?.uuid !== cluster.properties.listingId && (
+                  <div className={styles.price}>
+                    ${cluster.properties.price.toLocaleString()}
+                  </div>
+                )}
+
+                {selectedListing?.uuid === cluster.properties.listingId &&
+                  selectedListing && (
+                    <CustomInfoWindow
+                      listing={selectedListing}
+                      onClose={() => setSelectedListing(null)}
+                    />
+                  )}
               </div>
-              <div className={styles.type}>{marker.listing.type}</div>
-            </div>
-          </AdvancedMarker>
-        ))}
-        {selectedListing && (
-          <CustomInfoWindow
-            listing={selectedListing}
-            onClose={() => setSelectedListing(null)}
-          />
-        )}
+            </AdvancedMarker>
+          );
+        })}
       </Map>
     </APIProvider>
   );
