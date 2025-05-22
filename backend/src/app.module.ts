@@ -8,7 +8,6 @@ import { EmailSendingModule } from './email-sending/email-sending.module';
 import { AwsModule } from './aws/aws.module';
 import { ListingsModule } from './listings/listings.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { AwsCleanupModule } from './aws-cleanup/aws-cleanup.module';
 import { CalculatorModule } from './calculator/calculator.module';
 import { ChatsModule } from './chats/chats.module';
 
@@ -32,7 +31,6 @@ import { ChatsModule } from './chats/chats.module';
     EmailSendingModule,
     AwsModule,
     ListingsModule,
-    AwsCleanupModule,
     CalculatorModule,
     ChatsModule,
   ],

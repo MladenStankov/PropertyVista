@@ -1,17 +1,13 @@
 import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ChatService } from './services/chat.service';
-import { MessageService } from './services/message.service';
 import { JwtGuard } from '../auth/guards/jwt.guard';
 import { Throttle } from '@nestjs/throttler';
 
 @Controller('chats')
 @ApiTags('Chats')
 export class ChatsController {
-  constructor(
-    private chatService: ChatService,
-    private messageService: MessageService,
-  ) {}
+  constructor(private chatService: ChatService) {}
 
   @Post(':listingUuid')
   @UseGuards(JwtGuard)

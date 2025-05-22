@@ -18,13 +18,13 @@ export class JwtWebsocketMiddleware {
       const cookieHeader = socket.handshake.headers.cookie;
       const cookies = cookie.parse(cookieHeader);
 
-      const acceessToken = cookies['access_token'];
+      const accessToken = cookies['access_token'];
 
-      if (!acceessToken) {
+      if (!accessToken) {
         throw new UnauthorizedException();
       }
 
-      const payload = await this.jwtService.verifyAsync(acceessToken, {
+      const payload = await this.jwtService.verifyAsync(accessToken, {
         secret: this.configService.getOrThrow('JWT_SECRET'),
       });
 

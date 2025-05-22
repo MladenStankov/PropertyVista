@@ -1,7 +1,5 @@
 import {
   DeleteObjectCommand,
-  GetObjectCommand,
-  ListObjectsV2Command,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
@@ -40,18 +38,6 @@ export class AwsService {
       throw new InternalServerErrorException('Error uploading file');
     }
   }
-  async getFileUrl(key: string): Promise<string> {
-    const bucketName = this.configService.get('AWS_BUCKET_NAME');
-    const command = new GetObjectCommand({ Bucket: bucketName, Key: key });
-
-    try {
-      await this.s3.send(command);
-      return `https://${bucketName}.s3.amazonaws.com/${key}`;
-    } catch (error) {
-      console.error('Error getting file from S3', error);
-      throw new InternalServerErrorException('Error getting file');
-    }
-  }
 
   async deleteFile(key: string) {
     const bucketName = this.configService.get('AWS_BUCKET_NAME');
@@ -62,23 +48,6 @@ export class AwsService {
     } catch (error) {
       console.error('Error deleting file from S3', error);
       throw new InternalServerErrorException('Error deleting file');
-    }
-  }
-
-  async getAllFiles(): Promise<string[]> {
-    const bucketName = this.configService.get('AWS_BUCKET_NAME');
-    const command = new ListObjectsV2Command({ Bucket: bucketName });
-
-    try {
-      const response = await this.s3.send(command);
-      return (
-        response.Contents?.map((file) => file.Key).filter(
-          (file) => file !== 'default-profile-image.png',
-        ) || []
-      );
-    } catch (error) {
-      console.error('Error listing files in S3', error);
-      throw new InternalServerErrorException('Error listing files in S3');
     }
   }
 }
