@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { APIProvider, Map, AdvancedMarker } from "@vis.gl/react-google-maps";
 import useSupercluster from "use-supercluster";
 import type { BBox } from "geojson";
@@ -47,6 +47,7 @@ export default function ListingMap() {
         }
         const data = await response.json();
         setListings(data);
+        console.log("Fetched listings:", data);
 
         if (data && data.length > 0) {
           setCenter({ lat: data[0].lat, lng: data[0].lng });
@@ -58,9 +59,8 @@ export default function ListingMap() {
     fetchListings();
   }, []);
 
-  const points = useMemo(() => {
-    if (!listings) return [];
-    return listings.map((listing) => ({
+  const points =
+    listings?.map((listing) => ({
       type: "Feature" as const,
       properties: {
         cluster: false,
@@ -74,8 +74,7 @@ export default function ListingMap() {
         type: "Point" as const,
         coordinates: [listing.lng, listing.lat],
       },
-    }));
-  }, [listings]);
+    })) || [];
 
   const { clusters, supercluster } = useSupercluster<ClusterProperties>({
     points,
@@ -122,14 +121,6 @@ export default function ListingMap() {
               <AdvancedMarker
                 key={`cluster-${clusterId}`}
                 position={{ lat: latitude, lng: longitude }}
-                onClick={() => {
-                  const expansionZoom = Math.min(
-                    supercluster.getClusterExpansionZoom(clusterId),
-                    20
-                  );
-                  setZoom(expansionZoom);
-                  setCenter({ lat: latitude, lng: longitude });
-                }}
               >
                 <div className={styles.clusterMarker}>{pointCount}</div>
               </AdvancedMarker>
@@ -150,7 +141,12 @@ export default function ListingMap() {
               <div className={styles.markerContainer}>
                 {selectedListing?.uuid !== cluster.properties.listingId && (
                   <div className={styles.price}>
-                    ${cluster.properties.price.toLocaleString()}
+                    €{cluster.properties.price.toLocaleString()}
+                    <p className="text-sm text-gray-500">
+                      {cluster.properties.propertyType === "rent"
+                        ? "/month"
+                        : ""}
+                    </p>
                   </div>
                 )}
 

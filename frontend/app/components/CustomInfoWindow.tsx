@@ -20,7 +20,7 @@ export default function CustomInfoWindow({
     <div className="relative w-64 flex flex-col items-center bg-white shadow-lg rounded-lg">
       <button
         onClick={onClose}
-        className="absolute -top-2 -right-2 w-6 h-6 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100"
+        className="absolute -top-2 -right-2 w-6 h-6 bg-white rounded-full shadow-md flex items-center justify-center hover:bg-gray-100 z-10"
       >
         ✕
       </button>
@@ -36,7 +36,7 @@ export default function CustomInfoWindow({
           />
           <div className="text-blue-500 font-bold text-lg mt-2 text-center">
             {listing.type === "rent"
-              ? `${formattedPrice}/month`
+              ? ` ${formattedPrice}/month`
               : formattedPrice}
           </div>
         </div>
