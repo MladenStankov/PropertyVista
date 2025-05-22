@@ -160,21 +160,7 @@ export default function ChatComponent({ uuid, socket }: IProps) {
     return (
       <div className="flex h-full items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="text-center p-8 rounded-xl bg-white shadow-lg border border-gray-100">
-          <div className="mb-4">
-            <svg
-              className="w-16 h-16 mx-auto text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-              />
-            </svg>
-          </div>
+          <div className="mb-4"></div>
           <h3 className="text-xl font-semibold mb-2 text-gray-800">
             Select a chat
           </h3>
@@ -190,21 +176,6 @@ export default function ChatComponent({ uuid, socket }: IProps) {
     return (
       <div className="flex h-full items-center justify-center bg-gradient-to-br from-red-50 to-gray-50">
         <div className="text-center p-8 rounded-xl bg-white shadow-lg border border-red-100">
-          <div className="mb-4">
-            <svg
-              className="w-16 h-16 mx-auto text-red-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-          </div>
           <h3 className="text-xl font-semibold mb-2 text-red-600">Error</h3>
           <p className="text-sm text-gray-600">{error}</p>
         </div>
@@ -230,6 +201,7 @@ export default function ChatComponent({ uuid, socket }: IProps) {
                 className={`flex flex-col ${
                   chat.currentUser ? "items-end" : "items-start"
                 }`}
+                ref={index === chatMessages.length - 1 ? messagesEndRef : null}
               >
                 <div className="flex items-center mb-1 space-x-2">
                   <div className="w-8 h-8 rounded-full overflow-hidden ring-2 ring-offset-2 ring-blue-100">
@@ -279,7 +251,6 @@ export default function ChatComponent({ uuid, socket }: IProps) {
                 </div>
               </div>
             ))}
-            <div ref={messagesEndRef} />
           </div>
         )}
       </div>

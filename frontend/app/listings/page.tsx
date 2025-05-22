@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
 
 import ListingsCard, {
   IListingsCard,
 } from "../components/listings/ListingsCard";
 import Loading from "../components/Loading";
+import FilterContainer from "../components/listings/FilterContainer";
 
 import { IoSearch, IoClose } from "react-icons/io5";
 import { FaArrowRightLong } from "react-icons/fa6";
@@ -18,11 +18,6 @@ import {
   ConstructionType,
   PropertyType,
 } from "../components/sell/WizardForm";
-
-const FilterContainer = dynamic(
-  () => import("../components/listings/FilterContainer"),
-  { ssr: false }
-);
 
 enum SortType {
   PRICE_ASC = "price-asc",
@@ -192,6 +187,8 @@ export default function ListingsPage() {
       "",
       `${window.location.pathname}${queriesString ? `?${queriesString}` : ""}`
     );
+    window.location.reload();
+
     setAppliedFilter(filter);
   };
 
@@ -373,12 +370,6 @@ export default function ListingsPage() {
               onChange={(e) => !isFilterLoading && handleSort(e.target.value)}
               value={appliedFilter.sort || SortType.NEWEST}
               disabled={isFilterLoading}
-              style={{
-                backgroundImage: `url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e")`,
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "right 1rem center",
-                backgroundSize: "1.5em",
-              }}
             >
               <option value={SortType.PRICE_ASC}>Price: Low to High</option>
               <option value={SortType.PRICE_DESC}>Price: High to Low</option>

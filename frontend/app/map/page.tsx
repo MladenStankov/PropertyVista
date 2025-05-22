@@ -47,7 +47,6 @@ export default function ListingMap() {
         }
         const data = await response.json();
         setListings(data);
-        console.log("Fetched listings:", data);
 
         if (data && data.length > 0) {
           setCenter({ lat: data[0].lat, lng: data[0].lng });

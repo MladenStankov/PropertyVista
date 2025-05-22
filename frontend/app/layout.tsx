@@ -26,9 +26,7 @@ export const metadata: Metadata = {
     title: "PropertyVista",
     description: "Browse, buy, or rent properties with PropertyVista",
   },
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://propertyvista.vercel.app"
-  ),
+  metadataBase: new URL("https://propertyvista.vercel.app"),
 };
 
 export default function RootLayout({

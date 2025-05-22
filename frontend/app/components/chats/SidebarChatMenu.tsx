@@ -70,7 +70,7 @@ export default function SidebarChatMenu({ activeChatUuid }: IProps) {
   }, []);
 
   return (
-    <div className="h-full min-h-svh flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-white">
       <div className="flex text-sm sm:text-base lg:text-lg border-b border-gray-200 bg-white sticky top-0 z-10 shadow-sm">
         <button
           onClick={() => setCurrentChatType(CurrentChatType.HomeSeeking)}
@@ -104,19 +104,6 @@ export default function SidebarChatMenu({ activeChatUuid }: IProps) {
             {currentChatType === CurrentChatType.Broker ? (
               chats?.brokerChats?.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)] text-gray-500 px-4">
-                  <svg
-                    className="w-16 h-16 mb-4 text-gray-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"
-                    />
-                  </svg>
                   <p className="text-center font-medium mb-2">
                     No broker chats yet
                   </p>
@@ -135,19 +122,6 @@ export default function SidebarChatMenu({ activeChatUuid }: IProps) {
               <>
                 {chats?.homeSeekingChats?.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)] text-gray-500 px-4">
-                    <svg
-                      className="w-16 h-16 mb-4 text-gray-400"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                      />
-                    </svg>
                     <p className="text-center font-medium mb-2">
                       No property chats yet
                     </p>
